@@ -134,12 +134,6 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
       
         json_output.new_run()
 
-        try:
-            inps = test.inputs
-            sys.stdin = io.StringIO("\n".join([str(x) for x in inps]))
-        except IndexError:
-            inps = []
-
         if test.args:
             output(
                 msgs.get_msg("PrintTestVector", lang), Codes.DEBUG,
@@ -159,33 +153,29 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
     
         match test_category:
             case "SELECT":
-                ref, res, desc = select_test(test.ref_result, test_target, lang, msgs)
+                ref, res, column_names = select_test(test.ref_result, test_target, lang, msgs)
                 if (ref == 0 or res == 0):
-                    output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
                     return 0
 
             case "INSERT" | "UPDATE" | "DELETE":
                 ref, res = insert_update_test(test.ref_result, test_target, lang, msgs, test_query=test_query)
                 if (ref == 0 or res == 0):
-                    output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
                     return 0
 
             case "CREATE":
                 ref, res = create_test(test.ref_result, test_target, lang, msgs, test_query=test_query, insert_query=insert_query)
                 if (ref == 0 or res == 0):
-                    output(msgs.getmsg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
                     return 0
-
             case _:
-                output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
+                output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO)
                 return 0
-
         # Test preparations
+
 
         # Validating function results
         sys.stdout = save
         if not hide_output:
-            output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
+            output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO)
         
         # Validate results
         try: 
@@ -204,19 +194,9 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
                 
             #Extra feedback
-            for msg_key, format_args in test.feedback(res, desc):
+            for msg_key, format_args in test.feedback(res, column_names):
                 output(msgs.get_msg(msg_key, lang), Codes.INFO, **format_args)
 
-        # Remove?
-        if test.output_validator:
-            try: 
-                test.validate_output(o.content)
-                output(msgs.get_msg("CorrectMessage", lang), Codes.CORRECT)
-            except AssertionError as e:                
-                output(msgs.get_msg(e, lang, "IncorrectMessage"), Codes.INCORRECT)
-                output(msgs.get_msg("MessageInfo", lang), Codes.INFO)
-                output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
-        
         test.teardown()
         prev_res = res
         prev_out = test_cases
@@ -233,9 +213,8 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            print("File not found")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
+            return 0,0
 
         # Run student answer
         try: 
@@ -253,7 +232,6 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             conn.close()
            
         except sqlite3.Error as e:
-            print("db error1")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
             return 0, 0
         
@@ -272,7 +250,6 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             conn2.close()
 
         except sqlite3.Error as e:
-            print("db error2")
             print(str(e))
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
             return 0, 0
@@ -290,29 +267,28 @@ def select_test(ref_answer, student_answer, lang, msgs):
      
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            print("File not found")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
+            return 0,0
 
         # Run student answer
         try: 
-            conn = sqlite3.connect("mydatabase.db")
+            conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
        
             cursor.execute(sql_script)
             res = cursor.fetchall()
-            column_names = [description[0] for description in cursor.description]
         
+            column_names = [description[0] for description in cursor.description]
+
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
-            print("db error")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
+            return 0,0
         
         # Run reference answer
         try: 
-            conn = sqlite3.connect("mydatabase.db")
+            conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
        
             cursor.execute(ref_answer)
@@ -321,9 +297,8 @@ def select_test(ref_answer, student_answer, lang, msgs):
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
-            print("db error")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
+            return 0,0
 
         return ref, res, column_names
 
@@ -337,9 +312,8 @@ def create_test(ref_answer, student_answer, lang, msgs, test_query, insert_query
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            print("File not found")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
+            return 0,0
 
         # Run student answer
         try: 
@@ -360,7 +334,6 @@ def create_test(ref_answer, student_answer, lang, msgs, test_query, insert_query
             conn.close()
            
         except sqlite3.Error as e:
-            print("db error1", str(e))
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
             return 0, 0
         
@@ -382,7 +355,6 @@ def create_test(ref_answer, student_answer, lang, msgs, test_query, insert_query
             conn2.close()
 
         except sqlite3.Error as e:
-            print("db error2")
             print(str(e))
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
             return 0, 0

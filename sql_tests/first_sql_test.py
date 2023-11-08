@@ -101,8 +101,11 @@ if __name__ == "__main__":
     correct = False
     score = 0
 
+    test_type = "SELECT"
     test_query = ""
-    inesrt_query = ""
+    insert_query = ""
+
+
 
     core.init_test(__file__, 1)
     
@@ -112,9 +115,9 @@ if __name__ == "__main__":
 
     st_mname = files[0]
 
-    st_module = core.load_sql_module(st_mname, lang, inputs=["0"])
+    st_module = load_sql_module(st_mname, lang, inputs=["0"])
 
-    score += run_sql_test_cases("program", "SELECT", st_mname, gen_program_vector, lang, custom_msgs=msgs)
+    score += run_sql_test_cases("program", test_type, st_mname, gen_program_vector, lang, custom_msgs=msgs)
 
     correct = bool(score)
     core.set_result(correct, score)
