@@ -194,9 +194,10 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
                 
             #Extra feedback
-            for msg_key, format_args in test.feedback(res, column_names):
-                output(msgs.get_msg(msg_key, lang), Codes.INFO, **format_args)
-
+            if column_names != None:
+                for msg_key, format_args in test.feedback(res, column_names):
+                    output(msgs.get_msg(msg_key, lang), Codes.INFO, **format_args)
+        
         test.teardown()
         prev_res = res
         prev_out = test_cases
