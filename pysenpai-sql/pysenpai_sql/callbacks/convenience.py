@@ -12,3 +12,9 @@ def parsed_list_sql_validator(ref, res, out):
             assert v == out[i], "fail_output_result"
     except IndexError:
         raise AssertionError
+
+def test_validator(ref, res, out):
+    try:
+        assert res == 1, "value_non_unique"
+    except AssertionError:
+        raise AssertionError

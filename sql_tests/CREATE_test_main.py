@@ -1,13 +1,18 @@
 
+from pyexpat.errors import codes
 import re
+import sqlite3
 import pysenpai.core as core
-# from pysenpai.messages import Codes
+from pysenpai.messages import Codes
 
-from pysenpai_sql.checking.testcase import SQLQueryTestCase, run_sql_test_cases
-from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator
+from pysenpai_sql.checking.testcase import SQLCreateTestCase, run_sql_test_cases
+from pysenpai_sql.callbacks.convenience import *
 import pysenpai.utils.checker as utils
 from pysenpai.exceptions import OutputParseError
 from pysenpai_sql.core import load_sql_module
+from datasetup import init_db
+from pysenpai.output import output
+
 
 msgs = core.TranslationDict()
 float_pat = re.compile("(-?[0-9]+\\.[0-9]+)")
@@ -51,8 +56,18 @@ msgs.set_msg("incorrect_column_order", "en", dict(
     triggers=["student_sql_query"]
 ))
 
+msgs.set_msg("value_non_unique", "fi", dict(
+    content="Taulukon arvo ei ole uniikki.",
+    triggers=["student_sql_query"]
+))
 
-class MainTestCase(SQLQueryTestCase):
+msgs.set_msg("value_non_unique", "en", dict(
+    content="The value is not unique.",
+    triggers=["student_sql_query"]
+))
+
+
+class MainTestCase(SQLCreateTestCase):
 
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)
@@ -62,31 +77,48 @@ class MainTestCase(SQLQueryTestCase):
 
     def feedback(self, res, descriptions):
         yield from super().feedback(res, descriptions)
-        try:
-            names = []
-            for result in res:
-                names.append(result[0])
-            if names != sorted(names):
-                yield ("incorrect_return_order", {})
 
-            correct = ["name", "yearborn", "birthplace"]
+class SpecificTestCase(SQLCreateTestCase):
 
-            # convert to lowercase
-            descriptions = [item.lower() for item in descriptions]
+    def wrap(self, ref_answer, student_answer, lang, msgs, test_query, insert_query):
+        try :
+            sql_file = open(student_answer, 'r')
+            sql_script = sql_file.read()
+        except FileNotFoundError as e:
+            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            return 0,0
+        # Run student answer
+        try: 
+            conn = sqlite3.connect("mydatabase1.db")
+            cursor = conn.cursor()
+            primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
 
-            incorrect_variables = descriptions != correct
-            incorrect_order = (sorted(descriptions) == sorted(correct)
-                               and incorrect_variables)
+            cursor.executescript(sql_script)
+            # Insert to created table
+            cursor.executescript(insert_query)
+            cursor.execute(test_query)
 
-            if incorrect_order:
-                yield ("incorrect_column_order", {})
-            elif incorrect_variables:
-                yield ("incorrect_selected_columns", {})
+            cursor.execute(primary_key_test)            
 
-        except AssertionError:
-            pass
+            conn.commit()
+            cursor.close()
+            conn.close()
+           
+        except sqlite3.IntegrityError as e:
+            return 1, 1
+        
+        return 0, 0
+
+    def parse(self, output):
+        pass
+    
+    def feedback(self, res, descriptions):
+        yield from super().feedback(res, descriptions)
+        
+        yield("value_non_unique", {})
 
 
+        
 def gen_program_vector():
 
     """
@@ -98,8 +130,15 @@ def gen_program_vector():
             ref_result=ref_program(),
             validator=parsed_list_sql_validator
         ))
+        v.append(SpecificTestCase(
+            ref_result=primary_key_ref(),
+            validator=test_validator
+        ))
     return v
 
+def primary_key_ref():
+    insert_query = "INSERT INTO testtable VALUES (1, 'testi2')"
+    return insert_query
 
 def ref_program():
 
@@ -116,6 +155,7 @@ def ref_program():
 
 
 if __name__ == "__main__":
+    core.init_test(__file__, 1)
     correct = False
     score = 0
 
@@ -123,12 +163,14 @@ if __name__ == "__main__":
     test_type = "CREATE"
 
     # SELECT query to test DELETE, INSERT, UPDATE, CREATE
-    test_query = "SELECT * FROM testtable"
-
+    test_query = "SELECT * FROM testtable WHERE name = 'testi'"
+    
     # INSERT query to test CREATE
+
     insert_query = "INSERT INTO testtable VALUES (1, 'testi')"
 
-    core.init_test(__file__, 1)
+
+    init_db() # reset database
 
     msgs.update(msgs)
 
@@ -151,3 +193,5 @@ if __name__ == "__main__":
 
     correct = bool(score)
     core.set_result(correct, score)
+
+
