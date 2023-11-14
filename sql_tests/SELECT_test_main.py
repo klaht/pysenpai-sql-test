@@ -3,11 +3,14 @@ import re
 import pysenpai.core as core
 # from pysenpai.messages import Codes
 
-from pysenpai_sql.checking.testcase import SQLQueryTestCase, run_sql_test_cases
+from pysenpai_sql.checking.testcase import SQLSelectTestCase, run_sql_test_cases
 from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator
 import pysenpai.utils.checker as utils
 from pysenpai.exceptions import OutputParseError
 from pysenpai_sql.core import load_sql_module
+from datasetup import init_db
+from pysenpai.output import output
+
 
 msgs = core.TranslationDict()
 float_pat = re.compile("(-?[0-9]+\\.[0-9]+)")
@@ -52,7 +55,7 @@ msgs.set_msg("incorrect_column_order", "en", dict(
 ))
 
 
-class MainTestCase(SQLQueryTestCase):
+class MainTestCase(SQLSelectTestCase):
 
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)
@@ -104,20 +107,27 @@ def ref_program():
     """
     Returns reference answer of the problem.
     """
-    correct_answer = ("SELECT name, yearborn, birthplace FROM artist"
-                      "WHERE nationality == \"Finland\" ORDER BY name ASC;")
+    correct_answer = ("SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting') ORDER BY name ASC;")
     return correct_answer
 
 
 if __name__ == "__main__":
+    core.init_test(__file__, 1)
     correct = False
     score = 0
 
+    # Test category SELECT, UPDATE, DELETE, INSERT, CREATE
     test_type = "SELECT"
+
+    # SELECT query to test DELETE, INSERT, UPDATE, CREATE
     test_query = ""
+    
+    # INSERT query to test CREATE
+
     insert_query = ""
 
-    core.init_test(__file__, 1)
+
+    init_db() # reset database
 
     msgs.update(msgs)
 
@@ -134,7 +144,9 @@ if __name__ == "__main__":
                                     st_mname,
                                     gen_program_vector,
                                     lang,
-                                    custom_msgs=msgs)
+                                    custom_msgs=msgs,
+                                    insert_query=insert_query,
+                                    test_query=test_query)
 
     correct = bool(score)
     core.set_result(correct, score)

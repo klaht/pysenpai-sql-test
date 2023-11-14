@@ -157,6 +157,68 @@ class SQLCreateTestCase(SQLTestCase):
             return 0, 0
         
         return ref, res
+    
+class SQLSelectTestCase(SQLTestCase):
+    
+    def __init__(self, ref_result, 
+                 args=None,
+                 inputs=None,
+                 data=None,
+                 weight=1,
+                 tag="",
+                 validator=convenience.parsed_result_validator,
+                 output_validator=None,
+                 eref_results=None,
+                 internal_config=None,
+                 presenters=None):
+        
+        super().__init__(
+            ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
+        )
+
+    def wrap(self, ref_answer, student_answer, lang, msgs):
+        # Run student and reference querys and return answers
+    
+        # Open student answer
+        try :
+            sql_file = open(student_answer, 'r')
+     
+            sql_script = sql_file.read()
+        except FileNotFoundError as e:
+            print("File not found")
+            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            return 0,0
+
+        # Run student answer
+        try: 
+            conn = sqlite3.connect("mydatabase1.db")
+            cursor = conn.cursor()
+       
+            cursor.execute(sql_script)
+            res = cursor.fetchall()
+        
+            conn.commit()
+            conn.close()
+        except sqlite3.Error as e:
+            print("db error1")
+            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            return 0,0
+
+        # Run reference answer
+        try: 
+            conn = sqlite3.connect("mydatabase1.db")
+            cursor = conn.cursor()
+       
+            cursor.execute(ref_answer)
+            ref = cursor.fetchall()
+        
+            conn.commit()
+            conn.close()
+        except sqlite3.Error as e:
+            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            return 0,0
+
+        return ref, res
 
 def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                   test_query=None,
@@ -217,10 +279,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
     
         match test_category:
             case "SELECT":
-                ref, res = select_test(test.ref_result, test_target, lang, msgs)
-                if (ref == 0 or res == 0):
-                    output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=o.content)
-                    return 0
+                ref, res = test.wrap(test.ref_result, test_target, lang, msgs)
 
             case "INSERT" | "UPDATE":
                 ref, res = insert_update_test(test.ref_result, test_target, lang, msgs, test_query=test_query)
@@ -330,51 +389,4 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
             return 0, 0
         
-        return ref, res
-
-
-def select_test(ref_answer, student_answer, lang, msgs):
-     
-     # Run student and reference querys and return answers
-    
-        # Open student answer
-        try :
-            sql_file = open(student_answer, 'r')
-     
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
-
-        # Run student answer
-        try: 
-            conn = sqlite3.connect("mydatabase.db")
-            cursor = conn.cursor()
-       
-            cursor.execute(sql_script)
-            res = cursor.fetchall()
-        
-            conn.commit()
-            conn.close()
-        except sqlite3.Error as e:
-            print("db error")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
-        
-        # Run reference answer
-        try: 
-            conn = sqlite3.connect("mydatabase.db")
-            cursor = conn.cursor()
-       
-            cursor.execute(ref_answer)
-            ref = cursor.fetchall()
-        
-            conn.commit()
-            conn.close()
-        except sqlite3.Error as e:
-            print("db error")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
-
         return ref, res
