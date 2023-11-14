@@ -1,7 +1,7 @@
 
 import re
 import pysenpai.core as core
-from pysenpai.messages import Codes
+# from pysenpai.messages import Codes
 
 from pysenpai_sql.checking.testcase import SQLQueryTestCase, run_sql_test_cases
 from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator
@@ -10,7 +10,7 @@ from pysenpai.exceptions import OutputParseError
 from pysenpai_sql.core import load_sql_module
 
 msgs = core.TranslationDict()
-float_pat = re.compile("(-?[0-9]+\.[0-9]+)")
+float_pat = re.compile("(-?[0-9]+\\.[0-9]+)")
 
 msgs.set_msg("fail_output_result", "fi", dict(
     content="Pääohjelman tulostama tulos oli väärä.",
@@ -53,13 +53,13 @@ msgs.set_msg("incorrect_column_order", "en", dict(
 
 
 class MainTestCase(SQLQueryTestCase):
-        
+
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)
         if res is None:
             raise OutputParseError(msgs.get_msg("fail_no_output", lang))
         return res
-    
+
     def feedback(self, res, descriptions):
         yield from super().feedback(res, descriptions)
         try:
@@ -70,11 +70,12 @@ class MainTestCase(SQLQueryTestCase):
                 yield ("incorrect_return_order", {})
 
             correct = ["name", "yearborn", "birthplace"]
-
-            descriptions = [item.lower() for item in descriptions] # convert to lowercase
+            # convert to lowercase
+            descriptions = [item.lower() for item in descriptions]
 
             incorrect_variables = descriptions != correct
-            incorrect_order = sorted(descriptions) == sorted(correct) and incorrect_variables
+            incorrect_order = (sorted(descriptions) == sorted(correct)
+                               and incorrect_variables)
 
             if incorrect_order:
                 yield ("incorrect_column_order", {})
@@ -84,7 +85,12 @@ class MainTestCase(SQLQueryTestCase):
         except AssertionError:
             pass
 
+
 def gen_program_vector():
+
+    """
+    Generates a vector of test cases for the main program.
+    """
     v = []
     for i in range(1):
         v.append(MainTestCase(
@@ -93,9 +99,16 @@ def gen_program_vector():
         ))
     return v
 
+
 def ref_program():
-    correct_answer = "DELETE FROM Artist WHERE artistId NOT IN (SELECT artistId FROM ArtWork);"
+
+    """
+    Returns reference answer of the problem.
+    """
+    correct_answer = ("DELETE FROM Artist WHERE artistId NOT IN"
+                      "(SELECT artistId FROM ArtWork);")
     return correct_answer
+
 
 if __name__ == "__main__":
     correct = False
@@ -103,16 +116,15 @@ if __name__ == "__main__":
 
     # Test category SELECT, UPDATE, DELETE, INSERT, CREATE
     test_type = "DELETE"
-    
+
     # SELECT query to test DELETE, INSERT, UPDATE, CREATE
     test_query = "SELECT name from Artist ORDER BY name;"
-    
+
     # INSERT query to test CREATE
     insert_query = ""
 
-
     core.init_test(__file__, 1)
-    
+
     msgs.update(msgs)
 
     files, lang = core.parse_command()
@@ -121,7 +133,15 @@ if __name__ == "__main__":
 
     st_module = load_sql_module(st_mname, lang, inputs=["0"])
 
-    score += run_sql_test_cases("program", test_type, st_mname, gen_program_vector, lang, custom_msgs=msgs, insert_query=insert_query, test_query=test_query)
+    # if fails, don't run tests
+    if st_module:
+        score += run_sql_test_cases("program",
+                                    test_type,
+                                    st_mname,
+                                    gen_program_vector,
+                                    lang, custom_msgs=msgs,
+                                    insert_query=insert_query,
+                                    test_query=test_query)
 
     correct = bool(score)
     core.set_result(correct, score)
