@@ -54,9 +54,30 @@ msgs.set_msg("incorrect_column_order", "en", dict(
     triggers=["student_sql_query"]
 ))
 
+def assertAscOrder(res):
+    '''Checks if the list is sorted in ascending order'''
+
+    if res != sorted(res):
+        return ("incorrect_return_order", {})
+    return None
+
+def assertSelectedVariables(res, correct):
+    '''Checks if the list contains the correct variables and that they are in the correct order'''
+    
+    res = [item.lower() for item in res]
+    
+    incorrect_variables = res != correct
+    incorrect_order = sorted(res) == (sorted(correct)
+                                                and incorrect_variables)
+
+    if incorrect_order:
+        return ("incorrect_column_order", {})
+    elif incorrect_variables:
+        return ("incorrect_selected_columns", {})
+    return None
 
 class MainTestCase(SQLSelectTestCase):
-
+    
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)
         if res is None:
@@ -69,21 +90,17 @@ class MainTestCase(SQLSelectTestCase):
             names = []
             for result in res:
                 names.append(result[0])
-            if names != sorted(names):
-                yield ("incorrect_return_order", {})
-
-            correct = ["name", "yearborn", "birthplace"]
-            # convert to lowercase
-            descriptions = [item.lower() for item in descriptions]
-
-            incorrect_variables = descriptions != correct
-            incorrect_order = sorted(descriptions) == (sorted(correct)
-                                                       and incorrect_variables)
-
+            
+            incorrect_order = assertAscOrder(names)
             if incorrect_order:
-                yield ("incorrect_column_order", {})
-            elif incorrect_variables:
-                yield ("incorrect_selected_columns", {})
+                yield incorrect_order
+                
+            correct = ["name"]
+            # convert to lowercase
+            print(assertSelectedVariables(names, correct))
+            incorrect_variables = assertSelectedVariables(names, correct)
+            if incorrect_variables:
+                yield incorrect_variables
 
         except AssertionError:
             pass

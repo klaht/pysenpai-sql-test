@@ -187,7 +187,7 @@ class SQLSelectTestCase(SQLTestCase):
         except FileNotFoundError as e:
             print("File not found")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0,0
+            return 0,0, None
 
         # Run student answer
         try: 
@@ -195,6 +195,9 @@ class SQLSelectTestCase(SQLTestCase):
             cursor = conn.cursor()
        
             cursor.execute(sql_script)
+            column_names = [column[0] for column in cursor.description]
+
+
             res = cursor.fetchall()
         
             conn.commit()
@@ -202,7 +205,7 @@ class SQLSelectTestCase(SQLTestCase):
         except sqlite3.Error as e:
             print("db error1")
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0,0
+            return 0,0, None
 
         # Run reference answer
         try: 
@@ -216,9 +219,9 @@ class SQLSelectTestCase(SQLTestCase):
             conn.close()
         except sqlite3.Error as e:
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0,0
+            return 0,0, None
 
-        return ref, res
+        return ref, res, column_names
 
 def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                   test_query=None,
@@ -279,7 +282,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
     
         match test_category:
             case "SELECT":
-                ref, res = test.wrap(test.ref_result, test_target, lang, msgs)
+                ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs)
 
             case "INSERT" | "UPDATE":
                 ref, res = insert_update_test(test.ref_result, test_target, lang, msgs, test_query=test_query)
