@@ -3,7 +3,7 @@ from pyexpat.errors import codes
 import re
 import sqlite3
 import pysenpai.core as core
-from pysenpai.messages import Codes
+from pysenpai_sql.messages import Codes
 
 from pysenpai_sql.checking.testcase import SQLCreateTestCase, run_sql_test_cases
 from pysenpai_sql.callbacks.convenience import *
@@ -85,7 +85,7 @@ class SpecificTestCase(SQLCreateTestCase):
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0,0
         # Run student answer
         try: 

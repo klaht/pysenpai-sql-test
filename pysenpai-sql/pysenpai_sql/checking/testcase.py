@@ -6,7 +6,7 @@ import sys
 import pysenpai.callbacks.defaults as defaults
 import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import json_output
-from pysenpai.messages import load_messages, Codes
+from pysenpai_sql.messages import load_messages, Codes
 from pysenpai.output import output
 
 class SQLTestCase(object):
@@ -107,7 +107,7 @@ class SQLCreateTestCase(SQLTestCase):
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0,0
 
         # Run student answer
@@ -131,7 +131,7 @@ class SQLCreateTestCase(SQLTestCase):
             conn.close()
            
         except sqlite3.Error as e:
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0
         
         # Run reference answer
@@ -152,8 +152,7 @@ class SQLCreateTestCase(SQLTestCase):
             conn2.close()
 
         except sqlite3.Error as e:
-            print(str(e))
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0
         
         return ref, res
@@ -185,8 +184,7 @@ class SQLSelectTestCase(SQLTestCase):
      
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0,0, None
 
         # Run student answer
@@ -203,8 +201,7 @@ class SQLSelectTestCase(SQLTestCase):
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
-            print("db error1")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0,0, None
 
         # Run reference answer
@@ -218,7 +215,7 @@ class SQLSelectTestCase(SQLTestCase):
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0,0, None
 
         return ref, res, column_names
@@ -348,8 +345,7 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0
 
         # Run student answer
@@ -368,8 +364,7 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             conn.close()
            
         except sqlite3.Error as e:
-            print("db error1")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0
         
         # Run reference answer
@@ -387,9 +382,7 @@ def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
             conn2.close()
 
         except sqlite3.Error as e:
-            print("db error2")
-            print(str(e))
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0
         
         return ref, res
