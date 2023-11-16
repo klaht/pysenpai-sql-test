@@ -54,6 +54,16 @@ msgs.set_msg("incorrect_column_order", "en", dict(
     triggers=["student_sql_query"]
 ))
 
+msgs.set_msg("output_not_distinct", "fi", dict(
+    content="Tuloksessa oli samoja nimiä useasti.",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("output_not_distinct", "en", dict(
+    content="The result contained the same names multiple times.",
+    triggers=["student_sql_query"]
+))
+
 def assertAscOrder(res):
     '''Checks if the list is sorted in ascending order'''
 
@@ -75,6 +85,14 @@ def assertSelectedVariables(res, correct):
     elif incorrect_variables:
         return ("incorrect_selected_columns", {})
     return None
+
+def assertDistinct(res):
+    '''Checks if the list contains only distinct values'''
+    
+    for thing in res:
+        if res.count(thing) > 1:
+            return ("output_not_distinct", {})
+        return None
 
 class MainTestCase(SQLSelectTestCase):
     
@@ -101,6 +119,10 @@ class MainTestCase(SQLSelectTestCase):
             incorrect_variables = assertSelectedVariables(names, correct)
             if incorrect_variables:
                 yield incorrect_variables
+                
+            not_distinct = assertDistinct(names)
+            if not_distinct:
+                yield not_distinct
 
         except AssertionError:
             pass
