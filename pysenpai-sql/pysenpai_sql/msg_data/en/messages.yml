@@ -1,10 +1,4 @@
 function:
-  FileOpenError: |-
-    File open failed
-    {emgs}
-  DatabaseError: |-
-    A database error occurred while calling the function.
-    {emsg}
   AdditionalInfo: |-
     The checker gave the following as additional information:
   AdditionalTests: |-
@@ -74,6 +68,14 @@ function:
     Additional information:
     {emsg}
 import:
+  FileOpenError: |-
+    File open failed
+    {emgs}
+  DatabaseError: |-
+    A database error occurred while calling the function.
+    {emsg}
+  DatabaseCreationError : |-
+    A database creation error occurred while creating the database.
   FileOpenError: |-
     File open failed
     {emgs}
@@ -160,6 +162,11 @@ lint:
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
+  DatabaseError: |-
+    A database error occurred while calling the function.
+    {emsg}
+  DatabaseCreationError : |-
+    A database creation error occurred while creating the database.
   FileOpenError: |-
       File open failed
       {emgs}

@@ -3,7 +3,7 @@ from pyexpat.errors import codes
 import re
 import sqlite3
 import pysenpai.core as core
-from pysenpai_sql.messages import Codes
+from pysenpai.messages import Codes
 
 from pysenpai_sql.checking.testcase import SQLCreateTestCase, run_sql_test_cases
 from pysenpai_sql.callbacks.convenience import *
@@ -132,7 +132,7 @@ def gen_program_vector():
         ))
         v.append(SpecificTestCase(
             ref_result=primary_key_ref(),
-            validator=test_validator
+            validator=parsed_list_sql_validator
         ))
     return v
 
