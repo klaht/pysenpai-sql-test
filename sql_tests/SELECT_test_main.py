@@ -54,13 +54,23 @@ msgs.set_msg("incorrect_column_order", "en", dict(
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("output_not_distinct", "fi", dict(
-    content="Tuloksessa oli samoja nimiä useasti.",
+msgs.set_msg("too_many_return_values", "fi", dict(
+    content="Tulos sisälsi liikaa palautusarvoja {output}",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("output_not_distinct", "en", dict(
-    content="The result contained the same names multiple times.",
+msgs.set_msg("too_many_return_values", "en", dict(
+    content="The result contained too many values {output}",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("too_little_return_values", "fi", dict(
+    content="Tulos sisälsi liian vähän palautusarvoja {output}",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("too_little_return_values", "en", dict(
+    content="The result contained too low amount of values {output}", 
     triggers=["student_sql_query"]
 ))
 
@@ -68,22 +78,22 @@ def assertAscOrder(res):
     '''Checks if the list is sorted in ascending order'''
 
     if res != sorted(res):
-        return ("incorrect_return_order", {})
+        return ("incorrect_return_order")
     return None
 
 def assertSelectedVariables(res, correct):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
-    
+
     res = [item.lower() for item in res]
-    
+
     incorrect_variables = res != correct
     incorrect_order = sorted(res) == (sorted(correct)
                                                 and incorrect_variables)
 
     if incorrect_order:
-        return ("incorrect_column_order", {})
+        return ("incorrect_column_order")
     elif incorrect_variables:
-        return ("incorrect_selected_columns", {})
+        return ("incorrect_selected_columns")
     return None
 
 def assertDistinct(res):
@@ -91,8 +101,42 @@ def assertDistinct(res):
     
     for thing in res:
         if res.count(thing) > 1:
-            return ("output_not_distinct", {})
+            return ("output_not_distinct")
         return None
+
+def assertDistinct(res):
+    '''Checks if the list contains only distinct values'''
+    
+    for thing in res:
+        if res.count(thing) > 1:
+            return ("output_not_distinct")
+        return None
+
+def evaluateAmount(res, correct):
+    '''
+    Checks if the answer contains the correct amount of values
+    If there are too many or too little values, returns the excessive values
+    '''
+
+    evaluated_answer_tuples = [(artist,) for artist in res]
+
+    set_evaluated = set(evaluated_answer_tuples)
+    set_correct = set(correct)
+
+    if len(set_evaluated) > len(set_correct):
+        excessive = set_evaluated - set_correct
+        print(excessive)
+        if set_evaluated != set_correct:
+            return ("too_many_return_values"), excessive
+    
+    elif len(set_evaluated) < len(set_correct):
+        excessive = set_correct - set_evaluated
+        if set_evaluated != set_correct:
+            return ("too_little_return_values"), excessive
+
+    return None, None
+
+    
 
 class MainTestCase(SQLSelectTestCase):
     
@@ -105,24 +149,22 @@ class MainTestCase(SQLSelectTestCase):
     def feedback(self, res, descriptions):
         yield from super().feedback(res, descriptions)
         try:
+
             names = []
             for result in res:
                 names.append(result[0])
             
             incorrect_order = assertAscOrder(names)
             if incorrect_order:
-                yield incorrect_order
-                
-            correct = ["name"]
-            # convert to lowercase
-            print(assertSelectedVariables(names, correct))
-            incorrect_variables = assertSelectedVariables(names, correct)
+                yield incorrect_order, None
+
+            incorrect_variables = assertSelectedVariables(descriptions, ["name"])
             if incorrect_variables:
-                yield incorrect_variables
-                
-            not_distinct = assertDistinct(names)
-            if not_distinct:
-                yield not_distinct
+                yield incorrect_variables, None
+
+            correctAmount, output = evaluateAmount(names, self.ref_query_result)
+            if correctAmount:
+                yield correctAmount, output
 
         except AssertionError:
             pass

@@ -55,7 +55,6 @@ def load_sql_module(
     #dberror = create_databases(msgs, lang)
     #if (dberror == False):
     #    return False
-    print("helo")
     if not module_name.endswith(".sql"):
         output(msgs.get_msg("MissingFileExtension", lang), Codes.ERROR)
         print("MissingFileExtension")
