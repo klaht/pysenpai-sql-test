@@ -175,30 +175,44 @@ class SQLSelectTestCase(SQLTestCase):
                  ref_query_result=None,
                  order=None,
                  selected_variables=None,
-                 distinct=True):
+                 distinct=True,
+                 show_answer_difference=True):
         
         self.ref_query_result = ref_query_result
         self.order = order
         self.selected_variables = selected_variables
         self.distinct = distinct
+        self.show_answer_difference = show_answer_difference
         
         super().__init__(
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
     def feedback(self, res, descriptions):
+
+        
         if self.order != None:
             incorrect_order = assertOrder(res, self.order)
             if incorrect_order:
                 yield incorrect_order, None
 
-
         if self.selected_variables != None:
             incorrect_variables = assertSelectedVariables(descriptions, self.selected_variables)
             if incorrect_variables:
                 yield incorrect_variables, None
+            
+        if self.distinct != None:
+            incorrect_distinct = assertDistinct(res)
+            if incorrect_distinct:
+                yield incorrect_distinct, None
 
-
+        if self.show_answer_difference:
+            names = []
+            for result in res:
+                names.append(result[0])
+            correctAmount, output = evaluateAmount(names, self.ref_query_result)
+            if correctAmount:
+                yield correctAmount, output
 
         return super().feedback(res, descriptions)  
 

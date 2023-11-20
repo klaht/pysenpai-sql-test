@@ -79,8 +79,6 @@ msgs.set_msg("too_little_return_values", "en", dict(
 
 class MainTestCase(SQLSelectTestCase):
 
-
-
     def __init__(self, ref_result, validator):
 
         '''''
@@ -100,18 +98,6 @@ class MainTestCase(SQLSelectTestCase):
 
     def feedback(self, res, descriptions):
         yield from super().feedback(res, descriptions)
-        try:
-
-            names = []
-            for result in res:
-                names.append(result[0])
-
-            correctAmount, output = evaluateAmount(names, self.ref_query_result)
-            if correctAmount:
-                yield correctAmount, output
-
-        except AssertionError:
-            pass
 
 def gen_program_vector():
 
