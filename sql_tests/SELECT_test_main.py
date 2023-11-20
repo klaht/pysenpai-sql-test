@@ -10,6 +10,8 @@ from pysenpai.exceptions import OutputParseError
 from pysenpai_sql.core import load_sql_module
 from datasetup import init_db
 from pysenpai.output import output
+from pysenpai_sql.checking.tests import *
+
 
 
 msgs = core.TranslationDict()
@@ -74,72 +76,22 @@ msgs.set_msg("too_little_return_values", "en", dict(
     triggers=["student_sql_query"]
 ))
 
-def assertAscOrder(res):
-    '''Checks if the list is sorted in ascending order'''
-
-    if res != sorted(res):
-        return ("incorrect_return_order")
-    return None
-
-def assertSelectedVariables(res, correct):
-    '''Checks if the list contains the correct variables and that they are in the correct order'''
-
-    res = [item.lower() for item in res]
-
-    incorrect_variables = res != correct
-    incorrect_order = sorted(res) == (sorted(correct)
-                                                and incorrect_variables)
-
-    if incorrect_order:
-        return ("incorrect_column_order")
-    elif incorrect_variables:
-        return ("incorrect_selected_columns")
-    return None
-
-def assertDistinct(res):
-    '''Checks if the list contains only distinct values'''
-    
-    for thing in res:
-        if res.count(thing) > 1:
-            return ("output_not_distinct")
-        return None
-
-def assertDistinct(res):
-    '''Checks if the list contains only distinct values'''
-    
-    for thing in res:
-        if res.count(thing) > 1:
-            return ("output_not_distinct")
-        return None
-
-def evaluateAmount(res, correct):
-    '''
-    Checks if the answer contains the correct amount of values
-    If there are too many or too little values, returns the excessive values
-    '''
-
-    evaluated_answer_tuples = [(artist,) for artist in res]
-
-    set_evaluated = set(evaluated_answer_tuples)
-    set_correct = set(correct)
-
-    if len(set_evaluated) > len(set_correct):
-        excessive = set_evaluated - set_correct
-        print(excessive)
-        if set_evaluated != set_correct:
-            return ("too_many_return_values"), excessive
-    
-    elif len(set_evaluated) < len(set_correct):
-        excessive = set_correct - set_evaluated
-        if set_evaluated != set_correct:
-            return ("too_little_return_values"), excessive
-
-    return None, None
-
-    
 
 class MainTestCase(SQLSelectTestCase):
-    
+
+
+
+    def __init__(self, ref_result, validator):
+
+        '''''
+        Basic test details (order, selected_vars, distinct values) are set here in the constructor
+        For assignment specific tests, implement them in the feedback() method
+
+        '''''
+        super().__init__(
+            ref_result=ref_result, validator=validator, order="ASC", selected_variables=["name"], distinct=True
+        )
+
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)
         if res is None:
@@ -153,14 +105,6 @@ class MainTestCase(SQLSelectTestCase):
             names = []
             for result in res:
                 names.append(result[0])
-            
-            incorrect_order = assertAscOrder(names)
-            if incorrect_order:
-                yield incorrect_order, None
-
-            incorrect_variables = assertSelectedVariables(descriptions, ["name"])
-            if incorrect_variables:
-                yield incorrect_variables, None
 
             correctAmount, output = evaluateAmount(names, self.ref_query_result)
             if correctAmount:
@@ -168,7 +112,6 @@ class MainTestCase(SQLSelectTestCase):
 
         except AssertionError:
             pass
-
 
 def gen_program_vector():
 
@@ -206,7 +149,6 @@ if __name__ == "__main__":
     # INSERT query to test CREATE
 
     insert_query = ""
-
 
     init_db() # reset database
 

@@ -8,6 +8,7 @@ import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import json_output
 from pysenpai.messages import load_messages, Codes
 from pysenpai.output import output
+from pysenpai_sql.checking.tests import *
 
 class SQLTestCase(object):
     
@@ -171,13 +172,35 @@ class SQLSelectTestCase(SQLTestCase):
                  eref_results=None,
                  internal_config=None,
                  presenters=None,
-                 ref_query_result=None):
+                 ref_query_result=None,
+                 order=None,
+                 selected_variables=None,
+                 distinct=True):
         
         self.ref_query_result = ref_query_result
+        self.order = order
+        self.selected_variables = selected_variables
+        self.distinct = distinct
         
         super().__init__(
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
+
+    def feedback(self, res, descriptions):
+        if self.order != None:
+            incorrect_order = assertOrder(res, self.order)
+            if incorrect_order:
+                yield incorrect_order, None
+
+
+        if self.selected_variables != None:
+            incorrect_variables = assertSelectedVariables(descriptions, self.selected_variables)
+            if incorrect_variables:
+                yield incorrect_variables, None
+
+
+
+        return super().feedback(res, descriptions)  
 
     def wrap(self, ref_answer, student_answer, lang, msgs):
         # Run student and reference querys and return answers
