@@ -6,7 +6,7 @@ import sys
 import pysenpai.callbacks.defaults as defaults
 import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import json_output
-from pysenpai.messages import load_messages, Codes
+from pysenpai_sql.messages import load_messages, Codes
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 
@@ -176,13 +176,15 @@ class SQLSelectTestCase(SQLTestCase):
                  order=None,
                  selected_variables=None,
                  distinct=True,
-                 show_answer_difference=True):
+                 show_answer_difference=True,
+                 exNumber=0):
         
         self.ref_query_result = ref_query_result
         self.order = order
         self.selected_variables = selected_variables
         self.distinct = distinct
         self.show_answer_difference = show_answer_difference
+        self.exNumber = exNumber
         
         super().__init__(
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
@@ -210,7 +212,7 @@ class SQLSelectTestCase(SQLTestCase):
             names = []
             for result in res:
                 names.append(result[0])
-            correctAmount, output = evaluateAmount(names, self.ref_query_result)
+            correctAmount, output = evaluateAmount(names, self.ref_query_result, self.exNumber)
             if correctAmount:
                 yield correctAmount, output
 
@@ -269,7 +271,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                   test_query=None,
                   insert_query=None, 
                   parent_object=None,
-                  msg_module="pysenpai",
+                  msg_module="pysenpai_sql",
                   custom_msgs={},
                   hide_output=True,
                   test_recurrence=True,

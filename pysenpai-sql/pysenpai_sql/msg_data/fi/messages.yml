@@ -157,6 +157,10 @@ lint:
     Koodisi sai liian pienet laatupisteet ({stats.global_note:.1f} / 10.0).
     Tavoite: 9+ / 10.0.
 program:
+  too_many_return_values2: |- 
+    Ohjelma palautti liian monta arvoa.
+    Varmista, että valitset vain MAALAUKSIA.
+    {output}  
   DatabaseCreationError : |-
     Tietokanta virhe tietokannan luonnissa.
   FileOpenError: |- 

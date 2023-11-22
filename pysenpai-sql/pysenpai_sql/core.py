@@ -42,9 +42,9 @@ def load_sql_module(
        
     returns False if an error occurs, otherwise returns True
     """
-
     # save = sys.stdout
     msgs = load_messages(lang, "import")
+
     msgs.update(custom_msgs)
     module_name = os.path.basename(module_path)
 
@@ -78,7 +78,7 @@ def load_sql_module(
 
     if inputs:
         sys.stdin = io.StringIO("\n".join([str(i) for i in inputs]))
-        
+    
     return True
 
 def create_databases(msgs, lang):

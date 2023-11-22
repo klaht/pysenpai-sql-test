@@ -45,7 +45,7 @@ def assertDistinct(res):
             return ("output_not_distinct")
         return None
 
-def evaluateAmount(res, correct):
+def evaluateAmount(res, correct, exNumber=2):
     '''
     Checks if the answer contains the correct amount of values
     If there are too many or too little values, returns the excessive values
@@ -60,11 +60,12 @@ def evaluateAmount(res, correct):
         excessive = set_evaluated - set_correct
         print(excessive)
         if set_evaluated != set_correct:
-            return ("too_many_return_values"), excessive
+            message = "too_many_return_values" + str(exNumber)
+            return (message), excessive
     
     elif len(set_evaluated) < len(set_correct):
         excessive = set_correct - set_evaluated
         if set_evaluated != set_correct:
-            return ("too_little_return_values"), excessive
+            return ("too_little_return_values2"), excessive
 
     return None, None

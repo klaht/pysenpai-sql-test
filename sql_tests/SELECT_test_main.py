@@ -87,7 +87,7 @@ class MainTestCase(SQLSelectTestCase):
 
         '''''
         super().__init__(
-            ref_result=ref_result, validator=validator, order="ASC", selected_variables=["name"], distinct=True
+            ref_result=ref_result, validator=validator, order="ASC", selected_variables=["name"], distinct=True, exNumber=2
         )
 
     def parse(self, output):
