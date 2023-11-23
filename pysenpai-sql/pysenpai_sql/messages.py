@@ -127,7 +127,6 @@ def load_messages(lang, category, module="pysenpai_sql"):
         sys.exit(f"ERROR: Messages for module {module} not found for language {lang}")
     
     for key, value in msg_dict[category].items():
-        print(key)
         msgs.set_msg(key, lang, dict(content=value))
     return msgs
     
