@@ -1,0 +1,1 @@
+SELECT name FROM Artist WHERE artistId IN (SELECT artistId) ORDER BY name ASC;
