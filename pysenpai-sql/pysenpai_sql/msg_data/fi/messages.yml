@@ -157,6 +157,12 @@ lint:
     Koodisi sai liian pienet laatupisteet ({stats.global_note:.1f} / 10.0).
     Tavoite: 9+ / 10.0.
 program:
+  UnidentifiableRecord: |-
+    Sijoitettua tietuetta ei voitu tunnistaa.
+  IncorrectInsertError: |-
+    Taulukkoon sijoitetut arvot olivat väärin.
+  MissingInsertedValueError: |-
+    Taulukkoon sijoitettiin liian vähän arvoja.
   incorrect_table_name: |- 
     Taulukon nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.

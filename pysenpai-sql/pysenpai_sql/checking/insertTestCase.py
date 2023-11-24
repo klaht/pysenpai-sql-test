@@ -38,7 +38,7 @@ class SQLInsertTestCase(SQLTestCase):
     def feedback(self, res, descriptions):
 
         if self.selected_variables != None:
-            incorrect_variables = evaluate_variables(descriptions)
+            incorrect_variables = evaluate_variables(descriptions, self.ref_query_result)
             if incorrect_variables:
                 yield incorrect_variables, None
 
@@ -66,10 +66,14 @@ class SQLInsertTestCase(SQLTestCase):
             cursor.executescript(sql_script)
             
             cursor.execute(test_query)
-            
+
             res = cursor.fetchall()
 
-            result_list = [list(row) for row in res][0] # Arrange result to list
+            try:
+                result_list = [list(row) for row in res][0] # Arrange result to list
+            except IndexError as e:
+                output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
+                return 0, 0, None
 
             conn.commit()
             cursor.close()

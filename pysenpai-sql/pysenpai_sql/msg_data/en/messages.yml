@@ -76,9 +76,6 @@ import:
     {emsg}
   DatabaseCreationError : |-
     A database creation error occurred while creating the database.
-  FileOpenError: |-
-    File open failed
-    {emgs}
   BadModuleName: |-
     The filename contained unsupported characters.
     Only letters of the English alphabet, numbers and underscore are allowed.
@@ -162,6 +159,12 @@ lint:
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
+  UnidentifiableRecord: |-
+    Could not identify the inserted record.
+  IncorrectInsertError: |-
+    Inserted values were incorrect.
+  MissingInsertedValueError: |-
+    Too few values were inserted.
   DatabaseError: |-
     A database error occurred while calling the function.
     {emsg}

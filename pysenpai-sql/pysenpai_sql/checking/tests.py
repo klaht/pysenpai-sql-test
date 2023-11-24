@@ -30,11 +30,17 @@ def assertSelectedVariables(res, correct):
         return ("incorrect_selected_columns")
     return None
 
-def evaluate_variables(res):
+def evaluate_variables(res, correct):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
-    for item in res: # Check if missing values if item == None: output(msgs.get_msg("IncorrectResult", lang), Codes.ERROR) return 0, 0
-        if item == None: 
-            return ("incorrect_selected_columns")
+    correct = [list(row) for row in correct][0] # Arrange result to list
+
+    for i, item in enumerate(res): # Check if missing or incorrect values
+
+        if item == None: # Missing value
+            return ("MissingInsertedValueError")
+        elif item != correct[i]: # Correct value
+            return ("IncorrectInsertError")
+
     
     return None
     

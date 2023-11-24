@@ -11,69 +11,8 @@ from pysenpai_sql.core import load_sql_module
 from datasetup import init_db
 from pysenpai_sql.checking.insertTestCase import SQLInsertTestCase
 
-
 msgs = core.TranslationDict()
 float_pat = re.compile("(-?[0-9]+\\.[0-9]+)")
-
-msgs.set_msg("fail_output_result", "fi", dict(
-    content="Pääohjelman tulostama tulos oli väärä.",
-    triggers=["student_sql_query"]
-))
-msgs.set_msg("fail_output_result", "en", dict(
-    content="The result printed by the main program was wrong.",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("incorrect_return_order", "fi", dict(
-    content="Palautettava listaa ei järjestetty oikein.",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("incorrect_return_order", "en", dict(
-    content="The list was not arranged correctly.",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("incorrect_selected_columns", "fi", dict(
-    content="Haussa käyttettiin vääriä sarakkeita.",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("incorrect_selected_columns", "en", dict(
-    content="The query used wrong columns.",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("incorrect_column_order", "fi", dict(
-    content="Virheellinen sarakkeiden järjestys",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("incorrect_column_order", "en", dict(
-    content="Invalid column order.",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("too_many_return_values", "fi", dict(
-    content="Tulos sisälsi liikaa palautusarvoja {output}",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("too_many_return_values", "en", dict(
-    content="The result contained too many values {output}",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("too_little_return_values", "fi", dict(
-    content="Tulos sisälsi liian vähän palautusarvoja {output}",
-    triggers=["student_sql_query"]
-))
-
-msgs.set_msg("too_little_return_values", "en", dict(
-    content="The result contained too low amount of values {output}", 
-    triggers=["student_sql_query"]
-))
-
 
 class MainTestCase(SQLInsertTestCase):
 
