@@ -57,7 +57,6 @@ def load_sql_module(
     #    return False
     if not module_name.endswith(".sql"):
         output(msgs.get_msg("MissingFileExtension", lang), Codes.ERROR)
-        print("MissingFileExtension")
         return False
 
     name = module_name.rsplit(".sql", 1)[0]
@@ -65,7 +64,6 @@ def load_sql_module(
     if not FNAME_PAT.fullmatch(name):
         output(msgs.get_msg("BadModuleName", lang),
                Codes.ERROR, name=module_name)
-        print("BadModuleName")
         return False
 
     # pyver = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
@@ -73,7 +71,6 @@ def load_sql_module(
     if name in sys.stdlib_module_names:
         output(msgs.get_msg("SystemModuleName", lang),
                Codes.ERROR, name=module_name)
-        print("SystemModuleName")
         return False
 
     if inputs:
