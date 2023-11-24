@@ -80,32 +80,13 @@ def evaluateAmount(res, correct, exNumber):
 
     return None, None
 
-def checkPrimaryKey(student_answer, insert_query):
-    '''Checks if the student answer contains a primary key'''
-    
-    try :
-        sql_file = open(student_answer, 'r')
-        sql_script = sql_file.read()
-    except FileNotFoundError as e:
-        return "file_open_error"
-        
-    # Run student answer
-    try: 
-        conn = sqlite3.connect("mydatabase1.db")
-        cursor = conn.cursor()
-        primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
+def checkTableName():
+    '''Checks if the table name is correct'''
 
-        cursor.executescript(sql_script)
-        # Insert to created table
-        cursor.executescript(insert_query)
-
-        cursor.execute(primary_key_test)            
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
-    except sqlite3.IntegrityError as e:
-        return None
-    
-    yield "no_primary_key"
+    conn = sqlite3.connect("mydatabase1.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    table_name = cursor.fetchall()
+    if table_name.__contains__("testtable") == False:
+        return ("incorrect_table_name")
+    return None

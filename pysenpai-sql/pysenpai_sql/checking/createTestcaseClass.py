@@ -26,8 +26,8 @@ class SQLCreateTestCase(SQLTestCase):
                  ref_query_result=None,
                  order=None,
                  selected_variables=None,
-                 distinct=True,
-                 show_answer_difference=True,
+                 distinct=None,
+                 show_answer_difference=None,
                  student_answer=None,
                  insert_query=None,
                  exNumber=0):
@@ -69,8 +69,8 @@ class SQLCreateTestCase(SQLTestCase):
             correctAmount, output = evaluateAmount(names, self.ref_query_result, self.exNumber)
             if correctAmount:
                 yield correctAmount, output
-                
-        checkPrimary = checkPrimaryKey(self.student_answer, self.insert_query)
+            
+        checkPrimary = checkTableName()
         if checkPrimary != None:
             yield checkPrimary, None
 
@@ -111,7 +111,7 @@ class SQLCreateTestCase(SQLTestCase):
            
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return "notCorrect", "isNotCorrect", ""
         
         # Run reference answer
         try: 
@@ -133,5 +133,32 @@ class SQLCreateTestCase(SQLTestCase):
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
+
+        try :
+            sql_file = open(student_answer, 'r')
+            sql_script = sql_file.read()
+        except FileNotFoundError as e:
+            return "file_open_error"
+            
+        # Run student answer
+        try: 
+            conn = sqlite3.connect("mydatabase1.db")
+            cursor = conn.cursor()
+            primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
+
+            cursor.executescript(sql_script)
+            conn.commit()
+            # Insert to created table
+            cursor.executescript(insert_query)
+
+            cursor.execute(primary_key_test)            
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+            
+        except sqlite3.IntegrityError as e:
+            return ref, res, ""
         
-        return ref, res, ""
+        output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
+        return 0, 0, ""
