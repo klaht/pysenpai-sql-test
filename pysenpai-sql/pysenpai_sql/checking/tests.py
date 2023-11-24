@@ -1,3 +1,5 @@
+import sqlite3
+
 def assertOrder(res, order):
     '''Checks if the list is sorted in ascending order'''
 
@@ -53,7 +55,7 @@ def assertDistinct(res):
             return ("output_not_distinct")
         return None
 
-def evaluateAmount(res, correct):
+def evaluateAmount(res, correct, exNumber):
     '''
     Checks if the answer contains the correct amount of values
     If there are too many or too little values, returns the excessive values
@@ -67,11 +69,43 @@ def evaluateAmount(res, correct):
     if len(set_evaluated) > len(set_correct):
         excessive = set_evaluated - set_correct
         if set_evaluated != set_correct:
-            return ("too_many_return_values"), excessive
+            message = "too_many_return_values" + str(exNumber)
+            return (message), excessive
     
     elif len(set_evaluated) < len(set_correct):
         excessive = set_correct - set_evaluated
         if set_evaluated != set_correct:
-            return ("too_little_return_values"), excessive
+            message = "too_little_return_values" +  str(exNumber)
+            return (message), excessive
 
     return None, None
+
+def checkPrimaryKey(student_answer, insert_query):
+    '''Checks if the student answer contains a primary key'''
+    
+    try :
+        sql_file = open(student_answer, 'r')
+        sql_script = sql_file.read()
+    except FileNotFoundError as e:
+        return "file_open_error"
+        
+    # Run student answer
+    try: 
+        conn = sqlite3.connect("mydatabase1.db")
+        cursor = conn.cursor()
+        primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
+
+        cursor.executescript(sql_script)
+        # Insert to created table
+        cursor.executescript(insert_query)
+
+        cursor.execute(primary_key_test)            
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+    except sqlite3.IntegrityError as e:
+        return None
+    
+    yield "no_primary_key"

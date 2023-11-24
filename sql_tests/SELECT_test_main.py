@@ -3,7 +3,8 @@ import re
 import pysenpai.core as core
 # from pysenpai.messages import Codes
 
-from pysenpai_sql.checking.testcase import SQLSelectTestCase, run_sql_test_cases
+from pysenpai_sql.checking.testcase import run_sql_test_cases
+from pysenpai_sql.checking.selectTestcaseClass import SQLSelectTestCase
 from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator
 import pysenpai.utils.checker as utils
 from pysenpai.exceptions import OutputParseError

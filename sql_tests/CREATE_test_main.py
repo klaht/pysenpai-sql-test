@@ -5,7 +5,8 @@ import sqlite3
 import pysenpai.core as core
 from pysenpai.messages import Codes
 
-from pysenpai_sql.checking.testcase import SQLCreateTestCase, run_sql_test_cases
+from pysenpai_sql.checking.testcase import run_sql_test_cases
+from pysenpai_sql.checking.createTestcaseClass import SQLCreateTestCase
 from pysenpai_sql.callbacks.convenience import *
 import pysenpai.utils.checker as utils
 from pysenpai.exceptions import OutputParseError
@@ -69,6 +70,17 @@ msgs.set_msg("value_non_unique", "en", dict(
 
 class MainTestCase(SQLCreateTestCase):
 
+    def __init__(self, ref_result, validator):
+
+        '''''
+        Basic test details (order, selected_vars, distinct values) are set here in the constructor
+        For assignment specific tests, implement them in the feedback() method
+
+        '''''
+        super().__init__(
+            ref_result=ref_result, validator=validator, order=None, selected_variables=None, distinct=None, insert_query=primary_key_ref, exNumber=2
+        )
+
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)
         if res is None:
@@ -77,46 +89,6 @@ class MainTestCase(SQLCreateTestCase):
 
     def feedback(self, res, descriptions):
         yield from super().feedback(res, descriptions)
-
-class SpecificTestCase(SQLCreateTestCase):
-
-    def wrap(self, ref_answer, student_answer, lang, msgs, test_query, insert_query):
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
-            return 0,0
-        # Run student answer
-        try: 
-            conn = sqlite3.connect("mydatabase1.db")
-            cursor = conn.cursor()
-            primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
-
-            cursor.executescript(sql_script)
-            # Insert to created table
-            cursor.executescript(insert_query)
-            cursor.execute(test_query)
-
-            cursor.execute(primary_key_test)            
-
-            conn.commit()
-            cursor.close()
-            conn.close()
-           
-        except sqlite3.IntegrityError as e:
-            return 1, 1
-        
-        return 0, 0
-
-    def parse(self, output):
-        pass
-    
-    def feedback(self, res, descriptions):
-        yield from super().feedback(res, descriptions)
-        
-        yield("value_non_unique", {})
-
 
         
 def gen_program_vector():
@@ -128,10 +100,6 @@ def gen_program_vector():
     for i in range(1):
         v.append(MainTestCase(
             ref_result=ref_program(),
-            validator=parsed_list_sql_validator
-        ))
-        v.append(SpecificTestCase(
-            ref_result=primary_key_ref(),
             validator=parsed_list_sql_validator
         ))
     return v

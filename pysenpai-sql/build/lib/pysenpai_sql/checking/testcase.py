@@ -153,7 +153,6 @@ class SQLCreateTestCase(SQLTestCase):
             conn2.close()
 
         except sqlite3.Error as e:
-            print(str(e))
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
             return None, None
         
@@ -227,8 +226,7 @@ class SQLSelectTestCase(SQLTestCase):
      
             sql_script = sql_file.read()
         except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
         
 
@@ -246,8 +244,7 @@ class SQLSelectTestCase(SQLTestCase):
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
-            print("db error1")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
         # Run reference answer
@@ -262,10 +259,11 @@ class SQLSelectTestCase(SQLTestCase):
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
+            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
         return ref, res, column_names
+
 
 def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                   test_query=None,
@@ -328,15 +326,22 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             case "SELECT":
                 ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs)
 
+                if (ref == 0 or res == 0):
+                    output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
+                    return 0
+
             case "INSERT" | "UPDATE":
-                ref, res = insert_update_test(test.ref_result, test_target, lang, msgs, test_query=test_query)
+                ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs, test_query=test_query)
                 if (ref == 0 or res == 0):
                     output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
                     return 0
 
             case "CREATE":
-                ref, res = test.wrap(test.ref_result, test_target, lang, msgs, test_query=test_query, insert_query=insert_query)
-
+                ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs, test_query=test_query, insert_query=insert_query)
+                if (ref == 0 or res == 0):
+                    output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
+                    return 0
+                
             case _:
                 output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
                 return 0
@@ -376,58 +381,3 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
     
     return grader(test_cases)
 
-def insert_update_test(ref_answer, student_answer, lang, msgs, test_query):
-
-        # Run student and reference querys and return answers
-        # Insert and update are both tested with this
-
-        # Open student answer
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0
-
-        # Run student answer
-        try: 
-            conn = sqlite3.connect("mydatabase1.db")
-            cursor = conn.cursor()
-       
-            cursor.executescript(sql_script)
-        
-            cursor.execute(test_query)
-            
-            res = cursor.fetchall()
-
-            conn.commit()
-            cursor.close()
-            conn.close()
-           
-        except sqlite3.Error as e:
-            print("db error1")
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0, 0
-        
-        # Run reference answer
-        try: 
-            conn2 = sqlite3.connect("mydatabase2.db")
-            cursor2 = conn2.cursor()
-       
-            cursor2.executescript(ref_answer)
-
-            cursor2.execute(test_query)
-            ref = cursor2.fetchall()
-        
-            conn2.commit()
-            cursor2.close()
-            conn2.close()
-
-        except sqlite3.Error as e:
-            print("db error2")
-            print(str(e))
-            output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            return 0, 0
-        
-        return ref, res
