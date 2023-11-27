@@ -86,13 +86,32 @@ def evaluateAmount(res, correct, exNumber):
 
     return None, None
 
-def checkTableName():
+def checkTableName(correct_table_names = ['']):
     '''Checks if the table name is correct'''
+
+    default_table_names = [('Artist',), ('Location',), ('Collection',), ('ArtWork',), ('Exhibition',), ('On_Exhibition',)]
 
     conn = sqlite3.connect("mydatabase1.db")
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     table_name = cursor.fetchall()
-    if table_name.__contains__("testtable") == False:
+
+    correct_table_names = set(correct_table_names)
+    table_name = set(table_name)
+    default_table_names = set(default_table_names)
+
+    table_name = table_name - default_table_names
+    if table_name != correct_table_names:
         return ("incorrect_table_name")
+    return None
+
+def checkTableColumns(req_column_names = ['']):
+    '''Checks if the table columns are correct'''
+
+    conn = sqlite3.connect("mydatabase1.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM testtable")
+    column_names = [column[0] for column in cursor.description]
+    if column_names != req_column_names:
+        return ("incorrect_column_name")
     return None

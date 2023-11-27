@@ -165,6 +165,28 @@ program:
     Inserted values were incorrect.
   MissingInsertedValueError: |-
     Too few values were inserted.
+  incorrect_column_name: |- 
+    Column name is incorrect.
+    Make sure you use the name specified in the assignment.
+  incorrect_table_name: |- 
+    Table name is incorrect.
+    Make sure you use the name specified in the assignment.
+  missing_primarykey: |- 
+    Table is missing a primary key.
+    Make sure you define a primary key for the table.
+  too_many_return_values2: |- 
+    Query returned too many values.
+    Make sure you only select PAINTINGS.
+    Excessive values.
+    {output}
+  too_many_return_values0: |-
+    Query returned too many values.
+    Excessive values.
+    {output}
+  too_litte_return_values0: |- 
+    Query returned too few values.
+    Missing values.
+    {output}
   DatabaseError: |-
     A database error occurred while calling the function.
     {emsg}

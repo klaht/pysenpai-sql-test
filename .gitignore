@@ -1,1 +1,4 @@
 pysenpai-sql/build/
+sql_tests/mydatabase1.db
+sql_tests/mydatabase2.db
+sql_tests/__pycache__/

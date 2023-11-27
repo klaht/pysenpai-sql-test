@@ -78,7 +78,15 @@ class MainTestCase(SQLCreateTestCase):
 
         '''''
         super().__init__(
-            ref_result=ref_result, validator=validator, order=None, selected_variables=None, distinct=None, insert_query=primary_key_ref, exNumber=2
+            ref_result=ref_result,
+            validator=validator,
+            order=None,
+            selected_variables=None,
+            distinct=None,
+            insert_query=primary_key_ref,
+            exNumber=2,
+            correct_table_names=[("testtable",)], # USE THIS FORMAT [("table1",), ("table2",)] REMEMBER THE COMMA
+            req_column_names=["Id", "name"]
         )
 
     def parse(self, output):

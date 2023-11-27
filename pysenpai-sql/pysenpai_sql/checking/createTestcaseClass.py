@@ -30,6 +30,8 @@ class SQLCreateTestCase(SQLTestCase):
                  show_answer_difference=None,
                  student_answer=None,
                  insert_query=None,
+                 correct_table_names=None,
+                 req_column_names=None,
                  exNumber=0):
         
         super().__init__(
@@ -44,6 +46,8 @@ class SQLCreateTestCase(SQLTestCase):
         self.student_answer = student_answer
         self.insert_query = insert_query
         self.exNumber = exNumber
+        self.correct_table_names = correct_table_names
+        self.req_column_names = req_column_names
         
     def feedback(self, res, descriptions):
         
@@ -69,10 +73,16 @@ class SQLCreateTestCase(SQLTestCase):
             correctAmount, output = evaluateAmount(names, self.ref_query_result, self.exNumber)
             if correctAmount:
                 yield correctAmount, output
-            
-        checkPrimary = checkTableName()
-        if checkPrimary != None:
-            yield checkPrimary, None
+
+        if self.correct_table_names != None:    
+            tableNameCheck = checkTableName(correct_table_names=self.correct_table_names)
+            if tableNameCheck != None:
+                yield tableNameCheck, None
+
+        if self.req_column_names != None and tableNameCheck == None:
+            checkTableColumnNames = checkTableColumns(req_column_names=self.req_column_names)
+            if checkTableColumnNames != None:
+                yield checkTableColumnNames, None
 
         return super().feedback(res, descriptions)
         
@@ -111,7 +121,7 @@ class SQLCreateTestCase(SQLTestCase):
            
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return "notCorrect", "isNotCorrect", ""
+            return "ForMoreTestsIgnoreThis", "notCorrect", ""
         
         # Run reference answer
         try: 
