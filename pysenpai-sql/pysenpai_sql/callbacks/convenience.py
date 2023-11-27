@@ -18,3 +18,10 @@ def test_validator(ref, res, out):
         assert res == 1, "value_non_unique"
     except AssertionError:
         raise AssertionError
+
+def duplicate_validator(ref, res, out):
+    try:
+        assert not len(res) != len(set(res)), "value_non_unique"
+
+    except AssertionError:
+        raise AssertionError

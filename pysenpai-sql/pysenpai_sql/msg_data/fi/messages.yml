@@ -160,6 +160,11 @@ program:
   incorrect_column_name: |- 
     Sarakkeen nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  TooGeneralizedIdentifier: |-
+    Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
+  IncorrectUpdatedValues: |-
+    Kysely ei päivittänyt seuraavien kenttien arvoja oikein:
+    {output}
   UnidentifiableRecord: |-
     Sijoitettua tietuetta ei voitu tunnistaa.
   IncorrectInsertError: |-

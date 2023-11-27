@@ -159,6 +159,11 @@ lint:
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
+  TooGeneralizedIdentifier: |- 
+      The query used too generic identifiers. Use more specific identifiers.
+  IncorrectUpdatedValues: |-
+    The query updated the following fields incorrectly:
+    {output}
   UnidentifiableRecord: |-
     Could not identify the inserted record.
   IncorrectInsertError: |-

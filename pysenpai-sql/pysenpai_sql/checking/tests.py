@@ -115,3 +115,13 @@ def checkTableColumns(req_column_names = ['']):
     if column_names != req_column_names:
         return ("incorrect_column_name")
     return None
+
+def evaluate_updated_values(res, correct):
+    '''Checks if the updated values contains correct values'''
+
+    for i, value in enumerate(res):
+        if value != correct[i]:
+            return ("IncorrectUpdatedValues"), res
+
+    return None, None
+

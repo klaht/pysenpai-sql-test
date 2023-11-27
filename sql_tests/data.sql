@@ -156,6 +156,10 @@ INSERT INTO Exhibition VALUES(7, 'Van Gogh in the Summer', '2022-05-07', '2022-0
 INSERT INTO Exhibition VALUES(8, 'Lust For Life', '2022-09-09', '2022-12-31', 1, 12765, 25064, 16);
 INSERT INTO Exhibition VALUES(9, 'Beyond', '2018-02-09', '2018-03-30', 1, 1567, 10574, 16);
 INSERT INTO Exhibition VALUES(10, 'Locus', '2022-01-07', '2022-01-30', 1, 7832, 50574, 16);
+INSERT INTO Exhibition VALUES(11, 'Navigating North', '2022-10-07', '2023-04-02', 1, null, null, 2);
+INSERT INTO Exhibition VALUES(12, 'Another Exhibition in Kiasma', '2022-10-07', '2023-04-02', 1, null, null, 2);
+INSERT INTO Exhibition VALUES(13, 'Navigating North', '2022-05-07', '2022-08-02', 1, null, null, 2);
+
 
 INSERT INTO On_Exhibition VALUES(2001, 1, 10050, 20040);
 INSERT INTO On_Exhibition VALUES(2002, 1, 10060, 20080);
