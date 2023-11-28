@@ -38,7 +38,7 @@ class SQLUpdateTestCase(SQLTestCase):
         )
 
     def feedback(self, res, descriptions):
-        incorrect_variables, output = evaluate_updated_values(descriptions, self.ref_query_result, self.field_names)
+        incorrect_variables, output = evaluate_updated_values(self.ref_query_result, self.field_names)
         if incorrect_variables:
             yield incorrect_variables, output
 
