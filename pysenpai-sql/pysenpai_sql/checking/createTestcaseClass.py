@@ -103,6 +103,9 @@ class SQLCreateTestCase(SQLTestCase):
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
             
+            if sql_script.__contains__(';'):
+                sql_script = sql_script.replace(';', '')
+            
             cursor.executescript(sql_script)
             
             # Insert to created table
