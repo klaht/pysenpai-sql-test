@@ -63,13 +63,11 @@ class SQLInsertTestCase(SQLTestCase):
 
             cursor = conn.cursor()
 
-            cursor.executescript(sql_script)
+            cursor.execute(sql_script)
 
-            lastInsert = getLastInsertedRow(cursor, sql_script)
+            conn.commit()
 
-            #test_query = "SELECT * FROM " + table_name + " WHERE " 
-
-            res = cursor.fetchall()
+            res = getLastInsertedRow(cursor, sql_script)
 
             try:
                 result_list = [list(row) for row in res][0] # Arrange result to list
@@ -90,10 +88,11 @@ class SQLInsertTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
        
-            cursor2.executescript(ref_answer)
+            cursor2.execute(ref_answer)
 
-            #cursor2.execute(test_query)
-            ref = cursor2.fetchall()
+            conn2.commit()
+
+            ref = getLastInsertedRow(cursor2, ref_answer) 
             self.ref_query_result = ref
         
             conn2.commit()
@@ -118,11 +117,11 @@ def getLastInsertedRow(cursor, query):
     for column in columns:
         if column[5]:
             try:
-                test_query = "SELECT * FROM " + table_name + " WHERE " + column[2] + "=" + id_of_inserted
+                test_query = "SELECT * FROM " + table_name + " WHERE " + column[1] + "=" + str(id_of_inserted)
                 cursor.execute(test_query)
                 matchingId = cursor.fetchall()
                 assert len(matchingId) == 1
 
-                return matchingId[0]
+                return matchingId
             except Exception:
                 raise IndexError
