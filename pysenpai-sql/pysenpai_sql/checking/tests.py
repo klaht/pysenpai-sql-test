@@ -53,14 +53,6 @@ def assertDistinct(res):
             return ("output_not_distinct")
         return None
 
-def assertDistinct(res):
-    '''Checks if the list contains only distinct values'''
-    
-    for thing in res:
-        if res.count(thing) > 1:
-            return ("output_not_distinct")
-        return None
-
 def evaluateAmount(res, correct, exNumber):
     '''
     Checks if the answer contains the correct amount of values
