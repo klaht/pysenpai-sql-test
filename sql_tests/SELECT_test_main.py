@@ -122,7 +122,7 @@ def ref_program():
     return correct_answer
 
 
-if __name__ == "__main__":
+def execute_test(ref_result):
     core.init_test(__file__, 1)
     correct = False
     score = 0
@@ -132,12 +132,11 @@ if __name__ == "__main__":
 
     # SELECT query to test DELETE, INSERT, UPDATE, CREATE
     test_query = ""
-    
+
     # INSERT query to test CREATE
 
     insert_query = ""
 
-    init_db() # reset database
 
     msgs.update(msgs)
 
@@ -152,7 +151,7 @@ if __name__ == "__main__":
         score += run_sql_test_cases("program",
                                     test_type,
                                     st_mname,
-                                    gen_program_vector,
+                                    lambda: [MainTestCase(ref_result=ref_result, validator=parsed_list_sql_validator)], #:D spagetti haisee
                                     lang,
                                     custom_msgs=msgs,
                                     insert_query=insert_query,

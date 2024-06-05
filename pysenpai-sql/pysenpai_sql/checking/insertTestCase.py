@@ -64,8 +64,10 @@ class SQLInsertTestCase(SQLTestCase):
             cursor = conn.cursor()
 
             cursor.executescript(sql_script)
-            
-            cursor.execute(test_query)
+
+            lastInsert = getLastInsertedRow(cursor, sql_script)
+
+            #test_query = "SELECT * FROM " + table_name + " WHERE " 
 
             res = cursor.fetchall()
 
@@ -90,7 +92,7 @@ class SQLInsertTestCase(SQLTestCase):
        
             cursor2.executescript(ref_answer)
 
-            cursor2.execute(test_query)
+            #cursor2.execute(test_query)
             ref = cursor2.fetchall()
             self.ref_query_result = ref
         
@@ -103,3 +105,24 @@ class SQLInsertTestCase(SQLTestCase):
             return 0, 0, None
         
         return ref, res, result_list
+
+def getLastInsertedRow(cursor, query):
+    id_of_inserted = cursor.lastrowid
+
+    table_name = query.split()[2]
+
+    columns_query = "PRAGMA table_info(" + table_name + ")"
+
+    columns = cursor.execute(columns_query).fetchall()
+
+    for column in columns:
+        if column[5]:
+            try:
+                test_query = "SELECT * FROM " + table_name + " WHERE " + column[2] + "=" + id_of_inserted
+                cursor.execute(test_query)
+                matchingId = cursor.fetchall()
+                assert len(matchingId) == 1
+
+                return matchingId[0]
+            except Exception:
+                raise IndexError

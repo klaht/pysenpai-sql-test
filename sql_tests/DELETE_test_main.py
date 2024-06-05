@@ -3,7 +3,7 @@ import re
 import pysenpai.core as core
 # from pysenpai.messages import Codes
 
-from pysenpai_sql.checking.testcase import SQLQueryTestCase, run_sql_test_cases
+from pysenpai_sql.checking.testcase import SQLTestCase, run_sql_test_cases
 from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator
 import pysenpai.utils.checker as utils
 from pysenpai.exceptions import OutputParseError
@@ -52,7 +52,7 @@ msgs.set_msg("incorrect_column_order", "en", dict(
 ))
 
 
-class MainTestCase(SQLQueryTestCase):
+class MainTestCase(SQLTestCase):
 
     def parse(self, output):
         res = utils.find_first(float_pat, output, float)

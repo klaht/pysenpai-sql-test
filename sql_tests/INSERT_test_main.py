@@ -63,7 +63,7 @@ def ref_program():
     return correct_answer
 
 
-if __name__ == "__main__":
+def execute_test(ref_result):
     correct = False
     score = 0
 
@@ -71,11 +71,13 @@ if __name__ == "__main__":
     test_type = "INSERT"
 
     # SELECT query to test DELETE, INSERT, UPDATE, CREATE
-    test_query = ("SELECT title, startDate, endDate, "
-                  "isOnlineExhibition, E.locationId "
-                  "FROM Exhibition E, Location L "
-                  "WHERE E.locationId=L.locationId AND "
-                  "L.name='Museum of Contemporary Art Kiasma';")
+    test_query = ""
+
+#    test_query = ("SELECT title, startDate, endDate, "
+#                  "isOnlineExhibition, E.locationId "
+#                  "FROM Exhibition E, Location L "
+#                  "WHERE E.locationId=L.locationId AND "
+#                  "L.name='Museum of Contemporary Art Kiasma';")
 
     # INSERT query to test CREATE
     insert_query = ""
@@ -98,7 +100,7 @@ if __name__ == "__main__":
         score += run_sql_test_cases("program",
                                     test_type,
                                     st_mname,
-                                    gen_program_vector,
+                                    lambda: [MainTestCase(ref_result=ref_result, validator=parsed_list_sql_validator)], #:D
                                     lang,
                                     custom_msgs=msgs,
                                     insert_query=insert_query,
