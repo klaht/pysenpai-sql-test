@@ -4,7 +4,7 @@ import sys
 import sqlite3
 import pysenpai.callbacks.defaults as defaults
 from pysenpai.output import json_output
-from pysenpai.messages import load_messages, Codes
+from pysenpai_sql.messages import load_messages, Codes
 from pysenpai.output import output
 from pysenpai.utils.internal import FNAME_PAT
 
