@@ -130,7 +130,7 @@ def ref_program():
     return correct_answer
 
 
-if __name__ == "__main__":
+def execute_test(ref_result):
     core.init_test(__file__, 1)
     correct = False
     score = 0
@@ -139,12 +139,13 @@ if __name__ == "__main__":
     test_type = "CREATE"
 
     # SELECT query to test DELETE, INSERT, UPDATE, CREATE
-    test_query = "SELECT * FROM testtable WHERE name = 'testi'"
+    #test_query = "SELECT * FROM testtable WHERE name = 'testi'"
+    test_query = ""
     
     # INSERT query to test CREATE
 
-    insert_query = "INSERT INTO testtable VALUES (1, 'testi')"
-
+    #insert_query = "INSERT INTO testtable VALUES (1, 'testi')"
+    insert_query = ""
 
     init_db() # reset database
 
@@ -161,7 +162,7 @@ if __name__ == "__main__":
         score += run_sql_test_cases("program",
                                     test_type,
                                     st_mname,
-                                    gen_program_vector,
+                                    lambda: [MainTestCase(ref_result=ref_result, validator=parsed_list_sql_validator)],
                                     lang,
                                     custom_msgs=msgs,
                                     insert_query=insert_query,

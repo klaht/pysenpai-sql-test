@@ -1,6 +1,8 @@
 from pysenpai import core
 from SELECT_test_main import execute_test as selectTestExecute 
 from INSERT_test_main import execute_test as insertTestExecute 
+from CREATE_test_main import execute_test as createTestExecute
+from UPDATE_test_main import execute_test as updateTestExecute
 
 # TODO 
 #   Set messages like is done in seperate main files
@@ -22,6 +24,10 @@ if __name__ == "__main__":
                 selectTestExecute(reference_query)
             case "INSERT":
                 insertTestExecute(reference_query)
+            case "CREATE":
+                createTestExecute(reference_query)
+            case "UPDATE":
+                updateTestExecute(reference_query)
                 
 
                 

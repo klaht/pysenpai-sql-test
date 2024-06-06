@@ -109,14 +109,15 @@ class SQLCreateTestCase(SQLTestCase):
             cursor.executescript(sql_script)
             
             # Insert to created table
-            cursor.executescript(insert_query)
+            #cursor.executescript(insert_query)
             # column_names = [column[0] for column in cursor.description]
         
-            cursor.execute(test_query)
+            #cursor.execute(test_query)
             
             res = cursor.fetchall()
+            answer_columns = get_column_data(cursor, sql_script)
 
-            cursor.execute("DROP table testtable")
+            #cursor.execute("DROP table testtable")
 
             conn.commit()
             cursor.close()
@@ -133,10 +134,12 @@ class SQLCreateTestCase(SQLTestCase):
        
             cursor2.executescript(ref_answer)
 
-            # Insert to created table
-            cursor2.executescript(insert_query)
+            ref_columns = get_column_data(cursor2, ref_answer)
 
-            cursor2.execute(test_query)
+            # Insert to created table
+            #cursor2.executescript(insert_query)
+
+            #cursor2.execute(test_query)
             ref = cursor2.fetchall()
         
             conn2.commit()
@@ -154,6 +157,7 @@ class SQLCreateTestCase(SQLTestCase):
             return "file_open_error"
             
         # Run student answer
+        """
         try: 
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
@@ -172,6 +176,32 @@ class SQLCreateTestCase(SQLTestCase):
             
         except sqlite3.IntegrityError as e:
             return ref, res, ""
+        """
+
+        if compare_column_data(ref_columns, answer_columns):
+            return res, ref, ""
         
-        output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
+        #TODO Add tests for primary key
+        #output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
         return 0, 0, ""
+
+def get_column_data(cursor, query):
+    table_name = query.split()[2]
+
+    columns_query = "PRAGMA table_info(" + table_name + ")"
+
+    columns = cursor.execute(columns_query).fetchall()
+
+    return columns
+
+def compare_column_data(ref, ans):
+    try:
+        for i, column in enumerate(ref):
+            if column != ans[i]:
+                return False
+    except IndexError:
+        return False
+    
+    return True
+
+    

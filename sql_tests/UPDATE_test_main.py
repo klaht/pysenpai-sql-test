@@ -181,7 +181,7 @@ def ref_program():
     return correct_answer
 
 
-if __name__ == "__main__":
+def execute_test(ref_query):
     correct = False
     score = 0
 
