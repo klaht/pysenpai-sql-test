@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 import pysenpai.callbacks.convenience as convenience
 from pysenpai_sql.checking.testcase import SQLTestCase
@@ -62,22 +63,26 @@ class SQLUpdateTestCase(SQLTestCase):
             conn = sqlite3.connect("mydatabase1.db")
 
             cursor = conn.cursor()
-
-            cursor.execute(sql_script)
-            
             #cursor.execute(test_query)
-            #self.field_names = [i[0] for i in cursor.description]
-
             #res = cursor.fetchall()
-            res = []
 
-            """
+            #Get ids affected by the update
+            ans_affected_ids = get_affected_row_ids(cursor, sql_script)
+
+            #Execute updated
+            cursor.execute(sql_script)
+
+            #Get rows with previously fetched ids
+            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids)
+
+            self.field_names = [i[0] for i in cursor.description]
+
+
             try:
                 result_list = [list(row) for row in res][0] # Arrange result to list
             except IndexError as e:
                 output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
                 return 0, 0, None
-            """
 
             answer_row_count = cursor.rowcount
 
@@ -94,11 +99,16 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
        
+
+
+            ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
+
             cursor2.execute(ref_answer)
+
+            ref = get_rows_with_ids(cursor2, ref_answer, ref_affected_ids) 
 
             #cursor2.execute(test_query)
             #ref = cursor2.fetchall()
-            ref = []
             self.ref_query_result = ref
 
             reference_row_count = cursor.rowcount
@@ -114,5 +124,48 @@ class SQLUpdateTestCase(SQLTestCase):
         if answer_row_count != reference_row_count:
             return 0, 0, None
 
-        #return ref, res, result_list
-        return ref, res, ""
+        return ref, res, result_list
+
+def get_affected_row_ids(cursor: sqlite3.Cursor, query):
+    where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
+    primary_key = getTablePrimaryKey(cursor, query)
+
+    affected_query = "SELECT " + primary_key + " FROM " + query.split()[1] + " WHERE " + where_clause
+
+    cursor.execute(affected_query)
+
+    return cursor.fetchall()
+
+def getTablePrimaryKey(cursor, query):
+    table_name = query.split()[1]
+
+    columns_query = "PRAGMA table_info(" + table_name + ")"
+
+    columns = cursor.execute(columns_query).fetchall()
+
+    for column in columns:
+        if column[5]:
+            try:
+                return column[1]
+            except Exception as e:
+                raise IndexError
+
+def get_rows_with_ids(cursor, query, ids):
+    try:  
+        primary_key = getTablePrimaryKey(cursor, query)
+        select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
+
+        cursor.execute(select_query)
+
+        return cursor.fetchall()
+    except Exception as e:
+        print(e)
+
+def ids_to_string (ids):
+    query_str = "("
+    for id in ids:
+        query_str += str(id[0]) + ", "
+
+    #remove last comma
+    return query_str[:-2] + ")"
+

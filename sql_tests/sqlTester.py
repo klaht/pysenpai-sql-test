@@ -4,6 +4,8 @@ from INSERT_test_main import execute_test as insertTestExecute
 from CREATE_test_main import execute_test as createTestExecute
 from UPDATE_test_main import execute_test as updateTestExecute
 
+import traceback
+
 # TODO 
 #   Set messages like is done in seperate main files
 #   Clean previous main files
@@ -29,8 +31,7 @@ if __name__ == "__main__":
             case "UPDATE":
                 updateTestExecute(reference_query)
                 
-
-                
-
-    except IndexError:
+    except Exception as e:
+        print(e)
+        traceback.print_exc() #debug
         print("USAGE: ANSWER_FILENAME REFERENCE_FILENAME")
