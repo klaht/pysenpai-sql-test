@@ -147,7 +147,7 @@ class SpecificTestCase(SQLUpdateTestCase):
     def feedback(self, res, descriptions):
         yield("TooGeneralizedIdentifier", {})
 
-def gen_program_vector():
+def gen_program_vector(ref_query):
 
     """
     Generates a vector of test cases for the main program.
@@ -155,11 +155,11 @@ def gen_program_vector():
     v = []
     for i in range(1):
         v.append(MainTestCase(
-            ref_result=ref_program(),
+            ref_result=ref_query,
             validator=parsed_list_sql_validator
         ))
         v.append(SpecificTestCase(
-            ref_result=ref_program(),
+            ref_result=ref_query,
             validator=duplicate_validator
         ))
     return v
@@ -189,12 +189,16 @@ def execute_test(ref_query):
     test_type = "UPDATE"
 
     # SELECT query to test DELETE, INSERT, UPDATE, CREATE
+    """
     test_query = ("SELECT title, numberOfVisitors, numberOfOnlineVisitors "
                   "FROM Exhibition WHERE title = 'Navigating North' "
                   "AND startDate = '2022-10-07'"
                   "AND endDate = '2023-04-02'"
                   "AND locationId = (SELECT locationId FROM location WHERE name = 'Museum of Contemporary Art Kiasma')"
                   "AND isOnlineExhibition = 1;")
+    """
+
+    test_query = ""
 
     # INSERT query to test CREATE
     insert_query = ""
@@ -216,7 +220,7 @@ def execute_test(ref_query):
         score += run_sql_test_cases("program",
                                     test_type,
                                     st_mname,
-                                    gen_program_vector,
+                                    lambda: gen_program_vector(ref_query), #needs to be callable
                                     lang, custom_msgs=msgs,
                                     insert_query=insert_query,
                                     test_query=test_query)

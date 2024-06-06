@@ -63,19 +63,23 @@ class SQLUpdateTestCase(SQLTestCase):
 
             cursor = conn.cursor()
 
-            cursor.executescript(sql_script)
+            cursor.execute(sql_script)
             
-            cursor.execute(test_query)
-            self.field_names = [i[0] for i in cursor.description]
-            
+            #cursor.execute(test_query)
+            #self.field_names = [i[0] for i in cursor.description]
 
-            res = cursor.fetchall()
+            #res = cursor.fetchall()
+            res = []
 
+            """
             try:
                 result_list = [list(row) for row in res][0] # Arrange result to list
             except IndexError as e:
                 output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
                 return 0, 0, None
+            """
+
+            answer_row_count = cursor.rowcount
 
             conn.commit()
             cursor.close()
@@ -90,11 +94,14 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
        
-            cursor2.executescript(ref_answer)
+            cursor2.execute(ref_answer)
 
-            cursor2.execute(test_query)
-            ref = cursor2.fetchall()
+            #cursor2.execute(test_query)
+            #ref = cursor2.fetchall()
+            ref = []
             self.ref_query_result = ref
+
+            reference_row_count = cursor.rowcount
         
             conn2.commit()
             cursor2.close()
@@ -103,5 +110,9 @@ class SQLUpdateTestCase(SQLTestCase):
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
+        
+        if answer_row_count != reference_row_count:
+            return 0, 0, None
 
-        return ref, res, result_list
+        #return ref, res, result_list
+        return ref, res, ""
