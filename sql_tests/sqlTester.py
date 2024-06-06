@@ -15,6 +15,7 @@ from pysenpai_sql.checking.createTestcaseClass import SQLCreateTestCase
 from pysenpai_sql.checking.selectTestcaseClass import SQLSelectTestCase 
 from pysenpai_sql.checking.insertTestCase import SQLInsertTestCase 
 from pysenpai_sql.checking.updateTestcase import SQLUpdateTestCase 
+from pysenpai_sql.checking.SQLDeleteTestCase import SQLDeleteTestCase
 
 import traceback
 
@@ -132,6 +133,7 @@ def gen_program_vector(ref_query):
     """
     test_class = None
 
+    # hash map?
     match assignmentType.upper():
         case "SELECT":
            test_class = SQLSelectTestCase 
@@ -141,6 +143,8 @@ def gen_program_vector(ref_query):
            test_class = SQLCreateTestCase 
         case "UPDATE":
            test_class = SQLUpdateTestCase 
+        case "DELETE":
+            test_class = SQLDeleteTestCase
     v = []
     for i in range(1):
         v.append(test_class(
