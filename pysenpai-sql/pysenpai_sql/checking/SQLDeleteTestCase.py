@@ -1,13 +1,18 @@
 import sqlite3
+import re
+import pysenpai.core as core
+# from pysenpai.messages import Codes
 
-import pysenpai.callbacks.convenience as convenience
 from pysenpai_sql.checking.testcase import SQLTestCase
 from pysenpai_sql.messages import load_messages, Codes
-from pysenpai.output import output
+import pysenpai.callbacks.convenience as convenience
 from pysenpai_sql.checking.tests import *
+import pysenpai.utils.checker as utils
+from pysenpai.output import output
+from pysenpai.exceptions import OutputParseError
 
-class SQLInsertTestCase(SQLTestCase):
-    
+class SQLDeleteTestCase(SQLTestCase):
+
     def __init__(self, ref_result, 
                  args=None,
                  inputs=None,
@@ -20,12 +25,14 @@ class SQLInsertTestCase(SQLTestCase):
                  internal_config=None,
                  presenters=None,
                  ref_query_result=None,
+                 field_names = None,
                  order=None,
                  selected_variables=None,
                  distinct=True,
                  show_answer_difference=True):
         
         self.ref_query_result = ref_query_result
+        self.field_names = field_names
         self.order = order
         self.selected_variables = selected_variables
         self.distinct = distinct
@@ -36,19 +43,31 @@ class SQLInsertTestCase(SQLTestCase):
         )
 
     def feedback(self, res, descriptions):
+        yield from super().feedback(res, descriptions)
+        try:
+            names = []
+            for result in res:
+                names.append(result[0])
+            if names != sorted(names):
+                yield ("incorrect_return_order", {})
 
-        if self.selected_variables != None:
-            incorrect_variables = evaluate_variables(descriptions, self.ref_query_result)
-            if incorrect_variables:
-                yield incorrect_variables, None
+            correct = ["name", "yearborn", "birthplace"]
+            # convert to lowercase
+            descriptions = [item.lower() for item in descriptions]
 
-        return super().feedback(res, descriptions)  
+            incorrect_variables = descriptions != correct
+            incorrect_order = (sorted(descriptions) == sorted(correct)
+                               and incorrect_variables)
 
+            if incorrect_order:
+                yield ("incorrect_column_order", {})
+            elif incorrect_variables:
+                yield ("incorrect_selected_columns", {})
+
+        except AssertionError:
+            pass
+    
     def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
-        # Run student and reference querys and return answers
-        # Insert and update are both tested with this
-
-        # Open student answer
         try :
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
@@ -57,71 +76,43 @@ class SQLInsertTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
 
+
         # Run student answer
-        try: 
+        try:
             conn = sqlite3.connect("mydatabase1.db")
-
             cursor = conn.cursor()
-
             cursor.execute(sql_script)
 
-            conn.commit()
+            res = get_table_contents(cursor, sql_script)
 
-            res = getLastInsertedRow(cursor, sql_script)
-
-            try:
-                result_list = [list(row) for row in res][0] # Arrange result to list
-            except IndexError as e:
-                output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
-                return 0, 0, None
-
-            conn.commit()
-            cursor.close()
-            conn.close()
-           
+            conn.commit() 
+        
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
-        
+
         # Run reference answer
-        try: 
+        try:
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
-       
             cursor2.execute(ref_answer)
 
-            conn2.commit()
+            ref = get_table_contents(cursor2, ref_answer)
 
-            ref = getLastInsertedRow(cursor2, ref_answer) 
-            self.ref_query_result = ref
+            conn2.commit()
         
-            conn2.commit()
-            cursor2.close()
-            conn2.close()
-
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
-        
-        return ref, res, result_list
 
-def getLastInsertedRow(cursor, query):
-    id_of_inserted = cursor.lastrowid
+        return res, ref, ""
 
+
+def get_table_contents(cursor: sqlite3.Cursor, query: str):
     table_name = query.split()[2]
+    select_query = "SELECT * FROM " + table_name
 
-    columns_query = "PRAGMA table_info(" + table_name + ")"
+    cursor.execute(select_query)
 
-    columns = cursor.execute(columns_query).fetchall()
+    return cursor.fetchall()
 
-    for column in columns:
-        if column[5]:
-            try:
-                test_query = "SELECT * FROM " + table_name + " WHERE " + column[1] + "=" + str(id_of_inserted)
-                cursor.execute(test_query)
-                matchingId = cursor.fetchall()
-                assert len(matchingId) == 1
-
-                return matchingId
-            except Exception:
-                raise IndexError
