@@ -81,8 +81,9 @@ class SQLDeleteTestCase(SQLTestCase):
         try:
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
-
             cursor.execute(sql_script)
+
+            res = get_table_contents(cursor, sql_script)
 
             conn.commit() 
         
@@ -94,8 +95,9 @@ class SQLDeleteTestCase(SQLTestCase):
         try:
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
-
             cursor2.execute(ref_answer)
+
+            ref = get_table_contents(cursor2, ref_answer)
 
             conn2.commit()
         
@@ -103,5 +105,14 @@ class SQLDeleteTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
 
-        return [], [], None
+        return res, ref, ""
+
+
+def get_table_contents(cursor: sqlite3.Cursor, query: str):
+    table_name = query.split()[2]
+    select_query = "SELECT * FROM " + table_name
+
+    cursor.execute(select_query)
+
+    return cursor.fetchall()
 
