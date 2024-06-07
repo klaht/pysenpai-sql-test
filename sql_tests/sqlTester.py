@@ -16,6 +16,7 @@ from pysenpai_sql.checking.selectTestcaseClass import SQLSelectTestCase
 from pysenpai_sql.checking.insertTestCase import SQLInsertTestCase 
 from pysenpai_sql.checking.updateTestcase import SQLUpdateTestCase 
 from pysenpai_sql.checking.SQLDeleteTestCase import SQLDeleteTestCase
+from pysenpai_sql.checking.SQLAlterTestCase import SQLAlterTestCase
 
 import traceback
 
@@ -145,6 +146,8 @@ def gen_program_vector(ref_query):
            test_class = SQLUpdateTestCase 
         case "DELETE":
             test_class = SQLDeleteTestCase
+        case "ALTER":
+            test_class = SQLAlterTestCase
     v = []
     for i in range(1):
         v.append(test_class(
