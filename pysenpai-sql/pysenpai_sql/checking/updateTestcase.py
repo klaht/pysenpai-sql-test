@@ -127,6 +127,10 @@ class SQLUpdateTestCase(SQLTestCase):
         return ref, res, result_list
 
 def get_affected_row_ids(cursor: sqlite3.Cursor, query):
+    """
+    Get all affected row primary keys from an update query
+    Splits the query at the first WHERE and uses the part after in a SELECT query
+    """
     where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
     primary_key = getTablePrimaryKey(cursor, query)
 
@@ -137,31 +141,35 @@ def get_affected_row_ids(cursor: sqlite3.Cursor, query):
     return cursor.fetchall()
 
 def getTablePrimaryKey(cursor, query):
+    """
+    Get primary key from an UPDATE query
+    Uses PRAGMA query to fetch information about the table
+    """
     table_name = query.split()[1]
-
     columns_query = "PRAGMA table_info(" + table_name + ")"
-
     columns = cursor.execute(columns_query).fetchall()
 
     for column in columns:
-        if column[5]:
+        if column[5]: #Primary key information is stored at index 5
             try:
-                return column[1]
+                return column[1] #Index 1 stores column name
             except Exception as e:
                 raise IndexError
 
 def get_rows_with_ids(cursor, query, ids):
-    try:  
-        primary_key = getTablePrimaryKey(cursor, query)
-        select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
+    """
+    Get all rows from table for given ids (primary key)
+    """
+    primary_key = getTablePrimaryKey(cursor, query)
+    select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
+    cursor.execute(select_query)
 
-        cursor.execute(select_query)
-
-        return cursor.fetchall()
-    except Exception as e:
-        print(e)
+    return cursor.fetchall()
 
 def ids_to_string (ids):
+    """
+    Generates a string to be used in "WHERE ... IN" query
+    """
     query_str = "("
     for id in ids:
         query_str += str(id[0]) + ", "
