@@ -6,6 +6,7 @@ import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.testcase import SQLTestCase
+from pysenpai_sql.checking.tests import *
 
 class SQLAlterTestCase(SQLTestCase):
     
@@ -39,9 +40,9 @@ class SQLAlterTestCase(SQLTestCase):
         )
 
     def feedback(self, res, descriptions):
-        #TODO Add correct tests for table information
-        pass
-
+        column_data_result = compare_column_data(res, self.ref_query_result)
+        if column_data_result != None:
+            yield column_data_result, None
 
         return super().feedback(res, descriptions)  
 
@@ -80,6 +81,7 @@ class SQLAlterTestCase(SQLTestCase):
        
             cursor2.execute(ref_answer)
             ref = get_table_information(cursor2, ref_answer)
+            self.ref_query_result = ref
         
             conn2.commit()
             conn2.close()

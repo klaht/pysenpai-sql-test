@@ -117,3 +117,17 @@ def evaluate_updated_values(res, correct):
 
     return None, None
 
+def compare_column_data(res, correct):
+    '''
+    Compare column values of reference and answer table
+    '''
+    try:
+        for i, column in enumerate(correct):
+            if column != res[i]:
+                return "incorrect_column_name"
+    except IndexError:
+        return "incorrect_column_name"
+    
+    return None
+
+    
