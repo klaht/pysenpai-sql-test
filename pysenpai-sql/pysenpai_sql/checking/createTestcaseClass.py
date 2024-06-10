@@ -11,7 +11,47 @@ from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.testcase import SQLTestCase
 
 class SQLCreateTestCase(SQLTestCase):
-    
+    """
+    A class representing a SQL test case for creating tables.
+
+    Args:
+        sqltestcase (SQLTestCase): The SQLTestCase object.
+        (
+        ref_result (Any): The reference result for the test case.
+        args (Optional[Any]): Additional arguments for the test case. Default is None.
+        inputs (Optional[Any]): Inputs for the test case. Default is None.
+        data (Optional[Any]): Data for the test case. Default is None.
+        weight (int): The weight of the test case. Default is 1.
+        tag (str): The tag for the test case. Default is an empty string.
+        validator (Callable): The validator function for the test case. Default is convenience.parsed_result_validator.
+        output_validator (Optional[Callable]): The output validator function for the test case. Default is None.
+        eref_results (Optional[Any]): The expected reference results for the test case. Default is None.
+        internal_config (Optional[Any]): Internal configuration for the test case. Default is None.
+        presenters (Optional[Any]): Presenters for the test case. Default is None.
+        ref_query_result (Optional[Any]): The reference query result for the test case. Default is None.
+        order (Optional[Any]): The order for the test case. Default is None.
+        selected_variables (Optional[Any]): The selected variables for the test case. Default is None.
+        distinct (Optional[Any]): The distinct value for the test case. Default is None.
+        show_answer_difference (Optional[Any]): The show answer difference value for the test case. Default is None.
+        student_answer (Optional[Any]): The student answer for the test case. Default is None.
+        insert_query (Optional[Any]): The insert query for the test case. Default is None.
+        correct_table_names (Optional[Any]): The correct table names for the test case. Default is None.
+        req_column_names (Optional[Any]): The required column names for the test case. Default is None.
+        exNumber (int): The exercise number for the test case. Default is 0.)
+
+    Attributes:
+        ref_query_result (Optional[Any]): The reference query result for the test case.
+        order (Optional[Any]): The order for the test case.
+        selected_variables (Optional[Any]): The selected variables for the test case.
+        distinct (Optional[Any]): The distinct value for the test case.
+        show_answer_difference (Optional[Any]): The show answer difference value for the test case.
+        student_answer (Optional[Any]): The student answer for the test case.
+        insert_query (Optional[Any]): The insert query for the test case.
+        exNumber (int): The exercise number for the test case.
+        correct_table_names (Optional[Any]): The correct table names for the test case.
+        req_column_names (Optional[Any]): The required column names for the test case.
+    """
+
     def __init__(self, ref_result, 
                  args=None,
                  inputs=None,
@@ -33,7 +73,9 @@ class SQLCreateTestCase(SQLTestCase):
                  correct_table_names=None,
                  req_column_names=None,
                  exNumber=0):
-        
+        """
+        Initializes a new instance of the SQLCreateTestCase class.
+        """
         super().__init__(
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
@@ -50,7 +92,16 @@ class SQLCreateTestCase(SQLTestCase):
         self.req_column_names = req_column_names
         
     def feedback(self, res, descriptions):
-        
+        """
+        Provides feedback for the test case.
+
+        Args:
+            res (Any): The result of the test case.
+            descriptions (Any): The descriptions for the test case.
+
+        Yields:
+            Tuple: A tuple containing the feedback message and additional information.
+        """
         if self.order != None:
             incorrect_order = assertOrder(res, self.order)
             if incorrect_order:
@@ -87,7 +138,21 @@ class SQLCreateTestCase(SQLTestCase):
         return super().feedback(res, descriptions)
         
     def wrap(self, ref_answer, student_answer, lang, msgs, test_query, insert_query):
-        # Run student and reference querys and return answers
+        """
+        Wraps the test case by running the student and reference queries and returning the answers.
+
+        Args:
+            ref_answer (Any): The reference answer for the test case.
+            student_answer (Any): The student answer for the test case.
+            lang (str): The language for the test case.
+            msgs (Any): The messages for the test case.
+            test_query (Any): The test query for the test case.
+            insert_query (Any): The insert query for the test case.
+
+        Returns:
+            Tuple: A tuple containing the result, reference answer, and additional information.
+        """
+        # Run student and reference queries and return answers
         # Insert and update are both tested with this
 
         # Open student answer
