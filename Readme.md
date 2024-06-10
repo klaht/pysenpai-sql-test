@@ -46,7 +46,7 @@ Tests can be run by going to `sql_tests` directory and running `pytest` command.
 cd sql_tests
 pytest
 ```
-Tha main test file is located at `tests_test_sqlTester.py`. 
+Tha main test file is located at `tests/test_sqlTester.py`. 
 
 New test cases for existing queries (UPDATE, SELECT, CREATE, DELETE, ALTER, INSERT) can be added by creating a new directory (fe. case_1) under the queries `xx_test_files` directory (fe. select_test_files).
 
