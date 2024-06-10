@@ -33,6 +33,8 @@ class SQLUpdateTestCase(SQLTestCase):
         self.selected_variables = selected_variables
         self.distinct = distinct
         self.show_answer_difference = show_answer_difference
+        self.ref_affected_ids = None
+        self.ans_affected_ids = None
         
         super().__init__(
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
@@ -43,9 +45,14 @@ class SQLUpdateTestCase(SQLTestCase):
         if incorrect_variables:
             yield incorrect_variables, output
 
-        incorrect_columns = compare_column_data(res, self.ref_query_result)
-        if (incorrect_columns):
-            yield incorrect_columns, None
+
+        #Compare primary keys to find if correct rows were selected
+        try:
+            for i, ref_id in enumerate(self.ref_affected_ids):
+                if ref_id != self.ans_affected_ids[i]:
+                    yield 'incorrect_selected_columns', None
+        except IndexError:
+            yield 'incorrect_selected_columns', None
         
         return super().feedback(res, descriptions)  
 
@@ -71,14 +78,14 @@ class SQLUpdateTestCase(SQLTestCase):
             #res = cursor.fetchall()
 
             #Get ids affected by the update
-            ans_affected_ids = get_affected_row_ids(cursor, sql_script)
+            self.ans_affected_ids = get_affected_row_ids(cursor, sql_script)
 
             #Execute updated
             cursor.execute(sql_script)
 
             #Get rows with previously fetched ids
             #If no rows have been affected by the query set all to empty
-            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids) if ans_affected_ids else []
+            res = get_rows_with_ids(cursor, sql_script, self.ans_affected_ids) if self.ans_affected_ids else []
             self.field_names = [i[0] for i in cursor.description] if res else []
             result_list = [list(row) for row in res][0] if res else []
 
@@ -95,11 +102,11 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
 
-            ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
+            self.ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
 
             cursor2.execute(ref_answer)
 
-            ref = get_rows_with_ids(cursor2, ref_answer, ref_affected_ids) 
+            ref = get_rows_with_ids(cursor2, ref_answer, self.ref_affected_ids) 
 
             #cursor2.execute(test_query)
             #ref = cursor2.fetchall()
