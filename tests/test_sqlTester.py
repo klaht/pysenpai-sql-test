@@ -1,7 +1,27 @@
-import pytest
 import subprocess
 import json
 import os
+
+
+def test_update():
+    run_tests_from_directory("../tests/update_test_files")
+
+def test_select():
+    run_tests_from_directory("../tests/select_test_files")
+
+def test_create():
+    run_tests_from_directory("../tests/create_test_files")
+
+def test_delete():
+    run_tests_from_directory("../tests/delete_test_files")
+
+def test_alter():
+    run_tests_from_directory("../tests/alter_test_files")
+
+def run_tests_from_directory(dir):
+    for test_case in open_root_directory(dir):
+        test_file_path, ref_file_path, should_pass = test_case
+        assert should_pass == run_test_case(test_file_path, ref_file_path)
 
 def run_test_case(ans_file, ref_file):
     p = subprocess.Popen(
@@ -13,19 +33,13 @@ def run_test_case(ans_file, ref_file):
     return get_result_from_stdout(str(p.stdout.read()))
 
 def get_result_from_stdout(out_str):
-    print(out_str)
-    out_str = "{" + out_str[str.find(out_str, "result") - 1:]
+    out_str = str.replace(out_str, "'", "\"")
+    out_str = "{" + out_str[str.find(out_str, "\"result"):]
     out_str = str.strip(out_str[:str.rfind(out_str, "}") + 1])
     data = json.loads(out_str)
 
-    print(data)
 
     return data['result']['correct']
-
-def test_update():
-    for test_case in open_root_directory("../tests/update_test_files"):
-        test_file_path, ref_file_path, should_pass = test_case
-        assert run_test_case(test_file_path, ref_file_path) == should_pass
 
 def open_root_directory(path):
     test_cases = []
