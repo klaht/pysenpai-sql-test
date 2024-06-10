@@ -204,5 +204,3 @@ if __name__ == "__main__":
 
     correct = bool(score)
     core.set_result(correct, score)
-
-                
