@@ -1,0 +1,1 @@
+INSERT INTO Exhibition (title, startDate, endDate, locationId, isOnlineExhibition) SELECT 'Navigating North', '2022-10-07', '2023-04-02', (SELECT locationId FROM location WHERE name = 'Museum of Contemporary Art Kiasma'), 1;
