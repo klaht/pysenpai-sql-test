@@ -110,10 +110,12 @@ def checkTableColumns(req_column_names = ['']):
 
 def evaluate_updated_values(res, correct):
     '''Checks if the updated values contains correct values'''
-
-    for i, value in enumerate(res):
-        if value != correct[i]:
-            return ("IncorrectUpdatedValues"), res
+    try:
+        for i, value in enumerate(res):
+            if value != correct[i]:
+                return ("IncorrectUpdatedValues"), res
+    except IndexError:
+        return "incorrect_selected_columns", res
 
     return None, None
 
@@ -124,9 +126,9 @@ def compare_column_data(res, correct):
     try:
         for i, column in enumerate(correct):
             if column != res[i]:
-                return "incorrect_column_name"
+                return "incorrect_selected_columns"
     except IndexError:
-        return "incorrect_column_name"
+        return "incorrect_selected_columns"
     
     return None
 

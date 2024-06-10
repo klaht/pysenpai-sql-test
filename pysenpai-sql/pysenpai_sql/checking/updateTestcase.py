@@ -43,6 +43,10 @@ class SQLUpdateTestCase(SQLTestCase):
         if incorrect_variables:
             yield incorrect_variables, output
 
+        incorrect_columns = compare_column_data(res, self.ref_query_result)
+        if (incorrect_columns):
+            yield incorrect_columns, None
+        
         return super().feedback(res, descriptions)  
 
     def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
@@ -73,18 +77,10 @@ class SQLUpdateTestCase(SQLTestCase):
             cursor.execute(sql_script)
 
             #Get rows with previously fetched ids
-            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids)
-
-            self.field_names = [i[0] for i in cursor.description]
-
-
-            try:
-                result_list = [list(row) for row in res][0] # Arrange result to list
-            except IndexError as e:
-                output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
-                return 0, 0, None
-
-            answer_row_count = cursor.rowcount
+            #If no rows have been affected by the query set all to empty
+            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids) if ans_affected_ids else []
+            self.field_names = [i[0] for i in cursor.description] if res else []
+            result_list = [list(row) for row in res][0] if res else []
 
             conn.commit()
             cursor.close()
@@ -98,8 +94,6 @@ class SQLUpdateTestCase(SQLTestCase):
         try: 
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
-       
-
 
             ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
 
@@ -111,17 +105,12 @@ class SQLUpdateTestCase(SQLTestCase):
             #ref = cursor2.fetchall()
             self.ref_query_result = ref
 
-            reference_row_count = cursor.rowcount
-        
             conn2.commit()
             cursor2.close()
             conn2.close()
 
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
-        
-        if answer_row_count != reference_row_count:
             return 0, 0, None
 
         return ref, res, result_list
