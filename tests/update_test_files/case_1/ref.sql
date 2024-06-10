@@ -1,0 +1,1 @@
+UPDATE exhibition SET numberOfVisitors = 14000, numberOfOnlineVisitors = 50000 WHERE title = 'Navigating North' AND startDate = '2022-10-07' AND endDate = '2023-04-02' AND locationId = (SELECT locationId FROM location WHERE name = 'Museum of Contemporary Art Kiasma') AND isOnlineExhibition = 1;

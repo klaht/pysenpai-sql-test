@@ -7,7 +7,7 @@ from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator, duplic
 import pysenpai.utils.checker as utils
 from pysenpai.exceptions import OutputParseError
 from pysenpai_sql.core import load_sql_module
-from datasetup import init_db
+from pysenpai_sql.datasetup.datasetup import init_db
 from pysenpai_sql.checking.updateTestcase import SQLUpdateTestCase
 from pysenpai.output import output
 
