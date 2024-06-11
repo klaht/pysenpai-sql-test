@@ -38,32 +38,32 @@ msgs.set_msg("fail_output_result", "en", dict(
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_return_order", "fi", dict(
+msgs.set_msg("i    isAnswerCorrect_return_order", "fi", dict(
     content="Palautettava listaa ei järjestetty oikein.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_return_order", "en", dict(
-    content="The list was not arranged correctly.",
+msgs.set_msg("i    isAnswerCorrect_return_order", "en", dict(
+    content="The list was not arranged    isAnswerCorrectly.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_selected_columns", "fi", dict(
+msgs.set_msg("i    isAnswerCorrect_selected_columns", "fi", dict(
     content="Haussa käyttettiin vääriä sarakkeita.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_selected_columns", "en", dict(
+msgs.set_msg("i    isAnswerCorrect_selected_columns", "en", dict(
     content="The query used wrong columns.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_column_order", "fi", dict(
+msgs.set_msg("i    isAnswerCorrect_column_order", "fi", dict(
     content="Virheellinen sarakkeiden järjestys",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_column_order", "en", dict(
+msgs.set_msg("i    isAnswerCorrect_column_order", "en", dict(
     content="Invalid column order.",
     triggers=["student_sql_query"]
 ))
@@ -97,32 +97,32 @@ msgs.set_msg("fail_output_result", "en", dict(
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_return_order", "fi", dict(
+msgs.set_msg("i    isAnswerCorrect_return_order", "fi", dict(
     content="Palautettava listaa ei järjestetty oikein.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_return_order", "en", dict(
-    content="The list was not arranged correctly.",
+msgs.set_msg("i    isAnswerCorrect_return_order", "en", dict(
+    content="The list was not arranged    isAnswerCorrectly.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_selected_columns", "fi", dict(
+msgs.set_msg("i    isAnswerCorrect_selected_columns", "fi", dict(
     content="Haussa käyttettiin vääriä sarakkeita.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_selected_columns", "en", dict(
+msgs.set_msg("i    isAnswerCorrect_selected_columns", "en", dict(
     content="The query used wrong columns.",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_column_order", "fi", dict(
+msgs.set_msg("i    isAnswerCorrect_column_order", "fi", dict(
     content="Virheellinen sarakkeiden järjestys",
     triggers=["student_sql_query"]
 ))
 
-msgs.set_msg("incorrect_column_order", "en", dict(
+msgs.set_msg("i    isAnswerCorrect_column_order", "en", dict(
     content="Invalid column order.",
     triggers=["student_sql_query"]
 ))
@@ -131,10 +131,18 @@ def gen_program_vector(ref_query):
 
     """
     Generates a vector of test cases for the main program.
+    Defines the test type based on the reference query.
+
+    Args:
+        ref_query (str): The reference query.
+    
+    Returns:
+        list: A list of test cases. Including the reference query and the validator.
     """
     test_class = None
 
     # hash map?
+    # Set the test class based on the assignment type
     match assignmentType.upper():
         case "SELECT":
            test_class = SQLSelectTestCase 
@@ -159,7 +167,10 @@ def gen_program_vector(ref_query):
 
 if __name__ == "__main__":
 
+    # Parse command line arguments to get the answer and reference file names
     args, language = core.parse_command()
+    
+    # Open the answer and reference files, create a query from the reference file
     try: 
         answerFile = args[0]; referenceFile = args[1]
 
@@ -172,7 +183,7 @@ if __name__ == "__main__":
         print("USAGE: ANSWER_FILENAME REFERENCE_FILENAME")
 
 
-    correct = False
+    isAnswerCorrect = False
     score = 0
 
     test_query = ""
@@ -202,5 +213,5 @@ if __name__ == "__main__":
                                     insert_query=insert_query,
                                     test_query=test_query)
 
-    correct = bool(score)
-    core.set_result(correct, score)
+    isAnswerCorrect = bool(score)
+    core.set_result(isAnswerCorrect, score)

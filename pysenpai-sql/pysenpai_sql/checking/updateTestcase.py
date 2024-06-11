@@ -8,7 +8,26 @@ from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 
 class SQLUpdateTestCase(SQLTestCase):
-    
+    """
+    A test case for SQL update queries.
+
+    Args:
+       test object: The SQLTestCase object.
+    Attributes:
+        ref_query_result: The reference query result.
+        field_names: The field names for the query result.
+        order: The order of the query result.
+        selected_variables: The selected variables for the query.
+        distinct: Whether to select distinct rows.
+        show_answer_difference: Whether to show the difference between the reference and student answers.
+        ref_affected_ids: The affected row IDs in the reference query.
+        ans_affected_ids: The affected row IDs in the student query.
+
+    Methods:
+        feedback: Provides feedback for the test case.
+        wrap: Runs the student and reference queries and returns the answers.
+    """
+
     def __init__(self, ref_result, 
                  args=None,
                  inputs=None,
@@ -21,11 +40,35 @@ class SQLUpdateTestCase(SQLTestCase):
                  internal_config=None,
                  presenters=None,
                  ref_query_result=None,
-                 field_names = None,
+                 field_names=None,
                  order=None,
                  selected_variables=None,
                  distinct=True,
                  show_answer_difference=True):
+        """
+        Initializes a new instance of the SQLUpdateTestCase class.
+
+        Args:
+            test object: The SQLTestCase object.
+            (
+            ref_result: The reference result for comparison.
+            args: Optional arguments for the test case.
+            inputs: Optional inputs for the test case.
+            data: Optional data for the test case.
+            weight: The weight of the test case.
+            tag: A tag for the test case.
+            validator: The validator function for the test case.
+            output_validator: The output validator function for the test case.
+            eref_results: The expected reference results for the test case.
+            internal_config: Internal configuration for the test case.
+            presenters: Presenters for the test case.
+            ref_query_result: The reference query result.
+            field_names: The field names for the query result.
+            order: The order of the query result.
+            selected_variables: The selected variables for the query.
+            distinct: Whether to select distinct rows.
+            show_answer_difference: Whether to show the difference between the reference and student answers.)
+        """
         
         self.ref_query_result = ref_query_result
         self.field_names = field_names
@@ -41,12 +84,21 @@ class SQLUpdateTestCase(SQLTestCase):
         )
 
     def feedback(self, res, descriptions):
+        """
+        Provides feedback for the test case.
+
+        Args:
+            res: The result of the test case.
+            descriptions: Descriptions for the feedback.
+
+        Yields:
+            Tuple[str, Any]: The feedback information.
+        """
         incorrect_variables, output = evaluate_updated_values(self.ref_query_result, self.field_names)
         if incorrect_variables:
             yield incorrect_variables, output
 
-
-        #Compare primary keys to find if correct rows were selected
+        # Compare primary keys to find if correct rows were selected
         try:
             for i, ref_id in enumerate(self.ref_affected_ids):
                 if ref_id != self.ans_affected_ids[i]:
@@ -57,11 +109,24 @@ class SQLUpdateTestCase(SQLTestCase):
         return super().feedback(res, descriptions)  
 
     def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
-        # Run student and reference querys and return answers
+        """
+        Runs the student and reference queries and returns the answers.
+
+        Args:
+            ref_answer: The reference answer.
+            student_answer: The student answer.
+            lang: The language of the test case.
+            msgs: The messages for the test case.
+            test_query: The test query.
+
+        Returns:
+            Tuple: The reference answer, student answer, and result list.
+        """
+        # Run student and reference queries and return answers
         # Insert and update are both tested with this
 
         # Open student answer
-        try :
+        try:
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
@@ -74,17 +139,17 @@ class SQLUpdateTestCase(SQLTestCase):
             conn = sqlite3.connect("mydatabase1.db")
 
             cursor = conn.cursor()
-            #cursor.execute(test_query)
-            #res = cursor.fetchall()
+            # cursor.execute(test_query)
+            # res = cursor.fetchall()
 
-            #Get ids affected by the update
+            # Get ids affected by the update
             self.ans_affected_ids = get_affected_row_ids(cursor, sql_script)
 
-            #Execute updated
+            # Execute updated
             cursor.execute(sql_script)
 
-            #Get rows with previously fetched ids
-            #If no rows have been affected by the query set all to empty
+            # Get rows with previously fetched ids
+            # If no rows have been affected by the query set all to empty
             res = get_rows_with_ids(cursor, sql_script, self.ans_affected_ids) if self.ans_affected_ids else []
             self.field_names = [i[0] for i in cursor.description] if res else []
             result_list = [list(row) for row in res][0] if res else []
@@ -108,8 +173,8 @@ class SQLUpdateTestCase(SQLTestCase):
 
             ref = get_rows_with_ids(cursor2, ref_answer, self.ref_affected_ids) 
 
-            #cursor2.execute(test_query)
-            #ref = cursor2.fetchall()
+            # cursor2.execute(test_query)
+            # ref = cursor2.fetchall()
             self.ref_query_result = ref
 
             conn2.commit()

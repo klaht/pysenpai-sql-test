@@ -12,6 +12,38 @@ from pysenpai.output import output
 from pysenpai.exceptions import OutputParseError
 
 class SQLDeleteTestCase(SQLTestCase):
+    """
+    A test case class for testing SQL DELETE statements.
+
+    Args:
+    test object: The SQLTestCase object.
+    (
+        ref_result (Any): The reference result for comparison.
+        args (Optional[Any]): Additional arguments for the test case.
+        inputs (Optional[Any]): Inputs for the test case.
+        data (Optional[Any]): Data for the test case.
+        weight (int): The weight of the test case.
+        tag (str): A tag for the test case.
+        validator (Callable): A function for validating the result.
+        output_validator (Optional[Callable]): A function for validating the output.
+        eref_results (Optional[Any]): Expected reference results.
+        internal_config (Optional[Any]): Internal configuration for the test case.
+        presenters (Optional[Any]): Presenters for the test case.
+        ref_query_result (Optional[Any]): Reference query result.
+        field_names (Optional[Any]): Field names for the test case.
+        order (Optional[Any]): Order for the test case.
+        selected_variables (Optional[Any]): Selected variables for the test case.
+        distinct (bool): Whether to use DISTINCT in the query.
+        show_answer_difference (bool): Whether to show the difference between the answer and the reference.)
+
+    Attributes:
+        ref_query_result (Any): The reference query result.
+        field_names (Any): The field names for the test case.
+        order (Any): The order for the test case.
+        selected_variables (Any): The selected variables for the test case.
+        distinct (bool): Whether to use DISTINCT in the query.
+        show_answer_difference (bool): Whether to show the difference between the answer and the reference.
+    """
 
     def __init__(self, ref_result, 
                  args=None,
@@ -25,12 +57,14 @@ class SQLDeleteTestCase(SQLTestCase):
                  internal_config=None,
                  presenters=None,
                  ref_query_result=None,
-                 field_names = None,
+                 field_names=None,
                  order=None,
                  selected_variables=None,
                  distinct=True,
                  show_answer_difference=True):
-        
+        """
+        Initializes a new instance of the SQLDeleteTestCase class.
+        """
         self.ref_query_result = ref_query_result
         self.field_names = field_names
         self.order = order
@@ -43,6 +77,16 @@ class SQLDeleteTestCase(SQLTestCase):
         )
 
     def feedback(self, res, descriptions):
+        """
+        Provides feedback for the test case.
+
+        Args:
+            res (Any): The result of the test case.
+            descriptions (Any): Descriptions for the test case.
+
+        Yields:
+            Tuple[str, dict]: A tuple containing the feedback message and additional information.
+        """
         yield from super().feedback(res, descriptions)
         try:
             names = []
@@ -68,7 +112,20 @@ class SQLDeleteTestCase(SQLTestCase):
             pass
     
     def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
-        try :
+        """
+        Wraps the test case with the student's answer.
+
+        Args:
+            ref_answer (Any): The reference answer.
+            student_answer (Any): The student's answer.
+            lang (str): The language of the test case.
+            msgs (Any): Messages for the test case.
+            test_query (Any): The test query.
+
+        Returns:
+            Tuple[Any, Any, str]: A tuple containing the result, reference, and an empty string.
+        """
+        try:
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
         except FileNotFoundError as e:
