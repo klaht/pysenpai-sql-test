@@ -142,7 +142,7 @@ def gen_program_vector(ref_query):
     """
     test_class = None
 
-    # hash map?
+    # Set the test class based on the assignment type
     match assignmentType.upper():
         case "SELECT":
            test_class = SQLSelectTestCase 
@@ -167,7 +167,10 @@ def gen_program_vector(ref_query):
 
 if __name__ == "__main__":
 
+     # Parse command line arguments to get the answer and reference file names
     args, language = core.parse_command()
+
+     # Open the answer and reference files, create a query from the reference file
     try: 
         answerFile = args[0]; referenceFile = args[1]
 
