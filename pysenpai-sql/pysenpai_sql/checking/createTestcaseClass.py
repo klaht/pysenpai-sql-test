@@ -3,12 +3,14 @@ import io
 import sqlite3
 import sys
 from pysenpai.messages import Codes
+import re
 
 import pysenpai.callbacks.defaults as defaults
 import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.testcase import SQLTestCase
+from pysenpai_sql.checking.schema_tests import *
 
 class SQLCreateTestCase(SQLTestCase):
     """
@@ -90,6 +92,8 @@ class SQLCreateTestCase(SQLTestCase):
         self.exNumber = exNumber
         self.correct_table_names = correct_table_names
         self.req_column_names = req_column_names
+        self.ans_column_data = None
+        self.ref_column_data = None
         
     def feedback(self, res, descriptions):
         """
@@ -102,28 +106,18 @@ class SQLCreateTestCase(SQLTestCase):
         Yields:
             Tuple: A tuple containing the feedback message and additional information.
         """
-        if self.order != None:
-            incorrect_order = assertOrder(res, self.order)
-            if incorrect_order:
-                yield incorrect_order, None
 
-        if self.selected_variables != None:
-            incorrect_variables = assertSelectedVariables(descriptions, self.selected_variables)
-            if incorrect_variables:
-                yield incorrect_variables, None
-            
-        if self.distinct != None:
-            incorrect_distinct = assertDistinct(res)
-            if incorrect_distinct:
-                yield incorrect_distinct, None
+        """
+        Incorrect column name incorrect_column_name
+        Incorrect table name incorrect_table_name
+        Incorrect data type
+        Incorrect primary key
+        Incorrect NOT NULL
+        """
 
-        if self.show_answer_difference:
-            names = []
-            for result in res:
-                names.append(result[0])
-            correctAmount, output = evaluateAmount(names, self.ref_query_result, self.exNumber)
-            if correctAmount:
-                yield correctAmount, output
+        incorrect_primary_key = check_primary_key(self.ans_column_data, self.ref_column_data)
+        if incorrect_primary_key:
+            yield incorrect_primary_key, None
 
         if self.correct_table_names != None:    
             tableNameCheck = checkTableName(correct_table_names=self.correct_table_names)
@@ -179,8 +173,7 @@ class SQLCreateTestCase(SQLTestCase):
         
             #cursor.execute(test_query)
             
-            res = cursor.fetchall()
-            answer_columns = get_column_data(cursor, sql_script)
+            res = get_column_data(cursor, sql_script)
 
             #cursor.execute("DROP table testtable")
 
@@ -199,13 +192,12 @@ class SQLCreateTestCase(SQLTestCase):
        
             cursor2.executescript(ref_answer)
 
-            ref_columns = get_column_data(cursor2, ref_answer)
+            ref = get_column_data(cursor2, ref_answer)
 
             # Insert to created table
             #cursor2.executescript(insert_query)
 
             #cursor2.execute(test_query)
-            ref = cursor2.fetchall()
         
             conn2.commit()
             cursor2.close()
@@ -215,40 +207,20 @@ class SQLCreateTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            return "file_open_error"
-            
-        # Run student answer
-        """
-        try: 
-            conn = sqlite3.connect("mydatabase1.db")
-            cursor = conn.cursor()
-            primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
+        #Set attributes for later comparison in feedback
+        self.ans_column_data = res
+        self.ref_column_data = ref
 
-            cursor.executescript(sql_script)
-            conn.commit()
-            # Insert to created table
-            cursor.executescript(insert_query)
+        #Add table name to the comparison list
+        res.insert(0, get_table_name(sql_script))
+        ref.insert(0, get_table_name(ref_answer))
 
-            cursor.execute(primary_key_test)            
+        output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
+        #TODO Different validator for CREATE queries
+        return res, ref, ""
 
-            conn.commit()
-            cursor.close()
-            conn.close()
-            
-        except sqlite3.IntegrityError as e:
-            return ref, res, ""
-        """
-
-        if compare_column_data(ref_columns, answer_columns):
-            return res, ref, ""
-        
-        #TODO Add tests for primary key
-        #output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
-        return 0, 0, ""
+def get_table_name(query):
+    return re.search("CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*\(", query, flags=re.IGNORECASE).group(2)
 
 def get_column_data(cursor, query):
     table_name = query.split()[2]
