@@ -76,7 +76,7 @@ class SQLDeleteTestCase(SQLTestCase):
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
-    def feedback(self, res, descriptions):
+    def feedback(self, res, descriptions, ref):
         """
         Provides feedback for the test case.
 
@@ -87,6 +87,7 @@ class SQLDeleteTestCase(SQLTestCase):
         Yields:
             Tuple[str, dict]: A tuple containing the feedback message and additional information.
         """
+        
         yield from super().feedback(res, descriptions)
         try:
             names = []
@@ -111,7 +112,8 @@ class SQLDeleteTestCase(SQLTestCase):
         except AssertionError:
             pass
     
-    def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
+    
+    def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Wraps the test case with the student's answer.
 
@@ -120,7 +122,6 @@ class SQLDeleteTestCase(SQLTestCase):
             student_answer (Any): The student's answer.
             lang (str): The language of the test case.
             msgs (Any): Messages for the test case.
-            test_query (Any): The test query.
 
         Returns:
             Tuple[Any, Any, str]: A tuple containing the result, reference, and an empty string.
@@ -128,6 +129,9 @@ class SQLDeleteTestCase(SQLTestCase):
         try:
             sql_file = open(student_answer, 'r')
             sql_script = sql_file.read()
+            if not sql_script:
+                output(msgs.get_msg("EmptyAnswer", lang), Codes.ERROR)
+                return 0, 0, None
         except FileNotFoundError as e:
             print("File not found")
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
@@ -141,7 +145,6 @@ class SQLDeleteTestCase(SQLTestCase):
             cursor.execute(sql_script)
 
             res = get_table_contents(cursor, sql_script)
-
             conn.commit() 
         
         except sqlite3.Error as e:
@@ -155,7 +158,7 @@ class SQLDeleteTestCase(SQLTestCase):
             cursor2.execute(ref_answer)
 
             ref = get_table_contents(cursor2, ref_answer)
-
+            
             conn2.commit()
         
         except sqlite3.Error as e:

@@ -1,1 +1,1 @@
-DELETE FROM Artist WHERE artistId NOT IN (SELECT artistId FROM ArtWork);
+DELETE FROM Artist WHERE artistId;

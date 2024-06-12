@@ -125,7 +125,7 @@ class SQLCreateTestCase(SQLTestCase):
             if correctAmount:
                 yield correctAmount, output
 
-        if self.correct_table_names != None:    
+        if self.correct_table_names != None:          
             tableNameCheck = checkTableName(correct_table_names=self.correct_table_names)
             if tableNameCheck != None:
                 yield tableNameCheck, None

@@ -64,10 +64,12 @@ class SQLSelectTestCase(SQLTestCase):
         Yields:
             Tuple: A tuple containing the feedback message and additional information.
         """
+    
         if self.order is not None:
             incorrect_order = assertOrder(res, self.order)
             if incorrect_order:
                 yield incorrect_order, None
+        
 
         if self.selected_variables is not None:
             incorrect_variables = assertSelectedVariables(descriptions, self.selected_variables)

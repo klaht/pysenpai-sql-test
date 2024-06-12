@@ -160,6 +160,11 @@ program:
   incorrect_column_name: |- 
     Sarakkeen nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  incorrect_column_order: |-
+    Sarakkeiden järjestys on väärä.
+    Varmista, että käytät tehtävänannossa määriteltyä järjestystä.
+  incorrect_selected_column: |-
+    Kysely käytti vääriä sarakkeita.
   TooGeneralizedIdentifier: |-
     Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
   IncorrectUpdatedValues: |-
@@ -192,6 +197,12 @@ program:
     {output} 
   DatabaseCreationError : |-
     Tietokanta virhe tietokannan luonnissa.
+  EmptyAnswer: |-
+    Vastaus on tyhjä.
+  TooLittleDeleted: |-
+    Kysely poisti liian vähän rivejä.
+  TooManyDeleted: |-
+    Kysely poisti liian monta riviä.
   FileOpenError: |- 
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
@@ -203,6 +214,9 @@ program:
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
+  incorrect_return_order: |-
+    Palautettujen arvojen järjestys on väärä.
+    Varmista, että palautat arvot oikeassa järjestyksessä.
   AdditionalInfo: |- 
     Tarkistin antoi myös seuraavat lisätiedot:
   AdditionalTests: |- 

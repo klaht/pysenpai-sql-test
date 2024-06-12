@@ -80,6 +80,9 @@ def evaluateAmount(res, correct, exNumber):
 
 def checkTableName(correct_table_names = ['']):
     '''Checks if the table name is correct'''
+    
+    #TODO:
+    #FIX THIS, NO HARD CODING
 
     default_table_names = [('Artist',), ('Location',), ('Collection',), ('ArtWork',), ('Exhibition',), ('On_Exhibition',)]
 
