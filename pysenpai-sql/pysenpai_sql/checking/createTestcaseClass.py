@@ -107,27 +107,29 @@ class SQLCreateTestCase(SQLTestCase):
             Tuple: A tuple containing the feedback message and additional information.
         """
 
-        """
-        Incorrect column name incorrect_column_name
-        Incorrect table name incorrect_table_name
-        Incorrect data type
-        Incorrect primary key
-        Incorrect NOT NULL
-        """
+        #Retrieve and remove table name from end of lists
+        ans_table_name = self.ans_column_data.pop()
+        ref_table_name = self.ref_column_data.pop()
 
-        incorrect_primary_key = check_primary_key(self.ans_column_data, self.ref_column_data)
-        if incorrect_primary_key:
-            yield incorrect_primary_key, None
+        primary_key_check = check_primary_key(self.ans_column_data, self.ref_column_data)
+        if primary_key_check:
+            yield primary_key_check, None
 
-        if self.correct_table_names != None:    
-            tableNameCheck = checkTableName(correct_table_names=self.correct_table_names)
-            if tableNameCheck != None:
-                yield tableNameCheck, None
+        table_name_check = check_table_names(ans_table_name, ref_table_name)
+        if table_name_check != None:
+            yield table_name_check, None
 
-        if self.req_column_names != None and tableNameCheck == None:
-            checkTableColumnNames = checkTableColumns(req_column_names=self.req_column_names)
-            if checkTableColumnNames != None:
-                yield checkTableColumnNames, None
+        data_type_check = check_column_data_types(self.ans_column_data, self.ref_column_data)
+        if data_type_check != None:
+            yield data_type_check, None
+
+        column_name_check = check_column_names(self.ans_column_data, self.ref_column_data)
+        if column_name_check != None:
+            yield column_name_check, None
+
+        not_null_check = check_null_values_allowed(self.ans_column_data, self.ref_column_data)
+        if not_null_check != None:
+            yield not_null_check, None
 
         return super().feedback(res, descriptions)
         
@@ -166,16 +168,7 @@ class SQLCreateTestCase(SQLTestCase):
                 sql_script = sql_script.replace(';', '')
             
             cursor.executescript(sql_script)
-            
-            # Insert to created table
-            #cursor.executescript(insert_query)
-            # column_names = [column[0] for column in cursor.description]
-        
-            #cursor.execute(test_query)
-            
             res = get_column_data(cursor, sql_script)
-
-            #cursor.execute("DROP table testtable")
 
             conn.commit()
             cursor.close()
@@ -191,14 +184,8 @@ class SQLCreateTestCase(SQLTestCase):
             cursor2 = conn2.cursor()
        
             cursor2.executescript(ref_answer)
-
             ref = get_column_data(cursor2, ref_answer)
 
-            # Insert to created table
-            #cursor2.executescript(insert_query)
-
-            #cursor2.execute(test_query)
-        
             conn2.commit()
             cursor2.close()
             conn2.close()
@@ -207,15 +194,14 @@ class SQLCreateTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
+        #Add table name to the comparison list
+        res.append(get_table_name(sql_script))
+        ref.append(get_table_name(ref_answer))
+
         #Set attributes for later comparison in feedback
         self.ans_column_data = res
         self.ref_column_data = ref
 
-        #Add table name to the comparison list
-        res.insert(0, get_table_name(sql_script))
-        ref.insert(0, get_table_name(ref_answer))
-
-        output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
         #TODO Different validator for CREATE queries
         return res, ref, ""
 
