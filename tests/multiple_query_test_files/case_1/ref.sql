@@ -4,7 +4,7 @@ CREATE TABLE Department (
     leaderId int NOT NULL,
     PRIMARY KEY (departmentId),
     FOREIGN KEY (leaderId) REFERENCES Employee(employeeId)
-)
+);
 
 CREATE TABLE Employee (
     employeeId int NOT NULL,
@@ -12,4 +12,4 @@ CREATE TABLE Employee (
     departmentId int NOT NULL,
     PRIMARY KEY (employeeId),
     FOREIGN KEY (departmentId) REFERENCES Department(departmentId)
-)
+);
