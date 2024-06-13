@@ -173,6 +173,11 @@ program:
   incorrect_column_name: |- 
     Column name is incorrect.
     Make sure you use the name specified in the assignment.
+  incorrect_colunm_order: |- 
+    Column order is incorrect.
+    Make sure you use the order specified in the assignment.
+  incorrect_selected_column: |-
+    The query used incorrect columns.
   incorrect_table_name: |- 
     Table name is incorrect.
     Make sure you use the name specified in the assignment.

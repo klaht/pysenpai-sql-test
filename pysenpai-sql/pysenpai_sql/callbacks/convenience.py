@@ -5,11 +5,11 @@ def parsed_list_sql_validator(ref, res, out):
     to the default validator (which compares res). Comparison is done item to item.
     """
 
-    if (len(out) != len(res)):
+    if (len(ref) != len(res)):
         assert False
     try:
         for i, v in enumerate(res):
-            assert v == out[i], "fail_output_result"
+            assert v == ref[i], "fail_output_result"
     except IndexError:
         raise AssertionError
 

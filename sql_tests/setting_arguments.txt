@@ -1,0 +1,2 @@
+exNumber = 0
+show_answer_difference

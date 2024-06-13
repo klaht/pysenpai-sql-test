@@ -98,7 +98,6 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
     # One time preparations
     save = sys.stdout
     msgs = load_messages(lang, category, module=msg_module)
-    msgs.update(custom_msgs)
     
     # call test and input producing functions 
 
@@ -140,15 +139,9 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             )
     
         match test_category:
-            case "SELECT":
+            
+            case "INSERT" | "UPDATE" | "DELETE" | "SELECT":
                 ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs)
-
-                if (ref == 0 or res == 0):
-                    output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
-                    return 0
-
-            case "INSERT" | "UPDATE" | "DELETE":
-                ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs, test_query=test_query)
                 if (ref == 0 or res == 0):
                     output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
                     return 0
@@ -170,7 +163,6 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
         
         # Validate results
         try: 
-            
             test.validate_result(res, ref, None)           
             output(msgs.get_msg("CorrectResult", lang), Codes.CORRECT)
         except AssertionError as e:
