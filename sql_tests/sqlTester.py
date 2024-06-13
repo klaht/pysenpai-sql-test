@@ -1,6 +1,7 @@
 import pysenpai.core as core
 import re
 from pysenpai.messages import Codes
+import os
 
 from pysenpai_sql.checking.testcase import run_sql_test_cases
 from pysenpai_sql.callbacks.convenience import parsed_list_sql_validator, duplicate_validator
@@ -19,12 +20,6 @@ from pysenpai_sql.checking.SQLDeleteTestCase import SQLDeleteTestCase
 from pysenpai_sql.checking.SQLAlterTestCase import SQLAlterTestCase
 
 import traceback
-
-# TODO 
-#   Set messages like is done in seperate main files
-#   Clean previous main files
-#   Add support for database seeding files 
-#   Insert queries and test queries? 
 
 msgs = core.TranslationDict()
 float_pat = re.compile("(-?[0-9]+\\.[0-9]+)")
@@ -144,7 +139,7 @@ msgs.set_msg("EmptyAnswer", "fi", dict(
     triggers=["student_sql_query"]
 ))
 # HERE ONLY THE MESSAGES USED IN THIS FILE
-# --> could also be added in the messages, no need if only one
+
 def gen_program_vector(ref_query):
 
     """
@@ -158,33 +153,17 @@ def gen_program_vector(ref_query):
         list: A list of test cases. Including the reference query and the validator.
     """
     test_class = None # Test class based on assignment type
-    distinct = False # Toggle whether the query should return distinct values or not
-    show_answer_difference = False # Toggle whether the query should show the difference between the reference and student query answers
-    order = None # Toggle whether the query should be ordered in ascending or descending order: None = no order, "ASC" = ascending, "DESC" = descending
-    exNumber = 0 # Exercise number used for exercise specific feedback
-
+   
     # hash map?
     # Set the test class based on the assignment type
     match assignmentType.upper():
         case "SELECT":
-            # Check if reference query contains DISTINCT keyword
-            if ref_query.find("DISTINCT") != -1:
-                distinct = True
-            
-            # Check if reference query contains ORDER BY keyword and set the order accordingly    
-            if ref_query.find("ORDER BY") != -1:
-                if ref_query.find("ASC") != -1:
-                    order = "ASC"
-                    
-                if ref_query.find("DESC") != -1:
-                    order = "DESC"
-            
+           
             # Set the test class by using prefered settings
-            test_class = SQLSelectTestCase(ref_result=ref_query,
+            test_class = SQLSelectTestCase(
+            ref_result=ref_query,
             validator=parsed_list_sql_validator,
-            order=order,
-            distinct=distinct,
-            show_answer_difference=True)
+            ref_query=ref_query,)
             
         case "INSERT":
            test_class = SQLInsertTestCase(ref_result=ref_query,
@@ -228,10 +207,10 @@ if __name__ == "__main__":
     isAnswerCorrect = False
     score = 0
 
-    test_query = ""
+    #test_query = ""
 
     # INSERT query to test CREATE
-    insert_query = ""
+    #insert_query = ""
 
     init_db()  # reset database
 
@@ -241,20 +220,23 @@ if __name__ == "__main__":
 
     files, lang = core.parse_command()
 
-    st_mname = files[0]
+    #st_mname = files[0]
 
-    st_module = load_sql_module(st_mname, lang, inputs=["0"])
+    st_module = load_sql_module(answerFile, lang, inputs=["0"])
 
-    # if fails, don't run tests
-
-    if st_module:
-        score += run_sql_test_cases("program",
-                                    assignmentType.upper(),
-                                    st_mname,
-                                    lambda: gen_program_vector(reference_query), #needs to be callable
-                                    lang, custom_msgs=msgs,
-                                    insert_query=insert_query,
-                                    test_query=test_query)
-  
+    # If the answer file exists and is not empty, run the tests
+    if os.path.exists(answerFile) and os.stat(answerFile).st_size > 0:
+        if st_module: # if fails to load module, don't run tests
+            score += run_sql_test_cases("program",
+                                        assignmentType.upper(),
+                                        answerFile,
+                                        lambda: gen_program_vector(reference_query), #needs to be callable
+                                        lang, custom_msgs=msgs
+                                        #insert_query=insert_query,
+                                        #test_query=test_query
+                                        )
+    else:
+        output(msgs.get_msg("EmptyAnswer", lang), Codes.INCORRECT)
+    
     isAnswerCorrect = bool(score)
     core.set_result(isAnswerCorrect, score)

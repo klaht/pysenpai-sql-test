@@ -18,12 +18,18 @@ class SQLSelectTestCase(SQLTestCase):
         sqltestcase (SQLTestCase): The SQLTestCase object.
 
     """
+    distinct = False # Toggle whether the query should return distinct values or not
+    show_answer_difference = False # Toggle whether the query should show the difference between the reference and student query answers
+    order = None # Toggle whether the query should be ordered in ascending or descending order: None = no order, "ASC" = ascending, "DESC" = descending
+    exNumber = 0 # Exercise number used for exercise specific feedback
+    selected_variables = None # The expected selected variables in the query result
+        
 
     def __init__(self, ref_result, args=None, inputs=None, data=None, weight=1, tag="", validator=convenience.parsed_result_validator,
-                 output_validator=None, eref_results=None, internal_config=None, presenters=None, ref_query_result=None,
-                 order=None, selected_variables=None, distinct=True, show_answer_difference=True, exNumber=0):
+                 output_validator=None, eref_results=None, internal_config=None, presenters=None, ref_query=None):
         """
         Initializes a new instance of the SQLSelectTestCase class.
+        Parameters define the extra feedback tests to be run.
 
         Args:
             ref_result (Any): The reference result.
@@ -44,43 +50,75 @@ class SQLSelectTestCase(SQLTestCase):
             show_answer_difference (bool): Whether to show the difference between the answer and the reference result. Default is True.
             exNumber (int): The exercise number. Default is 0.
         """
-        self.ref_query_result = ref_query_result
-        self.order = order
-        self.selected_variables = selected_variables
-        self.distinct = distinct
-        self.show_answer_difference = show_answer_difference
-        self.exNumber = exNumber
+        self.distinct = False # Toggle whether the query should return distinct values or not
+        self.show_answer_difference = False # Toggle whether the query should show the difference between the reference and student query answers
+        self.order = None # Toggle whether the query should be ordered in ascending or descending order: None = no order, "ASC" = ascending, "DESC" = descending
+        self.exNumber = 0 # Exercise number used for exercise specific feedback
+        
+        # Check if the setting_arguments.txt file exists and read the settings from it
+        settings = []
+        for setting in open("setting_arguments.txt", "r").readlines():
+            settings.append(setting)
+        
+        # Check if show_answer_difference is in the settings and set the variable accordingly
+        if "show_answer_difference" in settings:
+            self.show_answer_difference = True
+        
+        # Check if exNumber is in the settings and set the variable accordingly
+        for setting in settings:
+            if "exNumber" in setting:
+                self.exNumber = setting.split("=")[1].strip()
+                break  # exit the loop once the setting is found
+            
+        
+         # Check if reference query contains DISTINCT keyword
+        if ref_query.find("DISTINCT") != -1:
+            self.distinct = True
+            
+            # Check if reference query contains ORDER BY keyword and set the order accordingly    
+        if ref_query.find("ORDER BY") != -1:
+            if ref_query.find("ASC") != -1:
+                self.order = "ASC"
+                    
+            if ref_query.find("DESC") != -1:
+                self.order = "DESC"
 
         super().__init__(ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters)
 
     def feedback(self, res, descriptions):
         """
         Provides feedback for the test case.
+        Different feedback tests can be toggled on or off, or they can have different values.
+        Some test are very test specific and some are more general.
 
         Args:
+            (self: containing the information on which tests to run)
             res (Any): The query result.
             descriptions (Any): The descriptions.
 
         Yields:
             Tuple: A tuple containing the feedback message and additional information.
         """
-    
+
+        # Check for incorrect order
         if self.order is not None:
             incorrect_order = assertOrder(res, self.order)
             if incorrect_order:
                 yield incorrect_order, None
         
-
+        # Check for incorrect variables
         if self.selected_variables is not None:
             incorrect_variables = assertSelectedVariables(descriptions, self.selected_variables)
             if incorrect_variables:
                 yield incorrect_variables, None
 
+        # Check whether the query result is distinct
         if self.distinct is not None:
             incorrect_distinct = assertDistinct(res)
             if incorrect_distinct:
                 yield incorrect_distinct, None
 
+        # Show the difference between the answer and the reference result
         if self.show_answer_difference:
             names = []
             for result in res:
