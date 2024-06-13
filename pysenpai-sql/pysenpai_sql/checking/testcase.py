@@ -140,7 +140,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             )
     
         match test_category:
-            case "SELECT":
+            case "SELECT" | "MULTI":
                 ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs)
 
                 if (ref == 0 or res == 0):
