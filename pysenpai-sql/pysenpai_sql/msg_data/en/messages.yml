@@ -197,6 +197,10 @@ program:
     Query returned too few values.
     Missing values.
     {output}
+  tooManyDeleted: |-
+    Too many records were deleted.
+  tooLittleDeleted: |-
+    Too few records were deleted.
   DatabaseError: |-
     A database error occurred while calling the function.
     {emsg}

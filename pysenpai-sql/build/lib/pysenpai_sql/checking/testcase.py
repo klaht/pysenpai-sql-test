@@ -177,7 +177,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
                 
             #Extra feedback
-            for msg_key, test_output in test.feedback(res, column_names):
+            for msg_key, test_output in test.feedback(res, ref, column_names):
                 if test_output == None:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO)
                 else:

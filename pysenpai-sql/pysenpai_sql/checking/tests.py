@@ -135,4 +135,15 @@ def compare_column_data(res, correct):
     
     return None
 
+def check_deleted_row_amount(res, ref):
+    '''
+    Check if the amount of rows in the answer is correct
+    '''
+    if len(res) > len(ref):
+        return "tooLittleDeleted"
+    elif len(res) < len(ref):
+        return "TooManyDeleted"
+
+    return None
+
     

@@ -12,6 +12,7 @@ from pysenpai.output import output
 from pysenpai.exceptions import OutputParseError
 
 class SQLDeleteTestCase(SQLTestCase):
+
     """
     A test case class for testing SQL DELETE statements.
 
@@ -44,6 +45,13 @@ class SQLDeleteTestCase(SQLTestCase):
         distinct (bool): Whether to use DISTINCT in the query.
         show_answer_difference (bool): Whether to show the difference between the answer and the reference.
     """
+    
+    distinct = False # Toggle whether the query should return distinct values or not
+    show_answer_difference = False # Toggle whether the query should show the difference between the reference and student query answers
+    order = None # Toggle whether the query should be ordered in ascending or descending order: None = no order, "ASC" = ascending, "DESC" = descending
+    exNumber = 0 # Exercise number used for exercise specific feedback
+    selected_variables = None # The expected selected variables in the query result
+     
 
     def __init__(self, ref_result, 
                  args=None,
@@ -72,11 +80,20 @@ class SQLDeleteTestCase(SQLTestCase):
         self.distinct = distinct
         self.show_answer_difference = show_answer_difference
         
+        # Check if the setting_arguments.txt file exists and read the settings from it
+        settings = []
+        for setting in open("setting_arguments.txt", "r").readlines():
+            settings.append(setting)
+       
+         # Check if show_answer_difference is in the settings and set the variable accordingly
+        if "show_answer_difference" in settings:
+            self.show_answer_difference = True
+        
         super().__init__(
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
-    def feedback(self, res, descriptions, ref):
+    def feedback(self, res, ref, column_names):
         """
         Provides feedback for the test case.
 
@@ -88,30 +105,15 @@ class SQLDeleteTestCase(SQLTestCase):
             Tuple[str, dict]: A tuple containing the feedback message and additional information.
         """
         
-        yield from super().feedback(res, descriptions)
-        try:
-            names = []
-            for result in res:
-                names.append(result[0])
-            if names != sorted(names):
-                yield ("incorrect_return_order", {})
-
-            correct = ["name", "yearborn", "birthplace"]
-            # convert to lowercase
-            descriptions = [item.lower() for item in descriptions]
-
-            incorrect_variables = descriptions != correct
-            incorrect_order = (sorted(descriptions) == sorted(correct)
-                               and incorrect_variables)
-
-            if incorrect_order:
-                yield ("incorrect_column_order", {})
-            elif incorrect_variables:
-                yield ("incorrect_selected_columns", {})
-
-        except AssertionError:
-            pass
-    
+        # Check wheter the query deleted right amount of rows
+        row_amount = check_deleted_row_amount(res, ref)
+        if row_amount:
+            yield row_amount, None
+        
+        
+        
+        return super().feedback(res, ref) 
+        
     
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
@@ -165,7 +167,7 @@ class SQLDeleteTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
 
-        return res, ref, ""
+        return ref, res, ""
 
 
 def get_table_contents(cursor: sqlite3.Cursor, query: str):

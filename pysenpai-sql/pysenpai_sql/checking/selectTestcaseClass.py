@@ -50,10 +50,6 @@ class SQLSelectTestCase(SQLTestCase):
             show_answer_difference (bool): Whether to show the difference between the answer and the reference result. Default is True.
             exNumber (int): The exercise number. Default is 0.
         """
-        self.distinct = False # Toggle whether the query should return distinct values or not
-        self.show_answer_difference = False # Toggle whether the query should show the difference between the reference and student query answers
-        self.order = None # Toggle whether the query should be ordered in ascending or descending order: None = no order, "ASC" = ascending, "DESC" = descending
-        self.exNumber = 0 # Exercise number used for exercise specific feedback
         
         # Check if the setting_arguments.txt file exists and read the settings from it
         settings = []
@@ -86,6 +82,7 @@ class SQLSelectTestCase(SQLTestCase):
         super().__init__(ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters)
 
     def feedback(self, res, descriptions):
+        
         """
         Provides feedback for the test case.
         Different feedback tests can be toggled on or off, or they can have different values.

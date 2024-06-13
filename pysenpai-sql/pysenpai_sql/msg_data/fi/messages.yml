@@ -193,8 +193,13 @@ program:
     {output}
   too_little_return_values0: |- 
     Kysely palautti liian vähän arvoja.
-    Tuuttuvat arvot:
-    {output} 
+    Puuttuvat arvot:
+    {output}
+  tooLittleDeleted: |- 
+    Kysely poisti liian vähän rivejä.
+  tooManyDeleted: |- 
+    kyely poisti liian monta riviä.
+
   DatabaseCreationError : |-
     Tietokanta virhe tietokannan luonnissa.
   EmptyAnswer: |-
