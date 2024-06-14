@@ -31,4 +31,4 @@ jobs:
     - name: Test with pytest
       run: |
         cd sql_tests
-        python3 -m pytest
+        python -m pytest
