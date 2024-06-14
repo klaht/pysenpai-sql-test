@@ -5,6 +5,8 @@ def parsed_list_sql_validator(out, res, ref):
     to the default validator (which compares res). Comparison is done item to item.
     """
 
+    raise Exception
+
     if (len(res) != len(ref)):
         assert False
     try:
