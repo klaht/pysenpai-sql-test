@@ -207,6 +207,8 @@ program:
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
+  incorrect_selected_columns: |-
+    Kysely käytti vääriä sarakkeita.
   DatabaseError: |- 
     Tietokanta virhe.
     {emsg}

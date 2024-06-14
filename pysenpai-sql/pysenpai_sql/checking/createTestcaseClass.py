@@ -95,7 +95,7 @@ class SQLCreateTestCase(SQLTestCase):
         self.ans_column_data = None
         self.ref_column_data = None
         
-    def feedback(self, res, descriptions):
+    def feedback(self, res, descriptions, ref):
         """
         Provides feedback for the test case.
 

@@ -205,6 +205,8 @@ program:
   FileOpenError: |-
       File open failed
       {emgs}
+  incorrect_selected_columns: |-
+    The query used incorrect columns.
   AdditionalInfo: |-
     The checker gave the following as additional information asdasdads:
   AdditionalTests: |-

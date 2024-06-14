@@ -1,1 +1,1 @@
-DELETE FROM Artist WHERE artistId;
+DELETE FROM Artist;
