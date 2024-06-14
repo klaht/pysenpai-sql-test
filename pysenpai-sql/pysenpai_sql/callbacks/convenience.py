@@ -8,7 +8,7 @@ def parsed_list_sql_validator(out, res, ref):
     if (len(res) != len(ref)):
         assert False
     try:
-        for i, v in enumerate(ref):
+        for i, v in enumerate(res):
             assert v == ref[i], "fail_output_result"
     except IndexError:
         raise AssertionError

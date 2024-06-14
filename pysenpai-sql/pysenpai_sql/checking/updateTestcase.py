@@ -108,7 +108,7 @@ class SQLUpdateTestCase(SQLTestCase):
         
         return super().feedback(res, descriptions)  
 
-    def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
+    def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Runs the student and reference queries and returns the answers.
 

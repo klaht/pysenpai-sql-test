@@ -147,7 +147,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                     return 0
 
             case "CREATE" | "ALTER":
-                ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs, test_query=test_query, insert_query=insert_query)
+                ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs)
                 if (ref == 0 or res == 0):
                     output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
                     return 0
