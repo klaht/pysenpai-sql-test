@@ -185,11 +185,8 @@ def gen_program_vector(ref_query):
         case "MULTI":
             test_class = SQLMultipleQueryTestCase(ref_result=ref_query,
             validator=parsed_list_sql_validator)
-    v = []
-    for i in range(1):
-        v.append(test_class)
-
-    return v
+    
+    return [test_class]
 
 if __name__ == "__main__":
 
