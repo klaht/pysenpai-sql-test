@@ -18,6 +18,7 @@ from pysenpai_sql.checking.insertTestCase import SQLInsertTestCase
 from pysenpai_sql.checking.updateTestcase import SQLUpdateTestCase 
 from pysenpai_sql.checking.SQLDeleteTestCase import SQLDeleteTestCase
 from pysenpai_sql.checking.SQLAlterTestCase import SQLAlterTestCase
+from pysenpai_sql.checking.SQLMultipleQueryTestCase import SQLMultipleQueryTestCase
 
 import traceback
 
@@ -181,6 +182,9 @@ def gen_program_vector(ref_query):
         case "ALTER":
             test_class = SQLAlterTestCase(ref_result=ref_query,
             validator=parsed_list_sql_validator)
+        case "MULTI":
+            test_class = SQLMultipleQueryTestCase(ref_result=ref_query,
+            validator=parsed_list_sql_validator)
     v = []
     for i in range(1):
         v.append(test_class)
@@ -196,8 +200,14 @@ if __name__ == "__main__":
     try: 
         answerFile = args[0]; referenceFile = args[1]
 
-        reference_query = open(referenceFile).readline()
-        assignmentType = reference_query.split()[0]
+        reference_query = open(referenceFile).read()
+        reference_query = str.replace(reference_query, "\n", "")
+        #Find individual queries. If length of second query is greater than 0 assignment is "MULTI"
+        queries = reference_query.split(";")
+        if len(queries) >= 2 and len(queries[1]) > 0:
+            assignmentType = "MULTI"
+        else:
+            assignmentType = reference_query.split()[0]
 
     except Exception as e:
         print(e)

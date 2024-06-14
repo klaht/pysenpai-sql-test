@@ -21,6 +21,9 @@ def test_alter():
 def test_insert():
     run_tests_from_directory("../tests/insert_test_files")
 
+def test_multiline():
+    run_tests_from_directory("../tests/multiple_query_test_files")
+
 def run_tests_from_directory(dir):
     for test_case in open_root_directory(dir):
         test_file_path, ref_file_path, should_pass = test_case
