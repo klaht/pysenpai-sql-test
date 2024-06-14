@@ -1,0 +1,1 @@
+ALTER TABLE Exhibition ADD TestIdWRONG;

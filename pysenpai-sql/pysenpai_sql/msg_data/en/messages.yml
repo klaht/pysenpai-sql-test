@@ -76,9 +76,6 @@ import:
     {emsg}
   DatabaseCreationError : |-
     A database creation error occurred while creating the database.
-  FileOpenError: |-
-    File open failed
-    {emgs}
   BadModuleName: |-
     The filename contained unsupported characters.
     Only letters of the English alphabet, numbers and underscore are allowed.
@@ -162,6 +159,44 @@ lint:
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
+  TooGeneralizedIdentifier: |- 
+      The query used too generic identifiers. Use more specific identifiers.
+  IncorrectUpdatedValues: |-
+    The query updated the following fields incorrectly:
+    {output}
+  UnidentifiableRecord: |-
+    Could not identify the inserted record.
+  IncorrectInsertError: |-
+    Inserted values were incorrect.
+  MissingInsertedValueError: |-
+    Too few values were inserted.
+  incorrect_column_name: |- 
+    Column name is incorrect.
+    Make sure you use the name specified in the assignment.
+  incorrect_colunm_order: |- 
+    Column order is incorrect.
+    Make sure you use the order specified in the assignment.
+  incorrect_selected_column: |-
+    The query used incorrect columns.
+  incorrect_table_name: |- 
+    Table name is incorrect.
+    Make sure you use the name specified in the assignment.
+  missing_primarykey: |- 
+    Table is missing a primary key.
+    Make sure you define a primary key for the table.
+  too_many_return_values2: |- 
+    Query returned too many values.
+    Make sure you only select PAINTINGS.
+    Excessive values.
+    {output}
+  too_many_return_values0: |-
+    Query returned too many values.
+    Excessive values.
+    {output}
+  too_litte_return_values0: |- 
+    Query returned too few values.
+    Missing values.
+    {output}
   DatabaseError: |-
     A database error occurred while calling the function.
     {emsg}

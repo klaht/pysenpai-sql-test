@@ -157,8 +157,52 @@ lint:
     Koodisi sai liian pienet laatupisteet ({stats.global_note:.1f} / 10.0).
     Tavoite: 9+ / 10.0.
 program:
+  incorrect_column_name: |- 
+    Sarakkeen nimi on väärin.
+    Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  incorrect_column_order: |-
+    Sarakkeiden järjestys on väärä.
+    Varmista, että käytät tehtävänannossa määriteltyä järjestystä.
+  incorrect_selected_column: |-
+    Kysely käytti vääriä sarakkeita.
+  TooGeneralizedIdentifier: |-
+    Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
+  IncorrectUpdatedValues: |-
+    Kysely ei päivittänyt seuraavien kenttien arvoja oikein:
+    {output}
+  UnidentifiableRecord: |-
+    Sijoitettua tietuetta ei voitu tunnistaa.
+  IncorrectInsertError: |-
+    Taulukkoon sijoitetut arvot olivat väärin.
+  MissingInsertedValueError: |-
+    Taulukkoon sijoitettiin liian vähän arvoja.
+  incorrect_table_name: |- 
+    Taulukon nimi on väärin.
+    Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  missing_primarykey: |- 
+    Taulukosta puuttuu pääavain.
+    Lisää taulukkoon pääavain.
+  too_many_return_values2: |- 
+    Kysely palautti liian monta arvoa.
+    Varmista, että valitset vain MAALAUKSIA.
+    Ylimääräiset arvot:
+    {output}
+  too_many_return_values0: |- 
+    Kysely palautti liian monta arvoa.
+    Ylimääräiset arvot:
+    {output}
+  too_little_return_values0: |- 
+    Kysely palautti liian vähän arvoja.
+    Tuuttuvat arvot:
+    {output} 
   DatabaseCreationError : |-
     Tietokanta virhe tietokannan luonnissa.
+  EmptyAnswer: |-
+    Vastaus on tyhjä.
+  TooLittleDeleted: |-
+    Kysely poisti liian vähän rivejä.
+  TooManyDeleted: |-
+    Kysely poisti liian monta riviä.
   FileOpenError: |- 
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
@@ -170,6 +214,9 @@ program:
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
+  incorrect_return_order: |-
+    Palautettujen arvojen järjestys on väärä.
+    Varmista, että palautat arvot oikeassa järjestyksessä.
   AdditionalInfo: |- 
     Tarkistin antoi myös seuraavat lisätiedot:
   AdditionalTests: |- 
