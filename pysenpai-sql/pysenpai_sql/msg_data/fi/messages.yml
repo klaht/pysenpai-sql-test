@@ -165,6 +165,8 @@ program:
     Varmista, että käytät tehtävänannossa määriteltyä järjestystä.
   incorrect_selected_column: |-
     Kysely käytti vääriä sarakkeita.
+  incorrect_selected_rows: |-
+    WHERE lauseke koski vääriä rivejä.
   TooGeneralizedIdentifier: |-
     Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
   IncorrectUpdatedValues: |-

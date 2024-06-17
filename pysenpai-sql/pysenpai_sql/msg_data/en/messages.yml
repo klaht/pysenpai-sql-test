@@ -162,7 +162,7 @@ program:
   TooGeneralizedIdentifier: |- 
       The query used too generic identifiers. Use more specific identifiers.
   IncorrectUpdatedValues: |-
-    The query updated the following fields incorrectly:
+    The query updated one of the following fields incorrectly:
     {output}
   UnidentifiableRecord: |-
     Could not identify the inserted record.
@@ -178,6 +178,8 @@ program:
     Make sure you use the order specified in the assignment.
   incorrect_selected_column: |-
     The query used incorrect columns.
+  incorrect_selected_rows: |-
+    WHERE clause returned incorrect rows.
   incorrect_table_name: |- 
     Table name is incorrect.
     Make sure you use the name specified in the assignment.

@@ -118,7 +118,7 @@ def evaluate_updated_values(res, correct):
             if value != correct[i]:
                 return ("IncorrectUpdatedValues"), res
     except IndexError:
-        return "incorrect_selected_columns", res
+        return "incorrect_selected_rows", res
 
     return None, None
 

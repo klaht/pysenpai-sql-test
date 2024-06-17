@@ -99,12 +99,13 @@ class SQLUpdateTestCase(SQLTestCase):
             yield incorrect_variables, output
 
         # Compare primary keys to find if correct rows were selected
-        try:
-            for i, ref_id in enumerate(self.ref_affected_ids):
-                if ref_id != self.ans_affected_ids[i]:
-                    yield 'incorrect_selected_columns', None
-        except IndexError:
-            yield 'incorrect_selected_columns', None
+        if not incorrect_variables:
+            try:
+                for i, ref_id in enumerate(self.ref_affected_ids):
+                    if ref_id != self.ans_affected_ids[i]:
+                        yield 'incorrect_selected_rows', None
+            except IndexError:
+                yield 'incorrect_selected_rows', None
         
         return super().feedback(res, descriptions)  
 
