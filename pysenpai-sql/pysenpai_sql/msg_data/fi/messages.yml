@@ -175,7 +175,7 @@ program:
   UnidentifiableRecord: |-
     Sijoitettua tietuetta ei voitu tunnistaa.
   IncorrectInsertError: |-
-    Taulukkoon sijoitetut arvot olivat väärin.
+    Taulukkoon sijoitetut arvot olivat väärin. Väärä arvo oli: {output}
   MissingInsertedValueError: |-
     Taulukkoon sijoitettiin liian vähän arvoja.
   incorrect_table_name: |- 

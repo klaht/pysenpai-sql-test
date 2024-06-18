@@ -78,10 +78,9 @@ class SQLInsertTestCase(SQLTestCase):
         Yields:
             Tuple: Incorrect variables and None.
         """
-        if self.selected_variables != None:
-            incorrect_variables = evaluate_variables(descriptions, self.ref_query_result)
-            if incorrect_variables:
-                yield incorrect_variables, None
+        incorrect_variables, output = evaluate_variables(descriptions, self.ref_query_result)
+        if incorrect_variables:
+            yield incorrect_variables, output
 
         return super().feedback(res, descriptions)  
 
