@@ -53,7 +53,6 @@ def evaluate_variables(res, correct):
 
     
     return None
-    
 
 def assertDistinct(res):
     '''Checks if the list contains only distinct values'''
@@ -157,8 +156,21 @@ def check_table_schema(res, correct):
             if res[i][j] != value[j]:
                 return schema_indices[j], None
 
+def check_table_content_after_delete(res, correct):
+    if len(correct) > len(res):
+        return "too_few_deleted", None
+    elif len(correct) < len(res):
+        return "too_many_deleted", None
+    
+    for i, value in enumerate(res):
+        if value != correct[i]:
+            return "incorrect_deleted_rows", None
+
+
+
 
 feedback_functions = {
     "value": evaluate_variables,
-    "schema": check_table_schema
+    "schema": check_table_schema,
+    "delete": check_table_content_after_delete
 }

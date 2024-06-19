@@ -76,43 +76,6 @@ class SQLDeleteTestCase(SQLTestCase):
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
-    def feedback(self, res, descriptions, ref):
-        """
-        Provides feedback for the test case.
-
-        Args:
-            res (Any): The result of the test case.
-            descriptions (Any): Descriptions for the test case.
-
-        Yields:
-            Tuple[str, dict]: A tuple containing the feedback message and additional information.
-        """
-        
-        yield from super().feedback(res, descriptions)
-        try:
-            names = []
-            for result in res:
-                names.append(result[0])
-            if names != sorted(names):
-                yield ("incorrect_return_order", {})
-
-            correct = ["name", "yearborn", "birthplace"]
-            # convert to lowercase
-            descriptions = [item.lower() for item in descriptions]
-
-            incorrect_variables = descriptions != correct
-            incorrect_order = (sorted(descriptions) == sorted(correct)
-                               and incorrect_variables)
-
-            if incorrect_order:
-                yield ("incorrect_column_order", {})
-            elif incorrect_variables:
-                yield ("incorrect_selected_columns", {})
-
-        except AssertionError:
-            pass
-    
-    
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Wraps the test case with the student's answer.

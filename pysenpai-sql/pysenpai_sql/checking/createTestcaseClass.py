@@ -10,7 +10,6 @@ import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.testcase import SQLTestCase
-from pysenpai_sql.checking.schema_tests import *
 
 class SQLCreateTestCase(SQLTestCase):
     """
