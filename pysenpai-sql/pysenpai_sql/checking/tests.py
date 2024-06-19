@@ -1,5 +1,14 @@
 import sqlite3
 
+schema_indices = [
+    "incorrect_query",
+    "incorrect_column_name",
+    "incorrect_data_type",
+    "incorrect_not_null",
+    "incorrect_default_value",
+    "incorrect_primary_key",
+]
+
 def assertOrder(res, order):
     '''Checks if the list is sorted in ascending order'''
 
@@ -33,6 +42,7 @@ def assertSelectedVariables(res, correct):
 def evaluate_variables(res, correct):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
     correct = [list(row) for row in correct][0] # Arrange result to list
+    res = [list(row) for row in res][0] # Arrange result to list
 
     for i, item in enumerate(res): # Check if missing or incorrect values
 
@@ -135,6 +145,20 @@ def compare_column_data(res, correct):
     
     return None
 
+def check_table_schema(res, correct):
+    res_table_name = res.pop()
+    correct_table_name = correct.pop()
+
+    if correct_table_name != res_table_name:
+        return "incorrect_table_name", None
+
+    for i, value in enumerate(correct):
+        for j in range (0, 6):
+            if res[i][j] != value[j]:
+                return schema_indices[j], None
+
+
 feedback_functions = {
-    "value": evaluate_variables
+    "value": evaluate_variables,
+    "schema": check_table_schema
 }

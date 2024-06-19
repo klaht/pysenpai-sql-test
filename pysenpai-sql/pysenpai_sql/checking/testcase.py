@@ -62,17 +62,11 @@ class SQLTestCase(object):
             if setting.find("feedback") >= 0:
                 parsed_functions = setting.split("=")[1].split(",")
                 for function in parsed_functions:
-                   yield feedback_functions[function.strip()](res, ref) #Call feedback function
-
-
-        """
-        for eref_result, msg_key in self.eref_results:
-            try:
-                self.validator(eref_result, res, descriptions)
-                yield (msg_key, {})
-            except AssertionError:
-                pass
-        """
+                    try:
+                        yield feedback_functions[function.strip()](res, ref) #Call feedback function
+                    except KeyError:
+                        # TODO: Contact course staff without displaying error? Could be typo in config etc
+                        pass
 
     def parse(self, output):
         return output
