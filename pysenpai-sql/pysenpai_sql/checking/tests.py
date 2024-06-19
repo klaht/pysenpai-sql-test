@@ -135,4 +135,6 @@ def compare_column_data(res, correct):
     
     return None
 
-    
+feedback_functions = {
+    "value": evaluate_variables
+}

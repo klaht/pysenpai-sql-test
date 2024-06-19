@@ -57,13 +57,22 @@ class SQLTestCase(object):
     def present_call(self, target):
         return ""
     
-    def feedback(self, res, descriptions):
+    def feedback(self, res, descriptions, ref):
+        for setting in open("setting_arguments.txt", "r").readlines():
+            if setting.find("feedback") >= 0:
+                parsed_functions = setting.split("=")[1].split(",")
+                for function in parsed_functions:
+                   yield feedback_functions[function.strip()](res, ref) #Call feedback function
+
+
+        """
         for eref_result, msg_key in self.eref_results:
             try:
                 self.validator(eref_result, res, descriptions)
                 yield (msg_key, {})
             except AssertionError:
                 pass
+        """
 
     def parse(self, output):
         return output
