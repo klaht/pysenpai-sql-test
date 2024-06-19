@@ -206,10 +206,10 @@ class SQLCreateTestCase(SQLTestCase):
         return res, ref, ""
 
 def get_table_name(query):
-    return re.search("CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*\(", query, flags=re.IGNORECASE).group(2)
+    return re.search("CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*", query, flags=re.IGNORECASE).group(2)
 
 def get_column_data(cursor, query):
-    table_name = query.split()[2]
+    table_name = get_table_name(query)
 
     columns_query = "PRAGMA table_info(" + table_name + ")"
 
