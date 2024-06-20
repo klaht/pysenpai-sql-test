@@ -21,16 +21,46 @@ from pysenpai_sql.checking.SQLAlterTestCase import SQLAlterTestCase
 from pysenpai_sql.checking.SQLMultipleQueryTestCase import SQLMultipleQueryTestCase
 
 import traceback
+import sys
+
 
 msgs = core.TranslationDict()
 float_pat = re.compile("(-?[0-9]+\\.[0-9]+)")
 
 msgs.set_msg("EmptyAnswer", "en", dict(
-    content="Your answer was empty.",
+    content="The test was setup incorrectly; the reference answer is empty.",
     triggers=["student_sql_query"]
 ))
 msgs.set_msg("EmptyAnswer", "fi", dict(
-    content="Vastauksesi oli tyhjä.",
+    content="Testi on asetettu väärin; viitevastaus on tyhjä.",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("EmptyStudentAnswer", "en", dict(
+    content="Your answer is empty.",
+    triggers=["student_sql_query"]
+))
+msgs.set_msg("EmptyStudentAnswer", "fi", dict(
+    content="Vastauksesi on tyhjä.",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("InvalidCommand", "en", dict(
+    content="No valid SQL command detected.",
+    triggers=["student_sql_query"]
+))
+msgs.set_msg("InvalidCommand", "fi", dict(
+    content="Validia SQL komentoa ei havaittu.",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("UnicodeError", "en", dict(
+    content="The input contains invalid characters.",
+    triggers=["student_sql_query"]
+))
+
+msgs.set_msg("UnicodeError", "fi", dict(
+    content="Syöte sisältää virheellisiä merkkeja.",
     triggers=["student_sql_query"]
 ))
 
@@ -78,7 +108,11 @@ def gen_program_vector(ref_query):
         case "MULTI":
             test_class = SQLMultipleQueryTestCase(ref_result=ref_query,
             validator=parsed_list_sql_validator)
+        case _:
+            output(msgs.get_msg("InvalidCommand", lang), Codes.INCORRECT)
+            sys.exit(1)
     
+
     return [test_class]
 
 if __name__ == "__main__":
@@ -86,9 +120,21 @@ if __name__ == "__main__":
      # Parse command line arguments to get the answer and reference file names
     args, language = core.parse_command()
 
+    msgs.update(msgs)
+
+    correct = False
+    score = 0
+
+    init_db()  # reset database
+
+    core.init_test(__file__, 1)
+
+    files, lang = core.parse_command()
+
      # Open the answer and reference files, create a query from the reference file
     try: 
         answerFile = args[0]; referenceFile = args[1]
+        st_module = load_sql_module(answerFile, lang, inputs=["0"])
 
         reference_query = open(referenceFile).read()
         reference_query = str.replace(reference_query, "\n", "")
@@ -99,25 +145,18 @@ if __name__ == "__main__":
         else:
             assignmentType = reference_query.split()[0]
 
+    except UnicodeError: 
+        output(msgs.get_msg("UnicodeError", language), Codes.INCORRECT)
+        sys.exit(1)
+    except IndexError:
+        output(msgs.get_msg("EmptyAnswer", language), Codes.INCORRECT)
+        sys.exit(1)
+
     except Exception as e:
         print(e)
         traceback.print_exc() #debug
         print("USAGE: ANSWER_FILENAME REFERENCE_FILENAME")
-
-
-    correct = False
-    score = 0
-
-    init_db()  # reset database
-
-    core.init_test(__file__, 1)
-
-    msgs.update(msgs)
-
-    files, lang = core.parse_command()
-
-    st_module = load_sql_module(answerFile, lang, inputs=["0"])
-
+    
     # If the answer file exists and is not empty, run the tests
     if os.path.exists(answerFile) and os.stat(answerFile).st_size > 0:
         if st_module: # if fails to load module, don't run tests
