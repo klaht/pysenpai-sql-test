@@ -130,6 +130,7 @@ if __name__ == "__main__":
     core.init_test(__file__, 1)
 
     files, lang = core.parse_command()
+    valid_sql_commands = ['select', 'insert', 'update', 'delete', 'create', 'drop', 'alter', 'truncate']
 
      # Open the answer and reference files, create a query from the reference file
     try: 
@@ -140,8 +141,8 @@ if __name__ == "__main__":
         reference_query = str.replace(reference_query, "\n", "")
         #Find individual queries. If length of second query is greater than 0 assignment is "MULTI"
         queries = reference_query.split(";")
-        if len(queries) >= 2 and len(queries[1]) > 0:
-            assignmentType = "MULTI"
+        if len(queries) >= 2 and len(queries[1]) > 0 and queries[0].split()[0].lower() in valid_sql_commands:
+                assignmentType = "MULTI"
         else:
             assignmentType = reference_query.split()[0]
 
@@ -149,7 +150,7 @@ if __name__ == "__main__":
         output(msgs.get_msg("UnicodeError", language), Codes.INCORRECT)
         sys.exit(1)
     except IndexError:
-        output(msgs.get_msg("EmptyAnswer", language), Codes.INCORRECT)
+        output(msgs.get_msg("EmptyStudentAnswer", language), Codes.INCORRECT)
         sys.exit(1)
 
     except Exception as e:
