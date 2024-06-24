@@ -1,11 +1,11 @@
-def parsed_list_sql_validator(ref, res, out):
+def parsed_list_sql_validator(out, res, ref):
     """
     This is a convenience callback for validating lists of parsed results against
     a reference list. The comparison of out to ref is done item by item as opposed
     to the default validator (which compares res). Comparison is done item to item.
     """
 
-    if (len(ref) != len(res)):
+    if (len(res) != len(ref)):
         assert False
     try:
         for i, v in enumerate(res):

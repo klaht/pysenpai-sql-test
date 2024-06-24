@@ -3,12 +3,14 @@ import io
 import sqlite3
 import sys
 from pysenpai.messages import Codes
+import re
 
 import pysenpai.callbacks.defaults as defaults
 import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.testcase import SQLTestCase
+from pysenpai_sql.checking.schema_tests import *
 
 class SQLCreateTestCase(SQLTestCase):
     """
@@ -90,8 +92,10 @@ class SQLCreateTestCase(SQLTestCase):
         self.exNumber = exNumber
         self.correct_table_names = correct_table_names
         self.req_column_names = req_column_names
+        self.ans_column_data = None
+        self.ref_column_data = None
         
-    def feedback(self, res, descriptions):
+    def feedback(self, res, descriptions, ref):
         """
         Provides feedback for the test case.
 
@@ -102,42 +106,34 @@ class SQLCreateTestCase(SQLTestCase):
         Yields:
             Tuple: A tuple containing the feedback message and additional information.
         """
-        if self.order != None:
-            incorrect_order = assertOrder(res, self.order)
-            if incorrect_order:
-                yield incorrect_order, None
 
-        if self.selected_variables != None:
-            incorrect_variables = assertSelectedVariables(descriptions, self.selected_variables)
-            if incorrect_variables:
-                yield incorrect_variables, None
-            
-        if self.distinct != None:
-            incorrect_distinct = assertDistinct(res)
-            if incorrect_distinct:
-                yield incorrect_distinct, None
+        #Retrieve and remove table name from end of lists
+        ans_table_name = self.ans_column_data.pop()
+        ref_table_name = self.ref_column_data.pop()
 
-        if self.show_answer_difference:
-            names = []
-            for result in res:
-                names.append(result[0])
-            correctAmount, output = evaluateAmount(names, self.ref_query_result, self.exNumber)
-            if correctAmount:
-                yield correctAmount, output
+        primary_key_check = check_primary_key(self.ans_column_data, self.ref_column_data)
+        if primary_key_check:
+            yield primary_key_check, None
 
-        if self.correct_table_names != None:          
-            tableNameCheck = checkTableName(correct_table_names=self.correct_table_names)
-            if tableNameCheck != None:
-                yield tableNameCheck, None
+        table_name_check = check_table_names(ans_table_name, ref_table_name)
+        if table_name_check != None:
+            yield table_name_check, None
 
-        if self.req_column_names != None and tableNameCheck == None:
-            checkTableColumnNames = checkTableColumns(req_column_names=self.req_column_names)
-            if checkTableColumnNames != None:
-                yield checkTableColumnNames, None
+        data_type_check = check_column_data_types(self.ans_column_data, self.ref_column_data)
+        if data_type_check != None:
+            yield data_type_check, None
+
+        column_name_check = check_column_names(self.ans_column_data, self.ref_column_data)
+        if column_name_check != None:
+            yield column_name_check, None
+
+        not_null_check = check_null_values_allowed(self.ans_column_data, self.ref_column_data)
+        if not_null_check != None:
+            yield not_null_check, None
 
         return super().feedback(res, descriptions)
         
-    def wrap(self, ref_answer, student_answer, lang, msgs, test_query, insert_query):
+    def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Wraps the test case by running the student and reference queries and returning the answers.
 
@@ -172,17 +168,7 @@ class SQLCreateTestCase(SQLTestCase):
                 sql_script = sql_script.replace(';', '')
             
             cursor.executescript(sql_script)
-            
-            # Insert to created table
-            #cursor.executescript(insert_query)
-            # column_names = [column[0] for column in cursor.description]
-        
-            #cursor.execute(test_query)
-            
-            res = cursor.fetchall()
-            answer_columns = get_column_data(cursor, sql_script)
-
-            #cursor.execute("DROP table testtable")
+            res = get_column_data(cursor, sql_script)
 
             conn.commit()
             cursor.close()
@@ -198,15 +184,8 @@ class SQLCreateTestCase(SQLTestCase):
             cursor2 = conn2.cursor()
        
             cursor2.executescript(ref_answer)
+            ref = get_column_data(cursor2, ref_answer)
 
-            ref_columns = get_column_data(cursor2, ref_answer)
-
-            # Insert to created table
-            #cursor2.executescript(insert_query)
-
-            #cursor2.execute(test_query)
-            ref = cursor2.fetchall()
-        
             conn2.commit()
             cursor2.close()
             conn2.close()
@@ -215,43 +194,22 @@ class SQLCreateTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            return "file_open_error"
-            
-        # Run student answer
-        """
-        try: 
-            conn = sqlite3.connect("mydatabase1.db")
-            cursor = conn.cursor()
-            primary_key_test = "INSERT INTO testtable VALUES (1, 'testi2')"
+        #Add table name to the comparison list
+        res.append(get_table_name(sql_script))
+        ref.append(get_table_name(ref_answer))
 
-            cursor.executescript(sql_script)
-            conn.commit()
-            # Insert to created table
-            cursor.executescript(insert_query)
+        #Set attributes for later comparison in feedback
+        self.ans_column_data = res
+        self.ref_column_data = ref
 
-            cursor.execute(primary_key_test)            
+        #TODO Different validator for CREATE queries
+        return res, ref, ""
 
-            conn.commit()
-            cursor.close()
-            conn.close()
-            
-        except sqlite3.IntegrityError as e:
-            return ref, res, ""
-        """
-
-        if compare_column_data(ref_columns, answer_columns):
-            return res, ref, ""
-        
-        #TODO Add tests for primary key
-        #output(msgs.get_msg("missing_primarykey", lang), Codes.INCORRECT)
-        return 0, 0, ""
+def get_table_name(query):
+    return re.search("CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*", query, flags=re.IGNORECASE).group(2)
 
 def get_column_data(cursor, query):
-    table_name = query.split()[2]
+    table_name = get_table_name(query)
 
     columns_query = "PRAGMA table_info(" + table_name + ")"
 

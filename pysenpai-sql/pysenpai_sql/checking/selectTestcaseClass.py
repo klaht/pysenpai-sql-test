@@ -81,8 +81,7 @@ class SQLSelectTestCase(SQLTestCase):
 
         super().__init__(ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters)
 
-    def feedback(self, res, descriptions):
-        
+    def feedback(self, res, descriptions, ref):
         """
         Provides feedback for the test case.
         Different feedback tests can be toggled on or off, or they can have different values.

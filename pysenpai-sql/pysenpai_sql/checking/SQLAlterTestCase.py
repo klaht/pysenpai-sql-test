@@ -85,7 +85,7 @@ class SQLAlterTestCase(SQLTestCase):
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
-    def feedback(self, res, descriptions):
+    def feedback(self, res, descriptions, ref):
         """
         Provides feedback for the test case.
 
@@ -102,7 +102,7 @@ class SQLAlterTestCase(SQLTestCase):
 
         return super().feedback(res, descriptions)  
 
-    def wrap(self, ref_answer, student_answer, lang, msgs, test_query, insert_query):
+    def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Runs the student and reference queries and returns the answers.
 

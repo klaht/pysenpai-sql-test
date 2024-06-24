@@ -37,9 +37,9 @@ def evaluate_variables(res, correct):
     for i, item in enumerate(res): # Check if missing or incorrect values
 
         if item == None: # Missing value
-            return ("MissingInsertedValueError")
+            return "MissingInsertedValueError", None
         elif item != correct[i]: # Correct value
-            return ("IncorrectInsertError")
+            return "IncorrectInsertError", item
 
     
     return None
@@ -118,7 +118,7 @@ def evaluate_updated_values(res, correct):
             if value != correct[i]:
                 return ("IncorrectUpdatedValues"), res
     except IndexError:
-        return "incorrect_selected_columns", res
+        return "incorrect_selected_rows", res
 
     return None, None
 

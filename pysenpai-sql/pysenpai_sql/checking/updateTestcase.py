@@ -83,7 +83,7 @@ class SQLUpdateTestCase(SQLTestCase):
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
-    def feedback(self, res, descriptions):
+    def feedback(self, res, descriptions, ref):
         """
         Provides feedback for the test case.
 
@@ -99,16 +99,17 @@ class SQLUpdateTestCase(SQLTestCase):
             yield incorrect_variables, output
 
         # Compare primary keys to find if correct rows were selected
-        try:
-            for i, ref_id in enumerate(self.ref_affected_ids):
-                if ref_id != self.ans_affected_ids[i]:
-                    yield 'incorrect_selected_columns', None
-        except IndexError:
-            yield 'incorrect_selected_columns', None
+        if not incorrect_variables:
+            try:
+                for i, ref_id in enumerate(self.ref_affected_ids):
+                    if ref_id != self.ans_affected_ids[i]:
+                        yield 'incorrect_selected_rows', None
+            except IndexError:
+                yield 'incorrect_selected_rows', None
         
         return super().feedback(res, descriptions)  
 
-    def wrap(self, ref_answer, student_answer, lang, msgs, test_query):
+    def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Runs the student and reference queries and returns the answers.
 
