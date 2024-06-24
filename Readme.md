@@ -46,7 +46,12 @@ Tests can be run by going to `sql_tests` directory and running `pytest` command.
 cd sql_tests
 pytest
 ```
-Tha main test file is located at `tests/test_sqlTester.py`. 
+OR
+```bash
+cd sql_tests
+python3 -m pytest
+```
+The main test file is located at `tests/test_sqlTester.py`. 
 
 New test cases for existing queries (UPDATE, SELECT, CREATE, DELETE, ALTER, INSERT) can be added by creating a new directory (fe. case_1) under the queries `xx_test_files` directory (fe. select_test_files).
 
@@ -59,3 +64,15 @@ The case directory should contain at least three files:
 3) `pass_(x).sql` contains a query that shold be passed by the program.
 
 Multiple fail or pass files can exist for a case and they will all be tested agains the reference answer. If a failing query is passed or vica versa, pytest will mark the query as failed and print an error.
+
+The tests also include optional fuzz tests for testing fuzz inputs in the reference.sql file. These tests are not ran by default, and require the --fuzz flag:
+```bash
+pytest --fuzz
+```
+OR
+```bash
+python3 -m pytest --fuzz
+```
+The inputs are read from the fuzz_input.txt file one line at a time, meaning multiple inputs can be added to the file.
+These fuzz inputs can be found from example:
+https://github.com/minimaxir/big-list-of-naughty-strings/blob/master/blns.txt
