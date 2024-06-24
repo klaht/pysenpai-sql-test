@@ -10,7 +10,6 @@ import pysenpai.callbacks.convenience as convenience
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.testcase import SQLTestCase
-from pysenpai_sql.checking.schema_tests import *
 
 class SQLCreateTestCase(SQLTestCase):
     """
@@ -95,44 +94,6 @@ class SQLCreateTestCase(SQLTestCase):
         self.ans_column_data = None
         self.ref_column_data = None
         
-    def feedback(self, res, descriptions, ref):
-        """
-        Provides feedback for the test case.
-
-        Args:
-            res (Any): The result of the test case.
-            descriptions (Any): The descriptions for the test case.
-
-        Yields:
-            Tuple: A tuple containing the feedback message and additional information.
-        """
-
-        #Retrieve and remove table name from end of lists
-        ans_table_name = self.ans_column_data.pop()
-        ref_table_name = self.ref_column_data.pop()
-
-        primary_key_check = check_primary_key(self.ans_column_data, self.ref_column_data)
-        if primary_key_check:
-            yield primary_key_check, None
-
-        table_name_check = check_table_names(ans_table_name, ref_table_name)
-        if table_name_check != None:
-            yield table_name_check, None
-
-        data_type_check = check_column_data_types(self.ans_column_data, self.ref_column_data)
-        if data_type_check != None:
-            yield data_type_check, None
-
-        column_name_check = check_column_names(self.ans_column_data, self.ref_column_data)
-        if column_name_check != None:
-            yield column_name_check, None
-
-        not_null_check = check_null_values_allowed(self.ans_column_data, self.ref_column_data)
-        if not_null_check != None:
-            yield not_null_check, None
-
-        return super().feedback(res, descriptions)
-        
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Wraps the test case by running the student and reference queries and returning the answers.
@@ -203,7 +164,7 @@ class SQLCreateTestCase(SQLTestCase):
         self.ref_column_data = ref
 
         #TODO Different validator for CREATE queries
-        return res, ref, ""
+        return ref, res, ""
 
 def get_table_name(query):
     return re.search("CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*", query, flags=re.IGNORECASE).group(2)
