@@ -56,9 +56,8 @@ def gen_program_vector(ref_query):
            
             # Set the test class by using prefered settings
             test_class = SQLSelectTestCase(
-            ref_result=ref_query,
             validator=parsed_list_sql_validator,
-            ref_query=ref_query,)
+            ref_result=ref_query,)
             
         case "INSERT":
            test_class = SQLInsertTestCase(ref_result=ref_query,

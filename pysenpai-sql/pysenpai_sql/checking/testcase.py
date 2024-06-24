@@ -58,15 +58,18 @@ class SQLTestCase(object):
         return ""
     
     def feedback(self, res, descriptions, ref):
+        feedback_results = []
         for setting in open("setting_arguments.txt", "r").readlines():
             if setting.find("feedback") >= 0:
                 parsed_functions = setting.split("=")[1].split(",")
                 for function in parsed_functions:
                     try:
-                        yield feedback_functions[function.strip()](res, ref) #Call feedback function
+                        feedback_results.append(feedback_functions[function.strip()](res, ref)) #Call feedback function
                     except KeyError:
                         # TODO: Contact course staff without displaying error? Could be typo in config etc
                         pass
+            
+                return feedback_results
 
     def parse(self, output):
         return output
@@ -170,9 +173,9 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                 
             #Extra feedback
             for msg_key, test_output in test.feedback(res, column_names, ref):
-                if test_output == None:
+                if test_output == None and msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO)
-                else:
+                elif msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO, output=test_output)
 
        
