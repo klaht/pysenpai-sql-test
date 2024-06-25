@@ -144,6 +144,9 @@ def check_table_schema(res, correct):
 
     if correct_table_name != res_table_name:
         return "incorrect_table_name", None
+    
+    if len(res) != len(correct):
+        return "incorrect_column_amount", None
 
     for i, value in enumerate(correct):
         for j in range (0, 6):
@@ -170,5 +173,7 @@ feedback_functions = {
     "order": assertOrder,
     "distinct": assertDistinct,
     "selected_columns": assertSelectedVariables,
-    "amount": evaluateAmount
+    "amount": evaluateAmount,
+    "column": compare_column_data,
+    "update": evaluate_updated_values
 }
