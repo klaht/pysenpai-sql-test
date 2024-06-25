@@ -47,6 +47,7 @@ class SQLTestCase(object):
         }
         if presenters:
             self.presenters.update(presenters)
+        self.feedback_params = {}
     
     def configure_presenters(self, patch):
         self.presenters.update(patch)
@@ -57,14 +58,14 @@ class SQLTestCase(object):
     def present_call(self, target):
         return ""
     
-    def feedback(self, res, descriptions, ref):
+    def feedback(self, res, ref):
         feedback_results = []
         for setting in open("setting_arguments.txt", "r").readlines():
             if setting.find("feedback") >= 0:
                 parsed_functions = setting.split("=")[1].split(",")
                 for function in parsed_functions:
                     try:
-                        feedback_results.append(feedback_functions[function.strip()](res, ref)) #Call feedback function
+                        feedback_results.append(feedback_functions[function.strip()](res, ref, feedback_params=self.feedback_params)) #Call feedback function
                     except KeyError:
                         # TODO: Contact course staff without displaying error? Could be typo in config etc
                         pass
@@ -172,7 +173,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
                 
             #Extra feedback
-            for msg_key, test_output in test.feedback(res, column_names, ref):
+            for msg_key, test_output in test.feedback(res, ref):
                 if test_output == None and msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO)
                 elif msg_key:
@@ -180,8 +181,6 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
 
        
         test.teardown()
-        prev_res = res
-        prev_out = test_cases
     
     return grader(test_cases)
 

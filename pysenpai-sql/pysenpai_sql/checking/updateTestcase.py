@@ -47,14 +47,14 @@ class SQLUpdateTestCase(SQLTestCase):
             # res = cursor.fetchall()
 
             # Get ids affected by the update
-            self.ans_affected_ids = get_affected_row_ids(cursor, sql_script)
+            ans_affected_ids = get_affected_row_ids(cursor, sql_script)
 
             # Execute updated
             cursor.execute(sql_script)
 
             # Get rows with previously fetched ids
             # If no rows have been affected by the query set all to empty
-            res = get_rows_with_ids(cursor, sql_script, self.ans_affected_ids) if self.ans_affected_ids else []
+            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids) if ans_affected_ids else []
             self.field_names = [i[0] for i in cursor.description] if res else []
             result_list = [list(row) for row in res][0] if res else []
 
@@ -71,11 +71,11 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
 
-            self.ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
+            ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
 
             cursor2.execute(ref_answer)
 
-            ref = get_rows_with_ids(cursor2, ref_answer, self.ref_affected_ids) 
+            ref = get_rows_with_ids(cursor2, ref_answer, ref_affected_ids) 
 
             # cursor2.execute(test_query)
             # ref = cursor2.fetchall()
@@ -88,6 +88,9 @@ class SQLUpdateTestCase(SQLTestCase):
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
+        
+        self.feedback_params['res_affected_ids'] = ans_affected_ids
+        self.feedback_params['correct_affected_ids'] = ref_affected_ids
 
         return ref, res, result_list
 
