@@ -67,22 +67,6 @@ class SQLInsertTestCase(SQLTestCase):
             ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
         )
 
-    def feedback(self, res, descriptions, ref):
-        """
-        Provides feedback for the test case.
-
-        Args:
-            res (Any): The result of the test case.
-            descriptions (Any): The descriptions for the test case.
-
-        Yields:
-            Tuple: Incorrect variables and None.
-        """
-        incorrect_variables, output = evaluate_variables(descriptions, self.ref_query_result)
-        if incorrect_variables:
-            yield incorrect_variables, output
-
-        return super().feedback(res, descriptions)  
 
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
