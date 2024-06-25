@@ -141,7 +141,6 @@ def checkTableNameFromDB(correct_table_names = ['']):
         return ("incorrect_table_name")
     return None
 
-def checkTableColumns(res, correct):
 def checkTableColumns(req_column_names = [''], feedback_params=None):
     '''Checks if the table columns are correct'''
 
