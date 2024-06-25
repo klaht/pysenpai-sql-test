@@ -106,7 +106,7 @@ class SQLMultipleQueryTestCase(SQLTestCase):
 
         try:
             res, ref = create_list_for_validator(ref_results, ans_results, self)
-        except KeyError as e:
+        except KeyError:
             output(msgs.get_msg("incorrect_table_name", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
@@ -141,17 +141,13 @@ def execute_multi_line_script(script: str, cursor: sqlite3.Cursor):
     Returns table names affected by the queries
     """
     queries = script.split(";")
-
-    for i, query in enumerate(queries):
-        queries[i] = query.strip()
-
     affected_tables = []
     for query in queries:
         if len(query.strip()) == 0: #Don't execute empty strings
             continue
         query_type = query.split(" ")[0]
-        cursor.execute(query)
         table_name = get_table_name(query, query_type)
+        cursor.execute(query)
 
         affected_tables.append(table_name)
     
@@ -173,11 +169,7 @@ def get_table_name(query: str, query_type: str):
     Get table name from given query and query type
     Query type is used to find correct regex from dictionary 
     """
-    if (query_type.upper() not in table_regex_from_query_type.keys()):
-        return None
-
     match = re.search(table_regex_from_query_type[query_type.upper()], query, flags=re.IGNORECASE)
-        
     #If group 2 doesn't exist, the query has only 1 group
     try:
         return match.group(2)
