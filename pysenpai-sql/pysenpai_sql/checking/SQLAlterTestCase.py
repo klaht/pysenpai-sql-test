@@ -1,4 +1,5 @@
 import sqlite3
+import re
 from pysenpai.messages import Codes
 
 import pysenpai.callbacks.defaults as defaults
@@ -11,96 +12,7 @@ from pysenpai_sql.checking.tests import *
 class SQLAlterTestCase(SQLTestCase):
     """
     A test case class for SQL ALTER statements.
-
-    Args:
-    test object: The SQLTestCase object.
-    (
-        ref_result (str): The reference result for comparison.
-        args (list, optional): Additional arguments for the test case. Defaults to None.
-        inputs (list, optional): Input values for the test case. Defaults to None.
-        data (dict, optional): Additional data for the test case. Defaults to None.
-        weight (int, optional): The weight of the test case. Defaults to 1.
-        tag (str, optional): A tag for the test case. Defaults to "".
-        validator (function, optional): A function to validate the result. Defaults to convenience.parsed_result_validator.
-        output_validator (function, optional): A function to validate the output. Defaults to None.
-        eref_results (dict, optional): Expected reference results for comparison. Defaults to None.
-        internal_config (dict, optional): Internal configuration for the test case. Defaults to None.
-        presenters (list, optional): Presenters for the test case. Defaults to None.
-        ref_query_result (str, optional): The reference query result. Defaults to None.
-        order (str, optional): The order of the query result. Defaults to None.
-        selected_variables (list, optional): The selected variables in the query. Defaults to None.
-        distinct (bool, optional): Whether to use DISTINCT in the query. Defaults to True.
-        show_answer_difference (bool, optional): Whether to show the difference between the reference and student answers. Defaults to True.
-        exNumber (int, optional): The exercise number. Defaults to 0.)
     """
-
-    def __init__(self, ref_result, 
-                 args=None,
-                 inputs=None,
-                 data=None,
-                 weight=1,
-                 tag="",
-                 validator=convenience.parsed_result_validator,
-                 output_validator=None,
-                 eref_results=None,
-                 internal_config=None,
-                 presenters=None,
-                 ref_query_result=None,
-                 order=None,
-                 selected_variables=None,
-                 distinct=True,
-                 show_answer_difference=True,
-                 exNumber=0):
-        """
-        Initializes a new instance of the SQLAlterTestCase class.
-
-        Args:
-            ref_result (str): The reference result for comparison.
-            args (list, optional): Additional arguments for the test case. Defaults to None.
-            inputs (list, optional): Input values for the test case. Defaults to None.
-            data (dict, optional): Additional data for the test case. Defaults to None.
-            weight (int, optional): The weight of the test case. Defaults to 1.
-            tag (str, optional): A tag for the test case. Defaults to "".
-            validator (function, optional): A function to validate the result. Defaults to convenience.parsed_result_validator.
-            output_validator (function, optional): A function to validate the output. Defaults to None.
-            eref_results (dict, optional): Expected reference results for comparison. Defaults to None.
-            internal_config (dict, optional): Internal configuration for the test case. Defaults to None.
-            presenters (list, optional): Presenters for the test case. Defaults to None.
-            ref_query_result (str, optional): The reference query result. Defaults to None.
-            order (str, optional): The order of the query result. Defaults to None.
-            selected_variables (list, optional): The selected variables in the query. Defaults to None.
-            distinct (bool, optional): Whether to use DISTINCT in the query. Defaults to True.
-            show_answer_difference (bool, optional): Whether to show the difference between the reference and student answers. Defaults to True.
-            exNumber (int, optional): The exercise number. Defaults to 0.
-        """
-        
-        self.ref_query_result = ref_query_result
-        self.order = order
-        self.selected_variables = selected_variables
-        self.distinct = distinct
-        self.show_answer_difference = show_answer_difference
-        self.exNumber = exNumber
-        
-        super().__init__(
-            ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
-        )
-
-    def feedback(self, res, descriptions, ref):
-        """
-        Provides feedback for the test case.
-
-        Args:
-            res (str): The result of the student's query.
-            descriptions (list): Descriptions of the feedback.
-
-        Yields:
-            tuple: A tuple containing the column data result and None.
-        """
-        column_data_result = compare_column_data(res, self.ref_query_result)
-        if column_data_result != None:
-            yield column_data_result, None
-
-        return super().feedback(res, descriptions)  
 
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
@@ -150,6 +62,9 @@ class SQLAlterTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
+        res.append(get_table_name(sql_script))
+        ref.append(get_table_name(ref_answer))
+
         return ref, res, ""
 
 def get_table_information(cursor, query):
@@ -162,3 +77,6 @@ def get_table_information(cursor, query):
     columns = cursor.execute(columns_query).fetchall()
 
     return columns
+
+def get_table_name(query):
+    return re.search("ALTER\s+TABLE\s+`?(\w+)`?\s+", query, flags=re.IGNORECASE).group(1)

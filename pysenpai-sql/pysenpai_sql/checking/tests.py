@@ -9,7 +9,7 @@ schema_indices = [
     "incorrect_primary_key",
 ]
 
-def assertOrder(res, correct):
+def assertOrder(res, correct, feedback_params=None):
     '''Checks if the list is sorted in ascending order'''
 
     if res != correct and set(res) == set(correct):
@@ -17,7 +17,7 @@ def assertOrder(res, correct):
 
     return None, None
 
-def assertSelectedVariables(res, correct):
+def assertSelectedVariables(res, correct, feedback_params=None):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
 
     if res == correct:
@@ -32,7 +32,7 @@ def assertSelectedVariables(res, correct):
 
     return None, None
 
-def evaluate_variables(res, correct):
+def evaluate_variables(res, correct, feedback_params=None):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
     correct = [list(row) for row in correct][0] # Arrange result to list
     res = [list(row) for row in res][0] # Arrange result to list
@@ -47,7 +47,7 @@ def evaluate_variables(res, correct):
     
     return None
 
-def assertDistinct(res, correct):
+def assertDistinct(res, correct, feedback_params=None):
     '''Checks if the list contains only distinct values'''
     #TODO Implement correctly
     
@@ -56,7 +56,7 @@ def assertDistinct(res, correct):
             return "output_not_distinct", None
         return None, None
 
-def evaluateAmount(res, correct):
+def evaluateAmount(res, correct, feedback_params=None):
     '''
     Checks if the answer contains the correct amount of values
     If there are too many or too little values, returns the excessive values
@@ -142,21 +142,31 @@ def checkTableNameFromDB(correct_table_names = ['']):
     return None
 
 def checkTableColumns(res, correct):
+def checkTableColumns(req_column_names = [''], feedback_params=None):
     '''Checks if the table columns are correct'''
-    correct_columns_spots = correct.find_all("FROM")
 
-def evaluate_updated_values(res, correct):
-    '''Checks if the updated values contains correct values'''
-    try:
-        for i, value in enumerate(res):
-            if value != correct[i]:
-                return ("IncorrectUpdatedValues"), res
-    except IndexError:
+    conn = sqlite3.connect("mydatabase1.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM testtable")
+    column_names = [column[0] for column in cursor.description]
+    if column_names != req_column_names:
+        return ("incorrect_column_name")
+    return None
+
+def evaluate_updated_values(res, correct, feedback_params=None):
+    incorrect_where_clause = feedback_params['res_affected_ids'] != feedback_params['correct_affected_ids']
+    '''Check if correct rows have been affected'''
+    if len(res) != len(correct) or incorrect_where_clause:
         return "incorrect_selected_rows", res
+
+    '''Checks if the updated values contains correct values'''
+    for i, value in enumerate(res):
+        if value != correct[i]:
+            return ("IncorrectUpdatedValues"), res
 
     return None, None
 
-def compare_column_data(res, correct):
+def compare_column_data(res, correct, feedback_params=None):
     '''
     Compare column values of reference and answer table
     '''
@@ -169,19 +179,22 @@ def compare_column_data(res, correct):
     
     return None
 
-def check_table_schema(res, correct):
+def check_table_schema(res, correct, feedback_params=None):
     res_table_name = res.pop()
     correct_table_name = correct.pop()
 
     if correct_table_name != res_table_name:
         return "incorrect_table_name", None
+    
+    if len(res) != len(correct):
+        return "incorrect_column_amount", None
 
     for i, value in enumerate(correct):
         for j in range (0, 6):
             if res[i][j] != value[j]:
                 return schema_indices[j], None
 
-def check_table_content_after_delete(res, correct):
+def check_table_content_after_delete(res, correct, feedback_params=None):
     if len(correct) > len(res):
         return "too_few_deleted", None
     elif len(correct) < len(res):
@@ -202,6 +215,8 @@ feedback_functions = {
     "distinct": assertDistinct,
     "selected_columns": assertSelectedVariables,
     "amount": evaluateAmount,
+    "column": compare_column_data,
+    "update": evaluate_updated_values,
     "table_name": check_table_names_from_query
 }
 
