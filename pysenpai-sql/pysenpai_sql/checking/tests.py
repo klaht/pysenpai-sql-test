@@ -81,38 +81,69 @@ def evaluateAmount(res, correct):
 
     return None, None
 
-def checkTableName(correct_table_names = ['']):
-    '''Checks if the table name is correct'''
+def check_table_names_from_query(res, correct):
+    '''
+    Checks if the table names are correct in the query
+    Can be used for everything
+    ''' 
     
-    #TODO:
-    #FIX THIS, NO HARD CODING
+    correct_table_ids = None
+    res_table_ids = None
+    correct_table_names = None
+    res_table_names = None
+    
+    if "FROM" in correct:
+        correct_table_ids = correct.index("FROM")
+    if "INTO" in correct:
+        correct_table_ids = correct.index("INTO")
+    if "TABLE" in correct:
+        correct_table_ids = correct.index("TABLE")    
+    
+    if correct_table_ids != None:
+        correct_table_names = correct[correct_table_ids + 1]
+    
+    if "FROM" in res:
+        res_table_ids = res.index("FROM")
+    if "INTO" in res:
+        res_table_ids = res.index("INTO")
+    if "TABLE" in res:
+        res_table_ids = res.index("TABLE")
+    
+    if res_table_ids != None:    
+        res_table_names = res[res_table_ids + 1]
+    
+    if correct_table_names != res_table_names:
+        return "incorrect_table_name", None
+    
+    return None, None
+    
 
-    default_table_names = [('Artist',), ('Location',), ('Collection',), ('ArtWork',), ('Exhibition',), ('On_Exhibition',)]
+def checkTableNameFromDB(correct_table_names = ['']):
+    '''
+    Checks if the table names are correct in the modified database
+    Used for UPDATE AND DELETE!!!!
+    '''
 
+    # Gets the table names from the student's database
     conn = sqlite3.connect("mydatabase1.db")
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     table_name = cursor.fetchall()
 
-    correct_table_names = set(correct_table_names)
-    table_name = set(table_name)
-    default_table_names = set(default_table_names)
+    # Gets the table names from the reference database
+    conn2 = sqlite3.connect("mydatabase2.db")
+    cursor2 = conn2.cursor()
+    cursor2.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    correct_table_names = cursor2.fetchall()
 
-    table_name = table_name - default_table_names
+    # Compares the table names
     if table_name != correct_table_names:
         return ("incorrect_table_name")
     return None
 
-def checkTableColumns(req_column_names = ['']):
+def checkTableColumns(res, correct):
     '''Checks if the table columns are correct'''
-
-    conn = sqlite3.connect("mydatabase1.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM testtable")
-    column_names = [column[0] for column in cursor.description]
-    if column_names != req_column_names:
-        return ("incorrect_column_name")
-    return None
+    correct_columns_spots = correct.find_all("FROM")
 
 def evaluate_updated_values(res, correct):
     '''Checks if the updated values contains correct values'''
@@ -170,5 +201,47 @@ feedback_functions = {
     "order": assertOrder,
     "distinct": assertDistinct,
     "selected_columns": assertSelectedVariables,
-    "amount": evaluateAmount
+    "amount": evaluateAmount,
+    "table_name": check_table_names_from_query
 }
+
+#Helper functions
+def get_affected_row_ids(cursor: sqlite3.Cursor, query):
+    """
+    Get all affected row primary keys from an update query
+    Splits the query at the first WHERE and uses the part after in a SELECT query
+    """
+    where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
+    primary_key = getTablePrimaryKey(cursor, query)
+
+    affected_query = "SELECT " + primary_key + " FROM " + query.split()[1] + " WHERE " + where_clause
+
+    cursor.execute(affected_query)
+
+    return cursor.fetchall()
+
+def get_rows_with_ids(cursor, query, ids):
+    """
+    Get all rows from table for given ids (primary key)
+    """
+    primary_key = getTablePrimaryKey(cursor, query)
+    select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
+    cursor.execute(select_query)
+
+    return cursor.fetchall()
+
+def getTablePrimaryKey(cursor, query):
+    """
+    Get primary key from an UPDATE query
+    Uses PRAGMA query to fetch information about the table
+    """
+    table_name = query.split()[1]
+    columns_query = "PRAGMA table_info(" + table_name + ")"
+    columns = cursor.execute(columns_query).fetchall()
+
+    for column in columns:
+        if column[5]: #Primary key information is stored at index 5
+            try:
+                return column[1] #Index 1 stores column name
+            except Exception as e:
+                raise IndexError
