@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 schema_indices = [
     "incorrect_query",
@@ -81,44 +82,31 @@ def evaluateAmount(res, correct, feedback_params=None):
 
     return None, None
 
-def check_table_names_from_query(res, correct):
+def check_table_names_from_query(res, correct, feedback_params=None):
     '''
     Checks if the table names are correct in the query
     Can be used for everything
     ''' 
     
-    correct_table_ids = None
-    res_table_ids = None
-    correct_table_names = None
-    res_table_names = None
+    correct_answer = feedback_params['ref']
+    student_answer_file = feedback_params['res']
     
-    if "FROM" in correct:
-        correct_table_ids = correct.index("FROM")
-    if "INTO" in correct:
-        correct_table_ids = correct.index("INTO")
-    if "TABLE" in correct:
-        correct_table_ids = correct.index("TABLE")    
+    try :
+        student_answer1 = open(student_answer_file, 'r')
+        student_answer = student_answer1.read()
+    except FileNotFoundError as e:
+        return None, None
+        
+    correct_table_names = get_table_names_from_query(correct_answer)
+    res_table_names = get_table_names_from_query(student_answer)
     
-    if correct_table_ids != None:
-        correct_table_names = correct[correct_table_ids + 1]
-    
-    if "FROM" in res:
-        res_table_ids = res.index("FROM")
-    if "INTO" in res:
-        res_table_ids = res.index("INTO")
-    if "TABLE" in res:
-        res_table_ids = res.index("TABLE")
-    
-    if res_table_ids != None:    
-        res_table_names = res[res_table_ids + 1]
-    
-    if correct_table_names != res_table_names:
+    if correct_table_names.lower() != res_table_names.lower():
         return "incorrect_table_name", None
     
     return None, None
     
 
-def checkTableNameFromDB(correct_table_names = ['']):
+def checkTableNameFromDB(res, correct, feedback_params=None):
     '''
     Checks if the table names are correct in the modified database
     Used for UPDATE AND DELETE!!!!
@@ -141,7 +129,7 @@ def checkTableNameFromDB(correct_table_names = ['']):
         return ("incorrect_table_name")
     return None
 
-def checkTableColumns(req_column_names = [''], feedback_params=None):
+def checkTableColumns(res, correct, feedback_params=None):
     '''Checks if the table columns are correct'''
 
     conn = sqlite3.connect("mydatabase1.db")
@@ -259,3 +247,26 @@ def getTablePrimaryKey(cursor, query):
                 return column[1] #Index 1 stores column name
             except Exception as e:
                 raise IndexError
+def get_table_names_from_query(query):
+   
+    table_ids = None
+    table_names = ""
+    ignore_once = False
+    
+    if "FROM" in query:
+        table_ids = query.index("FROM") + 5
+    if "INTO" in query:
+        table_ids = query.index("INTO") + 5
+    if "TABLE" in query:
+        table_ids = query.index("TABLE") + 6
+   
+    if table_ids != None:
+        while table_ids < len(query) and (query[table_ids] != " " and query[table_ids] != ";") or ignore_once == True:
+            table_names += query[table_ids]
+            table_ids += 1
+            ignore_once = False
+            if table_names[len(table_names)-1] == ",":
+                ignore_once = True
+    
+    return table_names
+    

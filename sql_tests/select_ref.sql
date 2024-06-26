@@ -1,1 +1,1 @@
-SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting') ORDER BY name ASC;
+SELECT title, startDate, endDate, numberofvisitors, name, city, country FROM exhibition, location WHERE numberofvisitors NOT NULL AND location.locationid == exhibition.locationid ORDER BY numberofvisitors DESC;
