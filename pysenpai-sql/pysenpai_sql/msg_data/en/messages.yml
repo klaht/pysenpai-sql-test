@@ -155,19 +155,19 @@ lint:
   LintWarning: |-
     Potential problem at {lintmsg.module}, line {lintmsg.line}. Explanation:
     {lintmsg.msg} ({lintmsg.symbol})
-  pylint_fail_low_score: |-
+  pylintFailLowScore: |-
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
-  incorrect_primary_key: |-
+  incorrectPrimaryKey: |-
     Incorrect primary key at table {output}.
-  incorrect_default_value: |-
+  incorrectDefaultValue: |-
     Incorrect default value at table {output}.
-  incorrect_not_null: |-
+  incorrectNotNull: |-
     Incorrect NOT NULL at table {output}.
-  incorrect_data_type: |-
+  incorrectDataType: |-
     Incorrect data type at table {output}.
-  multi_incorrect_table_content: |-
+  multiIncorrectTableContent: |-
     Table {output} contains incorrect values.
   TooGeneralizedIdentifier: |- 
       The query used too generic identifiers. Use more specific identifiers.
@@ -180,40 +180,35 @@ program:
     Inserted values were incorrect. Incorrect value was: {output}
   MissingInsertedValueError: |-
     Too few values were inserted.
-  incorrect_column_name: |- 
+  incorrectColumnName: |- 
     Column name is incorrect.
     Make sure you use the name specified in the assignment.
-  incorrect_colunm_order: |- 
+  incorrectColunmOrder: |- 
     Column order is incorrect.
     Make sure you use the order specified in the assignment.
-  incorrect_selected_column: |-
+  incorrectSelectedColumn: |-
     The query used incorrect columns.
-  incorrect_selected_rows: |-
+  incorrectSelectedRows: |-
     WHERE clause returned incorrect rows.
-  incorrect_table_name: |- 
+  incorrectTableName: |- 
     Table name is incorrect.
     Make sure you use the name specified in the assignment.
-  missing_primarykey: |- 
+  missingPrimarykey: |- 
     Table is missing a primary key.
     Make sure you define a primary key for the table.
-  too_many_return_values2: |- 
+  tooManyReturnValues2: |- 
     Query returned too many values.
     Make sure you only select PAINTINGS.
     Excessive values.
     {output}
-  too_many_return_values0: |-
+  tooManyReturnValues0: |-
     Query returned too many values.
     Excessive values.
     {output}
-  too_litte_return_values0: |- 
+  tooLitteReturnValues0: |- 
     Query returned too few values.
     Missing values.
     {output}
-  tooManyDeleted: |-
-    Too many records were deleted.
-  tooLittleDeleted: |-
-    Too few records were deleted.
-  DatabaseError: |-
     A database error occurred while calling the function.
     {emsg}
   DatabaseCreationError : |-
@@ -221,7 +216,7 @@ program:
   FileOpenError: |-
       File open failed
       {emgs}
-  incorrect_selected_columns: |-
+  incorrectSelectedColumns: |-
     The query used incorrect columns.
   AdditionalInfo: |-
     The checker gave the following as additional information asdasdads:

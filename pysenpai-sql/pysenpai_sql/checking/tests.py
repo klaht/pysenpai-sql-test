@@ -14,7 +14,7 @@ def assertOrder(res, correct, feedback_params=None):
     '''Checks if the list is sorted in ascending order'''
 
     if res != correct and set(res) == set(correct):
-        return "incorrect_return_order", None
+        return "incorrectReturnOrder", None
 
     return None, None
 
@@ -26,7 +26,7 @@ def assertSelectedVariables(res, correct, feedback_params=None):
 
     for i, value in enumerate(correct):
         if len(res[i]) != len(value):
-            return "incorrect_selected_columns", None
+            return "incorrectSelectedColumns", None
         
         #Only need to compare the first indices
         break
@@ -54,7 +54,7 @@ def assertDistinct(res, correct, feedback_params=None):
     
     for thing in res:
         if res.count(thing) > 1:
-            return "output_not_distinct", None
+            return "outputNotDistinct", None
         return None, None
 
 def evaluateAmount(res, correct, feedback_params=None):
@@ -101,7 +101,7 @@ def check_table_names_from_query(res, correct, feedback_params=None):
     res_table_names = get_table_names_from_query(student_answer)
     
     if correct_table_names.lower() != res_table_names.lower():
-        return "incorrect_table_name", None
+        return "incorrectTableName", None
     
     return None, None
     
@@ -126,7 +126,7 @@ def checkTableNameFromDB(res, correct, feedback_params=None):
 
     # Compares the table names
     if table_name != correct_table_names:
-        return ("incorrect_table_name")
+        return ("incorrectTableName")
     return None
 
 def checkTableColumns(res, correct, feedback_params=None):
@@ -137,14 +137,14 @@ def checkTableColumns(res, correct, feedback_params=None):
     cursor.execute("SELECT * FROM testtable")
     column_names = [column[0] for column in cursor.description]
     if column_names != req_column_names:
-        return ("incorrect_column_name")
+        return ("incorrectColumnName")
     return None
 
 def evaluate_updated_values(res, correct, feedback_params=None):
     incorrect_where_clause = feedback_params['res_affected_ids'] != feedback_params['correct_affected_ids']
     '''Check if correct rows have been affected'''
     if len(res) != len(correct) or incorrect_where_clause:
-        return "incorrect_selected_rows", res
+        return "incorrectSelectedRows", res
 
     '''Checks if the updated values contains correct values'''
     for i, value in enumerate(res):
@@ -160,9 +160,9 @@ def compare_column_data(res, correct, feedback_params=None):
     try:
         for i, column in enumerate(correct):
             if column != res[i]:
-                return "incorrect_selected_columns"
+                return "incorrectSelectedColumns"
     except IndexError:
-        return "incorrect_selected_columns"
+        return "incorrectSelectedColumns"
     
     return None
 
@@ -171,10 +171,10 @@ def check_table_schema(res, correct, feedback_params=None):
     correct_table_name = correct.pop()
 
     if correct_table_name != res_table_name:
-        return "incorrect_table_name", None
+        return "incorrectTableName", None
     
     if len(res) != len(correct):
-        return "incorrect_column_amount", None
+        return "incorrectColumnAmount", None
 
     for i, value in enumerate(correct):
         for j in range (0, 6):
@@ -183,13 +183,13 @@ def check_table_schema(res, correct, feedback_params=None):
 
 def check_table_content_after_delete(res, correct, feedback_params=None):
     if len(correct) > len(res):
-        return "too_few_deleted", None
+        return "tooFewDeleted", None
     elif len(correct) < len(res):
-        return "too_many_deleted", None
+        return "tooManyDeleted", None
     
     for i, value in enumerate(res):
         if value != correct[i]:
-            return "incorrect_deleted_rows", None
+            return "incorrectDeletedRows", None
 
 def evaluate_multi_query_content(res, correct, feedback_params=None):
     res_tables: dict = feedback_params['ans_multi_result']
@@ -198,7 +198,7 @@ def evaluate_multi_query_content(res, correct, feedback_params=None):
     for table, value in ref_tables.items():
         for i, row in enumerate(value['content']):
             if row != res_tables[table]['content'][i]:
-                return "multi_incorrect_table_content", table
+                return "multiIncorrectTableContent", table
 
     return None, None
 
