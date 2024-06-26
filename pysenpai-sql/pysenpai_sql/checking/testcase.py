@@ -12,7 +12,8 @@ from pysenpai_sql.checking.tests import *
 
 class SQLTestCase(object):
     
-    def __init__(self, ref_result, 
+    def __init__(self, ref_result,
+                 res_result=None, 
                  args=None,
                  inputs=None,
                  data=None,
@@ -30,6 +31,7 @@ class SQLTestCase(object):
         self.weight = weight
         self.tag = tag
         self.ref_result = ref_result
+        self.res_result = res_result
         self.validator = validator
         self.output_validator = output_validator
         self.eref_results = eref_results or []
@@ -63,6 +65,8 @@ class SQLTestCase(object):
         for setting in open("setting_arguments.txt", "r").readlines():
             if setting.find("feedback") >= 0:
                 parsed_functions = setting.split("=")[1].split(",")
+                self.feedback_params['ref'] = self.ref_result
+                self.feedback_params['res'] = self.res_result
                 for function in parsed_functions:
                     try:
                         feedback_results.append(feedback_functions[function.strip()](res, ref, feedback_params=self.feedback_params)) #Call feedback function
@@ -90,6 +94,7 @@ class SQLTestCase(object):
         pass
 
 def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
+                  res_result=None,
                   test_query=None,
                   insert_query=None, 
                   parent_object=None,

@@ -20,55 +20,6 @@ table_regex_from_query_type = {
 }
 
 class SQLMultipleQueryTestCase(SQLTestCase):
-    def __init__(self, 
-                 ref_result, 
-                 args=None, 
-                 inputs=None, 
-                 data=None, 
-                 weight=1, 
-                 tag="", 
-                 validator=defaults.result_validator, 
-                 output_validator=None, 
-                 eref_results=None, 
-                 internal_config=None, 
-                 presenters=None):
-        super().__init__(
-            ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
-        )
-        self.ans_table_content = []
-        self.ref_table_content = []
-        self.ans_table_data = []
-        self.ref_table_data = []
-    
-    def feedback(self, res, descriptions):
-        #Test table schema
-        primary_key_check = check_primary_key(self.ans_table_data, self.ref_table_data)
-        if primary_key_check:
-            yield primary_key_check, None
-
-        data_type_check = check_column_data_types(self.ans_table_data, self.ref_table_data)
-        if data_type_check != None:
-            yield data_type_check, None
-
-        column_name_check = check_column_names(self.ref_table_data, self.ref_table_data)
-        if column_name_check != None:
-            yield column_name_check, None
-
-        not_null_check = check_null_values_allowed(self.ref_table_data, self.ref_table_data)
-        if not_null_check != None:
-            yield not_null_check, None
-        
-        #Test table contents row by row
-        for i, row in enumerate(self.ref_table_content):
-            try:
-                if (row != self.ans_table_content[i]):
-                    yield "incorrect_inserted_data", None
-                    break
-            except IndexError:
-                yield "incorrect_inserted_data", None
-                break
-
-        return super().feedback(res, descriptions)
     
     def wrap(self, ref_answer, student_answer, lang, msgs):
         try :
@@ -84,6 +35,8 @@ class SQLMultipleQueryTestCase(SQLTestCase):
             ans_affected_tables = execute_multi_line_script(sql_script, cursor)
             ans_results = create_result_dict(ans_affected_tables, cursor)
 
+            self.feedback_params["ans_multi_result"] = ans_results
+
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
@@ -95,6 +48,8 @@ class SQLMultipleQueryTestCase(SQLTestCase):
             cursor2 = conn2.cursor()
             ref_affected_table = execute_multi_line_script(ref_answer, cursor2)
             ref_results = create_result_dict(ref_affected_table, cursor2)
+
+            self.feedback_params["ref_multi_result"] = ref_results
 
             conn2.commit()
             conn2.close()
@@ -123,14 +78,9 @@ def create_list_for_validator(ref_dict: dict, ans_dict: dict, test_class: SQLMul
     for table, values in ref_dict.items():
         ref.append(values["content"])
         ref.append(values["data"])
-        test_class.ref_table_data += ref_dict[table]['data']
-        test_class.ref_table_content += ref_dict[table]['content']
 
         res.append(ans_dict[table]["content"])
         res.append(ans_dict[table]["data"])
-
-        test_class.ans_table_data += ans_dict[table]['data']
-        test_class.ans_table_content += ans_dict[table]['content']
 
     return res, ref
 

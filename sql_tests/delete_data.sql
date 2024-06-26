@@ -1,1 +1,1 @@
-DELETE FROM Artist;
+DELETE FROM exhibition;

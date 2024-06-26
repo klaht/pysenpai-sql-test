@@ -12,7 +12,6 @@ from pysenpai.output import output
 from pysenpai.exceptions import OutputParseError
 
 class SQLDeleteTestCase(SQLTestCase):
-
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
         Wraps the test case with the student's answer.
@@ -65,7 +64,7 @@ class SQLDeleteTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
 
-        return res, ref, ""
+        return ref, res, ""
 
 
 def get_table_contents(cursor: sqlite3.Cursor, query: str):

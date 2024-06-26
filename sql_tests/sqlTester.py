@@ -64,7 +64,7 @@ msgs.set_msg("UnicodeError", "fi", dict(
     triggers=["student_sql_query"]
 ))
 
-def gen_program_vector(ref_query):
+def gen_program_vector(ref_query, res):
 
     """
     Generates a vector of test cases for the main program.
@@ -87,26 +87,33 @@ def gen_program_vector(ref_query):
             # Set the test class by using prefered settings
             test_class = SQLSelectTestCase(
             validator=parsed_list_sql_validator,
-            ref_result=ref_query,)
+            ref_result=ref_query,
+            res_result = res)
             
         case "INSERT":
            test_class = SQLInsertTestCase(ref_result=ref_query,
-            validator=parsed_list_sql_validator)
+            validator=parsed_list_sql_validator,
+            res_result = res)
         case "CREATE":
            test_class = SQLCreateTestCase(ref_result=ref_query,
-            validator=parsed_list_sql_validator)
+            validator=parsed_list_sql_validator,
+            res_result = res)
         case "UPDATE":
            test_class = SQLUpdateTestCase(ref_result=ref_query,
-            validator=parsed_list_sql_validator)
+            validator=parsed_list_sql_validator,
+            res_result = res)
         case "DELETE":
             test_class = SQLDeleteTestCase(ref_result=ref_query,
-            validator=parsed_list_sql_validator)
+            validator=parsed_list_sql_validator,
+            res_result = res)
         case "ALTER":
             test_class = SQLAlterTestCase(ref_result=ref_query,
-            validator=parsed_list_sql_validator)
+            validator=parsed_list_sql_validator,
+            res_result = res)
         case "MULTI":
             test_class = SQLMultipleQueryTestCase(ref_result=ref_query,
-            validator=parsed_list_sql_validator)
+            validator=parsed_list_sql_validator,
+            res_result = res)
         case _:
             output(msgs.get_msg("InvalidCommand", lang), Codes.INCORRECT)
             sys.exit(1)
@@ -164,7 +171,7 @@ if __name__ == "__main__":
             score += run_sql_test_cases("program",
                                         assignmentType.upper(),
                                         answerFile,
-                                        lambda: gen_program_vector(reference_query), #needs to be callable
+                                        lambda: gen_program_vector(reference_query, answerFile), #needs to be callable
                                         lang, custom_msgs=msgs
                                     )
     else:
