@@ -74,27 +74,13 @@ def create_list_for_validator(ref_dict: dict, ans_dict: dict, test_class: SQLMul
     """
     res = []
     ref = []
-    res_table_data = []
-    res_table_content = []
-    correct_table_data = []
-    correct_table_content = []
 
     for table, values in ref_dict.items():
         ref.append(values["content"])
         ref.append(values["data"])
-        correct_table_data.append(ref_dict[table]['data'])
-        correct_table_content.append(ref_dict[table]['content'])
 
         res.append(ans_dict[table]["content"])
         res.append(ans_dict[table]["data"])
-        res_table_data.append(ans_dict[table]['data'])
-        res_table_content.append(ans_dict[table]['content'])
-
-    test_class.feedback_params['res_table_data'] = res_table_data
-    test_class.feedback_params['res_table_content'] = res_table_content
-
-    test_class.feedback_params['correct_table_data'] = correct_table_data
-    test_class.feedback_params['correct_table_content'] = correct_table_content
 
     return res, ref
 
