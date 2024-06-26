@@ -184,7 +184,7 @@ def evaluate_multi_query_schema(res, correct, feedback_params=None):
         for i, value in enumerate(value['data']):
             for j in range (0, 6):
                 if res_tables[table]['data'][i][j] != value[j]:
-                    return schema_indices[j], None
+                    return schema_indices[j], table
 
     return None, None
 
