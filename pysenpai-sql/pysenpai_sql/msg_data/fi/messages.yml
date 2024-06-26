@@ -157,6 +157,8 @@ lint:
     Koodisi sai liian pienet laatupisteet ({stats.global_note:.1f} / 10.0).
     Tavoite: 9+ / 10.0.
 program:
+  multi_incorrect_table_content: |-
+    Tauluun {output} lisätty virheellisiä arvoja.
   incorrect_column_name: |- 
     Sarakkeen nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.

@@ -165,7 +165,28 @@ def check_table_content_after_delete(res, correct, feedback_params=None):
         if value != correct[i]:
             return "incorrect_deleted_rows", None
 
+def evaluate_multi_query_content(res, correct, feedback_params=None):
+    res_tables: dict = feedback_params['ans_multi_result']
+    ref_tables: dict = feedback_params['ref_multi_result']
 
+    for table, value in ref_tables.items():
+        for i, row in enumerate(value['content']):
+            if row != res_tables[table]['content'][i]:
+                return "multi_incorrect_table_content", table
+
+    return None, None
+
+def evaluate_multi_query_schema(res, correct, feedback_params=None):
+    res_tables: dict = feedback_params['ans_multi_result']
+    ref_tables: dict = feedback_params['ref_multi_result']
+
+    for table, value in ref_tables.items():
+        for i, value in enumerate(value['data']):
+            for j in range (0, 6):
+                if res_tables[table]['data'][i][j] != value[j]:
+                    return schema_indices[j], None
+
+    return None, None
 
 
 feedback_functions = {
@@ -177,5 +198,7 @@ feedback_functions = {
     "selected_columns": assertSelectedVariables,
     "amount": evaluateAmount,
     "column": compare_column_data,
-    "update": evaluate_updated_values
+    "update": evaluate_updated_values,
+    "multi_content": evaluate_multi_query_content,
+    "multi_schema": evaluate_multi_query_schema
 }

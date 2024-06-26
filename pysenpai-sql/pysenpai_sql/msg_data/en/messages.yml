@@ -159,6 +159,8 @@ lint:
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
+  multi_incorrect_table_content: |-
+    Table {output} contains incorrect values.
   TooGeneralizedIdentifier: |- 
       The query used too generic identifiers. Use more specific identifiers.
   IncorrectUpdatedValues: |-
