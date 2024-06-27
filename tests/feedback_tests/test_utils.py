@@ -4,7 +4,7 @@ import pytest
 import yaml
 import re
 
-def run_test_case(ans_query, ref_query):
+def run_test_case(ans_query, ref_query, args=[]):
 
     ans_file = "../tests/feedback_tests/ans_file.sql"
     ref_file = "../tests/feedback_tests/ref_file.sql"
@@ -14,9 +14,12 @@ def run_test_case(ans_query, ref_query):
 
     with open(ref_file, "w") as f:
         f.write(ref_query)
+    
+    with open("test_setting_arguments.txt", "w") as f:
+        f.write("\n".join(args))
 
     p = subprocess.Popen(
-        ["python3", "sqlTester.py", "-l", "en", ans_file, ref_file],
+        ["python3", "sqlTester.py", "-l", "en", ans_file, ref_file, "test_setting_arguments.txt"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT
     )

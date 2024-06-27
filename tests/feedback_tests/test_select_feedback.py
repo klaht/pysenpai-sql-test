@@ -12,8 +12,10 @@ def test_correct_feedback():
 def test_incorrect_table():
     ans_query = "SELECT name FROM Artist;"
     ref_query = "SELECT name FROM ArtWork;"
+
+    args = ["exNumber = 0", "show_answer_difference", "feedback=table_name"]
     
-    answer, msg = run_test_case(ans_query, ref_query)
+    answer, msg = run_test_case(ans_query, ref_query, args)
     correct_msg = get_msg("en", "DatabaseError")
     assert compare_messages(msg, correct_msg)
     assert not answer
