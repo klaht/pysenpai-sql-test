@@ -10,7 +10,7 @@ schema_indices = [
     "incorrect_primary_key",
 ]
 
-def assertOrder(res, correct, feedback_params=None):
+def assert_order(res, correct, feedback_params=None):
     '''Checks if the list is sorted in ascending order'''
 
     if res != correct and set(res) == set(correct):
@@ -18,7 +18,7 @@ def assertOrder(res, correct, feedback_params=None):
 
     return None, None
 
-def assertSelectedVariables(res, correct, feedback_params=None):
+def assert_selected_variables(res, correct, feedback_params=None):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
 
     if res == correct:
@@ -48,7 +48,7 @@ def evaluate_variables(res, correct, feedback_params=None):
     
     return None
 
-def assertDistinct(res, correct, feedback_params=None):
+def assert_distinct(res, correct, feedback_params=None):
     '''Checks if the list contains only distinct values'''
     #TODO Implement correctly
     
@@ -57,7 +57,7 @@ def assertDistinct(res, correct, feedback_params=None):
             return "outputNotDistinct", None
         return None, None
 
-def evaluateAmount(res, correct, feedback_params=None):
+def evaluate_amount(res, correct, feedback_params=None):
     '''
     Checks if the answer contains the correct amount of values
     If there are too many or too little values, returns the excessive values
@@ -106,7 +106,7 @@ def check_table_names_from_query(res, correct, feedback_params=None):
     return None, None
     
 
-def checkTableNameFromDB(res, correct, feedback_params=None):
+def check_table_name_from_db(res, correct, feedback_params=None):
     '''
     Checks if the table names are correct in the modified database
     Used for UPDATE AND DELETE!!!!
@@ -129,7 +129,7 @@ def checkTableNameFromDB(res, correct, feedback_params=None):
         return ("incorrectTableName")
     return None
 
-def checkTableColumns(res, correct, feedback_params=None):
+def check_table_columns(res, correct, feedback_params=None):
     '''Checks if the table columns are correct'''
 
     conn = sqlite3.connect("mydatabase1.db")
@@ -219,10 +219,10 @@ feedback_functions = {
     "value": evaluate_variables,
     "schema": check_table_schema,
     "delete": check_table_content_after_delete,
-    "order": assertOrder,
-    "distinct": assertDistinct,
-    "selected_columns": assertSelectedVariables,
-    "amount": evaluateAmount,
+    "order": assert_order,
+    "distinct": assert_distinct,
+    "selected_columns": assert_selected_variables,
+    "amount": evaluate_amount,
     "column": compare_column_data,
     "update": evaluate_updated_values,
     "multi_content": evaluate_multi_query_content,
@@ -237,7 +237,7 @@ def get_affected_row_ids(cursor: sqlite3.Cursor, query):
     Splits the query at the first WHERE and uses the part after in a SELECT query
     """
     where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
-    primary_key = getTablePrimaryKey(cursor, query)
+    primary_key = get_table_primary_key(cursor, query)
 
     affected_query = "SELECT " + primary_key + " FROM " + query.split()[1] + " WHERE " + where_clause
 
@@ -249,13 +249,13 @@ def get_rows_with_ids(cursor, query, ids):
     """
     Get all rows from table for given ids (primary key)
     """
-    primary_key = getTablePrimaryKey(cursor, query)
+    primary_key = get_table_primary_key(cursor, query)
     select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
     cursor.execute(select_query)
 
     return cursor.fetchall()
 
-def getTablePrimaryKey(cursor, query):
+def get_table_primary_key(cursor, query):
     """
     Get primary key from an UPDATE query
     Uses PRAGMA query to fetch information about the table
@@ -270,6 +270,7 @@ def getTablePrimaryKey(cursor, query):
                 return column[1] #Index 1 stores column name
             except Exception as e:
                 raise IndexError
+
 def get_table_names_from_query(query):
    
     table_ids = None
