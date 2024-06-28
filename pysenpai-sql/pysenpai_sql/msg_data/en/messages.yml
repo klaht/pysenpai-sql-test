@@ -186,8 +186,13 @@ program:
   incorrect_colunm_order: |- 
     Column order is incorrect.
     Make sure you use the order specified in the assignment.
-  incorrect_selected_column: |-
+  incorrect_return_order: |- 
+    The order of the returned values is incorrect.
+    Make sure you return the values in the order specified in the assignment.
+  incorrect_selected_columns: |-
     The query used incorrect columns.
+  output_not_distinct: |- 
+    The query returned non-distinct values.
   incorrect_selected_rows: |-
     WHERE clause returned incorrect rows.
   incorrect_table_name: |- 

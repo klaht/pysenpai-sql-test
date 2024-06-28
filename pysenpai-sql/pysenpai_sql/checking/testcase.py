@@ -60,9 +60,9 @@ class SQLTestCase(object):
     def present_call(self, target):
         return ""
     
-    def feedback(self, res, ref):
+    def feedback(self, res, ref, config_file):
         feedback_results = []
-        for setting in open("setting_arguments.txt", "r").readlines():
+        for setting in open(config_file, "r").readlines():
             if setting.find("feedback") >= 0:
                 parsed_functions = setting.split("=")[1].split(",")
                 self.feedback_params['ref'] = self.ref_result
@@ -105,7 +105,8 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                   validate_exception=False,
                   argument_cloner=defaults.default_argument_cloner,
                   new_test=defaults.default_new_test,
-                  grader=defaults.pass_fail_grader): 
+                  grader=defaults.pass_fail_grader,
+                  config_file="setting_arguments.txt"): 
 
     # One time preparations
     save = sys.stdout
@@ -178,7 +179,7 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
                 
             #Extra feedback
-            for msg_key, test_output in test.feedback(res, ref):
+            for msg_key, test_output in test.feedback(res, ref, config_file):
                 if test_output == None and msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO)
                 elif msg_key:

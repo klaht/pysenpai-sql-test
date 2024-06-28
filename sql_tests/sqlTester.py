@@ -142,6 +142,11 @@ if __name__ == "__main__":
         answerFile = args[0]; referenceFile = args[1]
         st_module = load_sql_module(answerFile, lang, inputs=["0"])
 
+        if (len(args) > 2):
+            config_file = args[2]
+        else:
+            config_file = "setting_arguments.txt"
+
         reference_query = open(referenceFile).read()
         reference_query = str.replace(reference_query, "\n", "")
         #Find individual queries. If length of second query is greater than 0 assignment is "MULTI"
@@ -172,7 +177,8 @@ if __name__ == "__main__":
                                         assignmentType.upper(),
                                         answerFile,
                                         lambda: gen_program_vector(reference_query, answerFile), #needs to be callable
-                                        lang, custom_msgs=msgs
+                                        lang, custom_msgs=msgs,
+                                        config_file=config_file,
                                     )
     else:
         output(msgs.get_msg("EmptyAnswer", lang), Codes.INCORRECT)
