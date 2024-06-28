@@ -3,8 +3,9 @@ from test_utils import *
 def test_correct_feedback():
     ans_query = "SELECT name FROM Artist;"
     ref_query = "SELECT name FROM Artist;"
-    
-    answer, output = run_test_case(ans_query, ref_query)
+    args = ["exNumber = 0", "show_answer_difference", "feedback=table_name, value"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
     error_keys = ["CorrectResult"]
 
     correct_msgs = get_msg("en", error_keys)
@@ -41,9 +42,11 @@ def test_incorrect_column_name_SELECT():
 def test_incorrect_column_name_WHERE():
     ans_query = "SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting');"
     ref_query = "SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting1');"
-    
-    answer, output = run_test_case(ans_query, ref_query)
+    args = ["exNumber = 0", "show_answer_difference", "feedback=table_name"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
     returned_msgs = parse_flag_msg(output, 0)
+    
 
     error_keys = ["IncorrectResult"]
     correct_msgs = get_msg("en", error_keys)
@@ -70,3 +73,21 @@ def test_incorrect_order():
     returned_msgs = parse_flag_msg(output, 0)
 
     assert compare_messages(returned_msgs, correct_msgs)
+
+def test_distinct():
+    ans_query = "SELECT title FROM ArtWork;"
+    ref_query = "SELECT DISTINCT title FROM ArtWork;"
+    args = ["exNumber = 0", "show_answer_difference", "feedback=table_name, distinct"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["output_not_distinct", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer

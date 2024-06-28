@@ -226,6 +226,8 @@ program:
     {emsg}
   incorrect_selected_columns: |-
     Kysely käytti vääriä sarakkeita.
+  output_not_distinct: |- 
+    Kysely ei palauttanut uniikkeja arvoja.
   DatabaseError: |- 
     Tietokanta virhe.
     {emsg}
