@@ -4,9 +4,13 @@ def test_correct_feedback():
     ans_query = "SELECT name FROM Artist;"
     ref_query = "SELECT name FROM Artist;"
     
-    answer, msg = run_test_case(ans_query, ref_query)
-    correct_msg = get_msg("en", "CorrectResult")
-    assert compare_messages(msg, correct_msg)
+    answer, output = run_test_case(ans_query, ref_query)
+    error_keys = ["CorrectResult"]
+
+    correct_msgs = get_msg("en", error_keys)
+    returned_msgs = parse_flag_msg(output, 1)
+
+    assert compare_messages(returned_msgs, correct_msgs)
     assert answer
 
 def test_incorrect_table():
@@ -15,34 +19,54 @@ def test_incorrect_table():
 
     args = ["exNumber = 0", "show_answer_difference", "feedback=table_name"]
     
-    answer, msg = run_test_case(ans_query, ref_query, args)
-    correct_msg = get_msg("en", "DatabaseError")
-    assert compare_messages(msg, correct_msg)
+    answer, output = run_test_case(ans_query, ref_query, args)
+    error_keys = ["DatabaseError"]
+    correct_msgs = get_msg("en", error_keys)
+    returned_msgs = parse_flag_msg(output, 3)
+
+    assert compare_messages(returned_msgs, correct_msgs)
     assert not answer
 
 def test_incorrect_column_name_SELECT():
     ans_query = "SELECT name1 FROM Artist;"
     ref_query = "SELECT name FROM Artist;"
     
-    answer, msg = run_test_case(ref_query, ans_query)
-    correct_msg = get_msg("en", "DatabaseError")
-    assert compare_messages(msg, correct_msg)
+    answer, output = run_test_case(ref_query, ans_query)
+    returned_msgs = parse_flag_msg(output, 3)
+    error_keys = ["DatabaseError"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
     assert not answer
 
 def test_incorrect_column_name_WHERE():
     ans_query = "SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting');"
     ref_query = "SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting1');"
     
-    answer, msg = run_test_case(ans_query, ref_query)
-    correct_msg = get_msg("en", "IncorrectResult")
-    assert compare_messages(msg, correct_msg)
+    answer, output = run_test_case(ans_query, ref_query)
+    returned_msgs = parse_flag_msg(output, 0)
+
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
     assert not answer
 
 def test_incorrect_order():
     ans_query = "SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting') ORDER BY name DESC;"
     ref_query = "SELECT name FROM Artist WHERE artistId IN (SELECT artistId FROM ArtWork WHERE type == 'painting') ORDER BY name ASC;"
+    args = ["exNumber = 0", "feedback=table_name, order"]
 
-    answer, msg = run_test_case(ans_query, ref_query)
-    correct_msg = get_msg("en", "incorrect_colunm_order")
-    #assert compare_messages(msg, correct_msg) # Heittää messageksi IncorrectResult vaikka pitäisi olla incorrect_colunm_order 
+    answer, output = run_test_case(ans_query, ref_query, args)
+
+    returned_msgs = parse_flag_msg(output, 2)
+
+    error_keys = ["incorrect_return_order", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+
+    assert compare_messages(returned_msgs, correct_msgs)
     assert not answer
+
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    returned_msgs = parse_flag_msg(output, 0)
+
+    assert compare_messages(returned_msgs, correct_msgs)
