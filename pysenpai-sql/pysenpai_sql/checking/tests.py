@@ -132,13 +132,22 @@ def checkTableNameFromDB(res, correct, feedback_params=None):
 def checkTableColumns(res, correct, feedback_params=None):
     '''Checks if the table columns are correct'''
 
-    conn = sqlite3.connect("mydatabase1.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM testtable")
-    column_names = [column[0] for column in cursor.description]
-    if column_names != req_column_names:
-        return ("incorrect_column_name")
-    return None
+    correct_answer = feedback_params['ref']
+    student_answer_file = feedback_params['res']
+    
+    try :
+        student_answer1 = open(student_answer_file, 'r')
+        student_answer = student_answer1.read()
+    except FileNotFoundError as e:
+        return None, None
+    
+    correct_column_names = get_column_names_from_query(correct_answer)
+    res_column_names = get_column_names_from_query(student_answer)
+    
+    if correct_column_names.lower() != res_column_names.lower():
+        return "incorrect_column_name", None
+        
+    return None, None
 
 def evaluate_updated_values(res, correct, feedback_params=None):
     incorrect_where_clause = feedback_params['res_affected_ids'] != feedback_params['correct_affected_ids']
@@ -227,49 +236,12 @@ feedback_functions = {
     "update": evaluate_updated_values,
     "multi_content": evaluate_multi_query_content,
     "multi_schema": evaluate_multi_query_schema,
-    "table_name": check_table_names_from_query
+    "table_name": check_table_names_from_query,
+    "column_names": checkTableColumns
 }
 
 #Helper functions
-def get_affected_row_ids(cursor: sqlite3.Cursor, query):
-    """
-    Get all affected row primary keys from an update query
-    Splits the query at the first WHERE and uses the part after in a SELECT query
-    """
-    where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
-    primary_key = getTablePrimaryKey(cursor, query)
-
-    affected_query = "SELECT " + primary_key + " FROM " + query.split()[1] + " WHERE " + where_clause
-
-    cursor.execute(affected_query)
-
-    return cursor.fetchall()
-
-def get_rows_with_ids(cursor, query, ids):
-    """
-    Get all rows from table for given ids (primary key)
-    """
-    primary_key = getTablePrimaryKey(cursor, query)
-    select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
-    cursor.execute(select_query)
-
-    return cursor.fetchall()
-
-def getTablePrimaryKey(cursor, query):
-    """
-    Get primary key from an UPDATE query
-    Uses PRAGMA query to fetch information about the table
-    """
-    table_name = query.split()[1]
-    columns_query = "PRAGMA table_info(" + table_name + ")"
-    columns = cursor.execute(columns_query).fetchall()
-
-    for column in columns:
-        if column[5]: #Primary key information is stored at index 5
-            try:
-                return column[1] #Index 1 stores column name
-            except Exception as e:
-                raise IndexError
+            
 def get_table_names_from_query(query):
    
     table_ids = None
@@ -288,8 +260,33 @@ def get_table_names_from_query(query):
             table_names += query[table_ids]
             table_ids += 1
             ignore_once = False
-            if table_names[len(table_names)-1] == ",":
+            if table_names[len(table_names)-1] == ",": #if multpiple tables they are separated by a comma
                 ignore_once = True
     
     return table_names
+
+def get_column_names_from_query(query):
+    
+    column_ids = None
+    column_names = ""
+    ignore_once = False
+    
+    if "SELECT" in query:
+        column_ids = query.index("SELECT") + 7
+    if "UPDATE" in query:
+        column_ids = query.index("UPDATE") + 7
+    if "DISTINCT" in query:
+        column_ids = query.index("DISTINCT") + 9
+    if "SET" in query:
+        column_ids = query.index("SET") + 4
+    
+    if column_ids != None:
+        while column_ids < len(query) and (query[column_ids] != " " and query[column_ids] != ";") or ignore_once == True:
+            column_names += query[column_ids]
+            column_ids += 1
+            ignore_once = False
+            if column_names[len(column_names)-1] == ",":
+                ignore_once = True
+                
+    return column_names
     
