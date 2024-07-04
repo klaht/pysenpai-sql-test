@@ -62,7 +62,7 @@ def test_incorrect_order():
 
     returned_msgs = parse_flag_msg(output, 2)
 
-    error_keys = ["incorrect_return_order", "AdditionalTests"]
+    error_keys = ["incorrectReturnOrder", "AdditionalTests"]
     correct_msgs = get_msg("en", error_keys)
 
     assert compare_messages(returned_msgs, correct_msgs)
@@ -86,7 +86,7 @@ def test_distinct():
     assert compare_messages(returned_msgs, correct_msgs)
 
     returned_msgs = parse_flag_msg(output, 2)
-    error_keys = ["output_not_distinct", "AdditionalTests"]
+    error_keys = ["outputNotDistinct", "AdditionalTests"]
     correct_msgs = get_msg("en", error_keys)
     assert compare_messages(returned_msgs, correct_msgs)
 

@@ -153,29 +153,29 @@ lint:
   LintWarning: |- 
     Mahdollinen ongelmien aiheuttaja tiedostossa {lintmsg.module}, rivillä {lintmsg.line}. Selitys:
     {lintmsg.msg} ({lintmsg.symbol})
-  pylint_fail_low_score: |-
+  pylintFailLowScore: |-
     Koodisi sai liian pienet laatupisteet ({stats.global_note:.1f} / 10.0).
     Tavoite: 9+ / 10.0.
 program:
-  incorrect_primary_key: |-
+  incorrectPrimaryKey: |-
     Väärä primary key taulussa {output}.
-  incorrect_default_value: |-
+  incorrectDefaultValue: |-
     Väärä default arvo taulussa {output}.
-  incorrect_not_null: |-
+  incorrectNotNull: |-
     Väärä NOT NULL taulussa {output}.
-  incorrect_data_type: |-
+  incorrectDataType: |-
     Väärä data tyyppi taulussa {output}.
-  multi_incorrect_table_content: |-
+  multiIncorrectTableContent: |-
     Tauluun {output} lisätty virheellisiä arvoja.
-  incorrect_column_name: |- 
+  incorrectColumnName: |- 
     Sarakkeen nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
-  incorrect_column_order: |-
+  incorrectColumnOrder: |-
     Sarakkeiden järjestys on väärä.
     Varmista, että käytät tehtävänannossa määriteltyä järjestystä.
-  incorrect_selected_column: |-
+  incorrectSelectedColumn: |-
     Kysely käytti vääriä sarakkeita.
-  incorrect_selected_rows: |-
+  incorrectSelectedRows: |-
     WHERE lauseke koski vääriä rivejä.
   TooGeneralizedIdentifier: |-
     Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
@@ -188,22 +188,22 @@ program:
     Taulukkoon sijoitetut arvot olivat väärin. Väärä arvo oli: {output}
   MissingInsertedValueError: |-
     Taulukkoon sijoitettiin liian vähän arvoja.
-  incorrect_table_name: |- 
+  incorrectTableName: |- 
     Taulukon nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
-  missing_primarykey: |- 
+  missingPrimarykey: |- 
     Taulukosta puuttuu pääavain.
     Lisää taulukkoon pääavain.
-  too_many_return_values2: |- 
+  tooManyReturnValues2: |- 
     Kysely palautti liian monta arvoa.
     Varmista, että valitset vain MAALAUKSIA.
     Ylimääräiset arvot:
     {output}
-  too_many_return_values0: |- 
+  tooManyReturnValues0: |- 
     Kysely palautti liian monta arvoa.
     Ylimääräiset arvot:
     {output}
-  too_little_return_values0: |- 
+  tooLittleReturnValues0: |- 
     Kysely palautti liian vähän arvoja.
     Puuttuvat arvot:
     {output}
@@ -224,9 +224,9 @@ program:
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
-  incorrect_selected_columns: |-
+  incorrectSelectedColumns: |-
     Kysely käytti vääriä sarakkeita.
-  output_not_distinct: |- 
+  outputNotDistinct: |- 
     Kysely ei palauttanut uniikkeja arvoja.
   DatabaseError: |- 
     Tietokanta virhe.
@@ -235,7 +235,7 @@ program:
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
-  incorrect_return_order: |-
+  incorrectReturnOrder: |-
     Palautettujen arvojen järjestys on väärä.
     Varmista, että palautat arvot oikeassa järjestyksessä.
   AdditionalInfo: |- 
@@ -345,9 +345,9 @@ snippet:
     Muuttujien arvot suorituksen jälkeen:\n{res}
   TargetName: |- 
     Testataan koodipätkää...
-  fail_missing_variable: |-
+  failMissingVariable: |-
     Koodissa ei luotu pyydettyä muuttujaa.
-  fail_variable_value: |- 
+  failVariableValue: |- 
     Koodi sijoitti muuttujaan väärän arvon.
 static:
   AttributeError: |- 

@@ -10,15 +10,15 @@ schema_indices = [
     "incorrect_primary_key",
 ]
 
-def assertOrder(res, correct, feedback_params=None):
+def assert_order(res, correct, feedback_params=None):
     '''Checks if the list is sorted in ascending order'''
 
     if res != correct and set(res) == set(correct):
-        return "incorrect_return_order", None
+        return "incorrectReturnOrder", None
 
     return None, None
 
-def assertSelectedVariables(res, correct, feedback_params=None):
+def assert_selected_variables(res, correct, feedback_params=None):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
 
     if res == correct:
@@ -26,7 +26,7 @@ def assertSelectedVariables(res, correct, feedback_params=None):
 
     for i, value in enumerate(correct):
         if len(res[i]) != len(value):
-            return "incorrect_selected_columns", None
+            return "incorrectSelectedColumns", None
         
         #Only need to compare the first indices
         break
@@ -48,16 +48,16 @@ def evaluate_variables(res, correct, feedback_params=None):
     
     return None
 
-def assertDistinct(res, correct, feedback_params=None):
+def assert_distinct(res, correct, feedback_params=None):
     '''Checks if the list contains only distinct values'''
     #TODO Implement correctly
     
     for thing in res:
         if res.count(thing) > 1:
-            return "output_not_distinct", None
+            return "outputNotDistinct", None
         return None, None
 
-def evaluateAmount(res, correct, feedback_params=None):
+def evaluate_amount(res, correct, feedback_params=None):
     '''
     Checks if the answer contains the correct amount of values
     If there are too many or too little values, returns the excessive values
@@ -101,12 +101,12 @@ def check_table_names_from_query(res, correct, feedback_params=None):
     res_table_names = get_table_names_from_query(student_answer)
     
     if correct_table_names.lower() != res_table_names.lower():
-        return "incorrect_table_name", None
+        return "incorrectTableName", None
     
     return None, None
     
 
-def checkTableNameFromDB(res, correct, feedback_params=None):
+def check_table_name_from_db(res, correct, feedback_params=None):
     '''
     Checks if the table names are correct in the modified database
     Used for UPDATE AND DELETE!!!!
@@ -126,10 +126,10 @@ def checkTableNameFromDB(res, correct, feedback_params=None):
 
     # Compares the table names
     if table_name != correct_table_names:
-        return ("incorrect_table_name")
+        return ("incorrectTableName")
     return None
 
-def checkTableColumns(res, correct, feedback_params=None):
+def check_table_columns(res, correct, feedback_params=None):
     '''Checks if the table columns are correct'''
 
     correct_answer = feedback_params['ref']
@@ -145,7 +145,7 @@ def checkTableColumns(res, correct, feedback_params=None):
     res_column_names = get_column_names_from_query(student_answer)
     
     if correct_column_names.lower() != res_column_names.lower():
-        return "incorrect_column_name", None
+        return "incorrectColumnName", None
         
     return None, None
 
@@ -153,7 +153,7 @@ def evaluate_updated_values(res, correct, feedback_params=None):
     incorrect_where_clause = feedback_params['res_affected_ids'] != feedback_params['correct_affected_ids']
     '''Check if correct rows have been affected'''
     if len(res) != len(correct) or incorrect_where_clause:
-        return "incorrect_selected_rows", res
+        return "incorrectSelectedRows", res
 
     '''Checks if the updated values contains correct values'''
     for i, value in enumerate(res):
@@ -169,9 +169,9 @@ def compare_column_data(res, correct, feedback_params=None):
     try:
         for i, column in enumerate(correct):
             if column != res[i]:
-                return "incorrect_selected_columns"
+                return "incorrectSelectedColumns"
     except IndexError:
-        return "incorrect_selected_columns"
+        return "incorrectSelectedColumns"
     
     return None
 
@@ -180,10 +180,10 @@ def check_table_schema(res, correct, feedback_params=None):
     correct_table_name = correct.pop()
 
     if correct_table_name != res_table_name:
-        return "incorrect_table_name", None
+        return "incorrectTableName", None
     
     if len(res) != len(correct):
-        return "incorrect_column_amount", None
+        return "incorrectColumnAmount", None
 
     for i, value in enumerate(correct):
         for j in range (0, 6):
@@ -192,13 +192,13 @@ def check_table_schema(res, correct, feedback_params=None):
 
 def check_table_content_after_delete(res, correct, feedback_params=None):
     if len(correct) > len(res):
-        return "too_few_deleted", None
+        return "tooFewDeleted", None
     elif len(correct) < len(res):
-        return "too_many_deleted", None
+        return "tooManyDeleted", None
     
     for i, value in enumerate(res):
         if value != correct[i]:
-            return "incorrect_deleted_rows", None
+            return "incorrectDeletedRows", None
 
 def evaluate_multi_query_content(res, correct, feedback_params=None):
     res_tables: dict = feedback_params['ans_multi_result']
@@ -207,7 +207,7 @@ def evaluate_multi_query_content(res, correct, feedback_params=None):
     for table, value in ref_tables.items():
         for i, row in enumerate(value['content']):
             if row != res_tables[table]['content'][i]:
-                return "multi_incorrect_table_content", table
+                return "multiIncorrectTableContent", table
 
     return None, None
 
@@ -228,20 +228,60 @@ feedback_functions = {
     "value": evaluate_variables,
     "schema": check_table_schema,
     "delete": check_table_content_after_delete,
-    "order": assertOrder,
-    "distinct": assertDistinct,
-    "selected_columns": assertSelectedVariables,
-    "amount": evaluateAmount,
+    "order": assert_order,
+    "distinct": assert_distinct,
+    "selected_columns": assert_selected_variables,
+    "amount": evaluate_amount,
     "column": compare_column_data,
     "update": evaluate_updated_values,
     "multi_content": evaluate_multi_query_content,
     "multi_schema": evaluate_multi_query_schema,
     "table_name": check_table_names_from_query,
-    "column_names": checkTableColumns
+    "column_names": check_table_columns
 }
 
 #Helper functions
             
+def get_affected_row_ids(cursor: sqlite3.Cursor, query):
+    """
+    Get all affected row primary keys from an update query
+    Splits the query at the first WHERE and uses the part after in a SELECT query
+    """
+    where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
+    primary_key = get_table_primary_key(cursor, query)
+
+    affected_query = "SELECT " + primary_key + " FROM " + query.split()[1] + " WHERE " + where_clause
+
+    cursor.execute(affected_query)
+
+    return cursor.fetchall()
+
+def get_rows_with_ids(cursor, query, ids):
+    """
+    Get all rows from table for given ids (primary key)
+    """
+    primary_key = get_table_primary_key(cursor, query)
+    select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
+    cursor.execute(select_query)
+
+    return cursor.fetchall()
+
+def get_table_primary_key(cursor, query):
+    """
+    Get primary key from an UPDATE query
+    Uses PRAGMA query to fetch information about the table
+    """
+    table_name = query.split()[1]
+    columns_query = "PRAGMA table_info(" + table_name + ")"
+    columns = cursor.execute(columns_query).fetchall()
+
+    for column in columns:
+        if column[5]: #Primary key information is stored at index 5
+            try:
+                return column[1] #Index 1 stores column name
+            except Exception as e:
+                raise IndexError
+
 def get_table_names_from_query(query):
    
     table_ids = None
