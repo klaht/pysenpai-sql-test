@@ -50,8 +50,12 @@ def evaluate_variables(res, correct, feedback_params=None):
 
 def assert_distinct(res, correct, feedback_params=None):
     '''Checks if the list contains only distinct values and if the query contains distinct keyword'''
-    answer_query = feedback_params['res']
-    if not re.search(r"\bDISTINCT\b", answer_query, re.IGNORECASE):
+    answer_query_file = feedback_params['res']
+    try :
+        student_answer= open(answer_query_file, 'r').read()
+    except FileNotFoundError as e:
+        return None, None
+    if not re.search(r"\bDISTINCT\b", student_answer, re.IGNORECASE):
         return "noDistinctKeyword", None
     
     for thing in res:
