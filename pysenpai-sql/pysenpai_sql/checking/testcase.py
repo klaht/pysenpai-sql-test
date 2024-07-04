@@ -12,7 +12,8 @@ from pysenpai_sql.checking.tests import *
 
 class SQLTestCase(object):
     
-    def __init__(self, ref_result, 
+    def __init__(self, ref_result,
+                 res_result=None, 
                  args=None,
                  inputs=None,
                  data=None,
@@ -30,6 +31,7 @@ class SQLTestCase(object):
         self.weight = weight
         self.tag = tag
         self.ref_result = ref_result
+        self.res_result = res_result
         self.validator = validator
         self.output_validator = output_validator
         self.eref_results = eref_results or []
@@ -47,6 +49,7 @@ class SQLTestCase(object):
         }
         if presenters:
             self.presenters.update(presenters)
+        self.feedback_params = {}
     
     def configure_presenters(self, patch):
         self.presenters.update(patch)
@@ -57,13 +60,21 @@ class SQLTestCase(object):
     def present_call(self, target):
         return ""
     
-    def feedback(self, res, descriptions):
-        for eref_result, msg_key in self.eref_results:
-            try:
-                self.validator(eref_result, res, descriptions)
-                yield (msg_key, {})
-            except AssertionError:
-                pass
+    def feedback(self, res, ref, config_file):
+        feedback_results = []
+        for setting in open(config_file, "r").readlines():
+            if setting.find("feedback") >= 0:
+                parsed_functions = setting.split("=")[1].split(",")
+                self.feedback_params['ref'] = self.ref_result
+                self.feedback_params['res'] = self.res_result
+                for function in parsed_functions:
+                    try:
+                        feedback_results.append(feedback_functions[function.strip()](res, ref, feedback_params=self.feedback_params)) #Call feedback function
+                    except KeyError:
+                        # TODO: Contact course staff without displaying error? Could be typo in config etc
+                        pass
+            
+                return feedback_results
 
     def parse(self, output):
         return output
@@ -83,6 +94,7 @@ class SQLTestCase(object):
         pass
 
 def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
+                  res_result=None,
                   test_query=None,
                   insert_query=None, 
                   parent_object=None,
@@ -93,7 +105,8 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                   validate_exception=False,
                   argument_cloner=defaults.default_argument_cloner,
                   new_test=defaults.default_new_test,
-                  grader=defaults.pass_fail_grader): 
+                  grader=defaults.pass_fail_grader,
+                  config_file="setting_arguments.txt"): 
 
     # One time preparations
     save = sys.stdout
@@ -166,16 +179,14 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
                 
             #Extra feedback
-            for msg_key, test_output in test.feedback(res, column_names, ref):
-                if test_output == None:
+            for msg_key, test_output in test.feedback(res, ref, config_file):
+                if test_output == None and msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO)
-                else:
+                elif msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO, output=test_output)
 
        
         test.teardown()
-        prev_res = res
-        prev_out = test_cases
     
     return grader(test_cases)
 

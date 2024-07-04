@@ -155,57 +155,76 @@ lint:
   LintWarning: |-
     Potential problem at {lintmsg.module}, line {lintmsg.line}. Explanation:
     {lintmsg.msg} ({lintmsg.symbol})
-  pylint_fail_low_score: |-
+  pylintFailLowScore: |-
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
+  incorrectPrimaryKey: |-
+    Incorrect primary key at table {output}.
+  incorrectDefaultValue: |-
+    Incorrect default value at table {output}.
+  incorrectNotNull: |-
+    Incorrect NOT NULL at table {output}.
+  incorrectDataType: |-
+    Incorrect data type at table {output}.
+  multiIncorrectTableContent: |-
+    Table {output} contains incorrect values.
   TooGeneralizedIdentifier: |- 
       The query used too generic identifiers. Use more specific identifiers.
   IncorrectUpdatedValues: |-
-    The query updated the following fields incorrectly:
+    The query updated one of the following fields incorrectly:
     {output}
   UnidentifiableRecord: |-
     Could not identify the inserted record.
   IncorrectInsertError: |-
-    Inserted values were incorrect.
+    Inserted values were incorrect. Incorrect value was: {output}
   MissingInsertedValueError: |-
     Too few values were inserted.
-  incorrect_column_name: |- 
+  incorrectColumnName: |- 
     Column name is incorrect.
     Make sure you use the name specified in the assignment.
-  incorrect_colunm_order: |- 
+  incorrectColunmOrder: |- 
     Column order is incorrect.
     Make sure you use the order specified in the assignment.
-  incorrect_selected_column: |-
+  incorrectReturnOrder: |- 
+    The order of the returned values is incorrect.
+    Make sure you return the values in the order specified in the assignment.
+  outputNotDistinct: |- 
+    The query returned non-distinct values.
+  incorrectSelectedColumn: |-
     The query used incorrect columns.
-  incorrect_table_name: |- 
+  incorrectSelectedRows: |-
+    WHERE clause returned incorrect rows.
+  incorrectTableName: |- 
     Table name is incorrect.
     Make sure you use the name specified in the assignment.
-  missing_primarykey: |- 
+  missingPrimarykey: |- 
     Table is missing a primary key.
     Make sure you define a primary key for the table.
-  too_many_return_values2: |- 
+  tooManyReturnValues2: |- 
     Query returned too many values.
     Make sure you only select PAINTINGS.
     Excessive values.
     {output}
-  too_many_return_values0: |-
+  tooManyReturnValues0: |-
     Query returned too many values.
     Excessive values.
     {output}
-  too_litte_return_values0: |- 
+  tooLitteReturnValues0: |- 
     Query returned too few values.
     Missing values.
     {output}
-  DatabaseError: |-
     A database error occurred while calling the function.
     {emsg}
   DatabaseCreationError : |-
     A database creation error occurred while creating the database.
+  DatabaseError: |- 
+    Database Error.
+    {emsg}
   FileOpenError: |-
       File open failed
       {emgs}
-  incorrect_selected_columns: |-
+  incorrectSelectedColumns: |-
     The query used incorrect columns.
   AdditionalInfo: |-
     The checker gave the following as additional information asdasdads:

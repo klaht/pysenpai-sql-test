@@ -10,103 +10,7 @@ from pysenpai_sql.checking.tests import *
 class SQLUpdateTestCase(SQLTestCase):
     """
     A test case for SQL update queries.
-
-    Args:
-       test object: The SQLTestCase object.
-    Attributes:
-        ref_query_result: The reference query result.
-        field_names: The field names for the query result.
-        order: The order of the query result.
-        selected_variables: The selected variables for the query.
-        distinct: Whether to select distinct rows.
-        show_answer_difference: Whether to show the difference between the reference and student answers.
-        ref_affected_ids: The affected row IDs in the reference query.
-        ans_affected_ids: The affected row IDs in the student query.
-
-    Methods:
-        feedback: Provides feedback for the test case.
-        wrap: Runs the student and reference queries and returns the answers.
     """
-
-    def __init__(self, ref_result, 
-                 args=None,
-                 inputs=None,
-                 data=None,
-                 weight=1,
-                 tag="",
-                 validator=convenience.parsed_result_validator,
-                 output_validator=None,
-                 eref_results=None,
-                 internal_config=None,
-                 presenters=None,
-                 ref_query_result=None,
-                 field_names=None,
-                 order=None,
-                 selected_variables=None,
-                 distinct=True,
-                 show_answer_difference=True):
-        """
-        Initializes a new instance of the SQLUpdateTestCase class.
-
-        Args:
-            test object: The SQLTestCase object.
-            (
-            ref_result: The reference result for comparison.
-            args: Optional arguments for the test case.
-            inputs: Optional inputs for the test case.
-            data: Optional data for the test case.
-            weight: The weight of the test case.
-            tag: A tag for the test case.
-            validator: The validator function for the test case.
-            output_validator: The output validator function for the test case.
-            eref_results: The expected reference results for the test case.
-            internal_config: Internal configuration for the test case.
-            presenters: Presenters for the test case.
-            ref_query_result: The reference query result.
-            field_names: The field names for the query result.
-            order: The order of the query result.
-            selected_variables: The selected variables for the query.
-            distinct: Whether to select distinct rows.
-            show_answer_difference: Whether to show the difference between the reference and student answers.)
-        """
-        
-        self.ref_query_result = ref_query_result
-        self.field_names = field_names
-        self.order = order
-        self.selected_variables = selected_variables
-        self.distinct = distinct
-        self.show_answer_difference = show_answer_difference
-        self.ref_affected_ids = None
-        self.ans_affected_ids = None
-        
-        super().__init__(
-            ref_result, args, inputs, data, weight, tag, validator, output_validator, eref_results, internal_config, presenters
-        )
-
-    def feedback(self, res, descriptions, ref):
-        """
-        Provides feedback for the test case.
-
-        Args:
-            res: The result of the test case.
-            descriptions: Descriptions for the feedback.
-
-        Yields:
-            Tuple[str, Any]: The feedback information.
-        """
-        incorrect_variables, output = evaluate_updated_values(self.ref_query_result, self.field_names)
-        if incorrect_variables:
-            yield incorrect_variables, output
-
-        # Compare primary keys to find if correct rows were selected
-        try:
-            for i, ref_id in enumerate(self.ref_affected_ids):
-                if ref_id != self.ans_affected_ids[i]:
-                    yield 'incorrect_selected_columns', None
-        except IndexError:
-            yield 'incorrect_selected_columns', None
-        
-        return super().feedback(res, descriptions)  
 
     def wrap(self, ref_answer, student_answer, lang, msgs):
         """
@@ -143,14 +47,14 @@ class SQLUpdateTestCase(SQLTestCase):
             # res = cursor.fetchall()
 
             # Get ids affected by the update
-            self.ans_affected_ids = get_affected_row_ids(cursor, sql_script)
+            ans_affected_ids = get_affected_row_ids(cursor, sql_script)
 
             # Execute updated
             cursor.execute(sql_script)
 
             # Get rows with previously fetched ids
             # If no rows have been affected by the query set all to empty
-            res = get_rows_with_ids(cursor, sql_script, self.ans_affected_ids) if self.ans_affected_ids else []
+            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids) if ans_affected_ids else []
             self.field_names = [i[0] for i in cursor.description] if res else []
             result_list = [list(row) for row in res][0] if res else []
 
@@ -167,11 +71,11 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
 
-            self.ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
+            ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
 
             cursor2.execute(ref_answer)
 
-            ref = get_rows_with_ids(cursor2, ref_answer, self.ref_affected_ids) 
+            ref = get_rows_with_ids(cursor2, ref_answer, ref_affected_ids) 
 
             # cursor2.execute(test_query)
             # ref = cursor2.fetchall()
@@ -184,6 +88,9 @@ class SQLUpdateTestCase(SQLTestCase):
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, None
+        
+        self.feedback_params['res_affected_ids'] = ans_affected_ids
+        self.feedback_params['correct_affected_ids'] = ref_affected_ids
 
         return ref, res, result_list
 
