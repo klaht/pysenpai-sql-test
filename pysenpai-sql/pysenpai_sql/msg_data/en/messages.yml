@@ -169,6 +169,8 @@ program:
     Incorrect data type at table {output}.
   multiIncorrectTableContent: |-
     Table {output} contains incorrect values.
+  noDistinctKeyword: |-
+    DISTINCT keyword wasn't used.
   TooGeneralizedIdentifier: |- 
       The query used too generic identifiers. Use more specific identifiers.
   IncorrectUpdatedValues: |-

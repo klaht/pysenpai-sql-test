@@ -49,8 +49,10 @@ def evaluate_variables(res, correct, feedback_params=None):
     return None
 
 def assert_distinct(res, correct, feedback_params=None):
-    '''Checks if the list contains only distinct values'''
-    #TODO Implement correctly
+    '''Checks if the list contains only distinct values and if the query contains distinct keyword'''
+    answer_query = feedback_params['res']
+    if not re.search(r"\bDISTINCT\b", answer_query, re.IGNORECASE):
+        return "noDistinctKeyword", None
     
     for thing in res:
         if res.count(thing) > 1:
@@ -287,6 +289,8 @@ def get_table_names_from_query(query):
     table_ids = None
     table_names = ""
     ignore_once = False
+
+    #TODO use regex
     
     if "FROM" in query:
         table_ids = query.index("FROM") + 5
@@ -310,6 +314,8 @@ def get_column_names_from_query(query):
     column_ids = None
     column_names = ""
     ignore_once = False
+
+    #TODO use regex
     
     if "SELECT" in query:
         column_ids = query.index("SELECT") + 7

@@ -188,6 +188,8 @@ program:
     Taulukkoon sijoitetut arvot olivat väärin. Väärä arvo oli: {output}
   MissingInsertedValueError: |-
     Taulukkoon sijoitettiin liian vähän arvoja.
+  noDistinctKeyword: |-
+    DISTINCT sanaa ei löytynyt vastauksesta.
   incorrectTableName: |- 
     Taulukon nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
@@ -226,7 +228,7 @@ program:
     {emsg}
   incorrectSelectedColumns: |-
     Kysely käytti vääriä sarakkeita.
-  outputNotDistinct: |- 
+  output_not_distinct: |- 
     Kysely ei palauttanut uniikkeja arvoja.
   DatabaseError: |- 
     Tietokanta virhe.

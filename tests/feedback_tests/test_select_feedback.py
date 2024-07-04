@@ -86,7 +86,7 @@ def test_distinct():
     assert compare_messages(returned_msgs, correct_msgs)
 
     returned_msgs = parse_flag_msg(output, 2)
-    error_keys = ["outputNotDistinct", "AdditionalTests"]
+    error_keys = ["noDistinctKeyword", "AdditionalTests"]
     correct_msgs = get_msg("en", error_keys)
     assert compare_messages(returned_msgs, correct_msgs)
 
