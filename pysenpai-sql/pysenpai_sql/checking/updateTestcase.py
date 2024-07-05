@@ -27,16 +27,6 @@ class SQLUpdateTestCase(SQLTestCase):
             Tuple: The reference answer, student answer, and result list.
         """
         # Run student and reference queries and return answers
-        # Insert and update are both tested with this
-
-        # Open student answer
-        try:
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
 
         # Run student answer
         try: 
@@ -47,14 +37,14 @@ class SQLUpdateTestCase(SQLTestCase):
             # res = cursor.fetchall()
 
             # Get ids affected by the update
-            ans_affected_ids = get_affected_row_ids(cursor, sql_script)
+            ans_affected_ids = get_affected_row_ids(cursor, student_answer)
 
             # Execute updated
-            cursor.execute(sql_script)
+            cursor.execute(student_answer)
 
             # Get rows with previously fetched ids
             # If no rows have been affected by the query set all to empty
-            res = get_rows_with_ids(cursor, sql_script, ans_affected_ids) if ans_affected_ids else []
+            res = get_rows_with_ids(cursor, student_answer, ans_affected_ids) if ans_affected_ids else []
             self.field_names = [i[0] for i in cursor.description] if res else []
             result_list = [list(row) for row in res][0] if res else []
 

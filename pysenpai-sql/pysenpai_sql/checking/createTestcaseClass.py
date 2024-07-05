@@ -32,24 +32,16 @@ class SQLCreateTestCase(SQLTestCase):
         # Run student and reference queries and return answers
         # Insert and update are both tested with this
 
-        # Open student answer
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
-
         # Run student answer
         try: 
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
             
-            if sql_script.__contains__(';'):
-                sql_script = sql_script.replace(';', '')
+            if student_answer.__contains__(';'):
+                student_answer = student_answer.replace(';', '')
             
-            cursor.executescript(sql_script)
-            res = get_column_data(cursor, sql_script)
+            cursor.executescript(student_answer)
+            res = get_column_data(cursor, student_answer)
 
             conn.commit()
             cursor.close()
@@ -76,7 +68,7 @@ class SQLCreateTestCase(SQLTestCase):
             return 0, 0, ""
 
         #Add table name to the comparison list
-        res.append(get_table_name(sql_script))
+        res.append(get_table_name(student_answer))
         ref.append(get_table_name(ref_answer))
 
 

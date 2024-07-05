@@ -154,8 +154,16 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             )
     
             
+        #Open student answer file
+        try :
+            sql_file = open(test_target, 'r')
+            student_answer = sql_file.read()
+        except FileNotFoundError as e:
+            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
+            return 0, 0, ""
+
         #Run test
-        ref, res, column_names = test.wrap(test.ref_result, test_target, lang, msgs)
+        ref, res, column_names = test.wrap(test.ref_result, student_answer, lang, msgs)
         if (ref == 0 or res == 0):
             output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
             return 0
