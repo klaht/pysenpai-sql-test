@@ -22,17 +22,10 @@ table_regex_from_query_type = {
 class SQLMultipleQueryTestCase(SQLTestCase):
     
     def wrap(self, ref_answer, student_answer, lang, msgs):
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-            sql_script = sql_script.replace("\n", "")
-        except FileNotFoundError as e:
-            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
         try: 
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
-            ans_affected_tables = execute_multi_line_script(sql_script, cursor)
+            ans_affected_tables = execute_multi_line_script(student_answer, cursor)
             ans_results = create_result_dict(ans_affected_tables, cursor)
 
             self.feedback_params["ans_multi_result"] = ans_results

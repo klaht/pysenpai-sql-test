@@ -29,20 +29,12 @@ class SQLAlterTestCase(SQLTestCase):
         Returns:
             tuple: A tuple containing the reference answer, student's answer, and an empty string.
         """
-        # Open student answer
-        try:
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
-
         # Run student answer
         try: 
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
-            cursor.execute(sql_script)
-            res = get_table_information(cursor, sql_script)
+            cursor.execute(student_answer)
+            res = get_table_information(cursor, student_answer)
             conn.commit()
             conn.close()
         except sqlite3.Error as e:
@@ -62,7 +54,7 @@ class SQLAlterTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
 
-        res.append(get_table_name(sql_script))
+        res.append(get_table_name(student_answer))
         ref.append(get_table_name(ref_answer))
 
         return ref, res, ""

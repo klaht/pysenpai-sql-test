@@ -188,6 +188,8 @@ program:
     Taulukkoon sijoitetut arvot olivat väärin. Väärä arvo oli: {output}
   MissingInsertedValueError: |-
     Taulukkoon sijoitettiin liian vähän arvoja.
+  noDistinctKeyword: |-
+    DISTINCT sanaa ei löytynyt vastauksesta.
   incorrectTableName: |- 
     Taulukon nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.

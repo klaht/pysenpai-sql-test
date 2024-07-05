@@ -25,25 +25,14 @@ class SQLDeleteTestCase(SQLTestCase):
         Returns:
             Tuple[Any, Any, str]: A tuple containing the result, reference, and an empty string.
         """
-        try:
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-            if not sql_script:
-                output(msgs.get_msg("EmptyAnswer", lang), Codes.ERROR)
-                return 0, 0, None
-        except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
-
 
         # Run student answer
         try:
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
-            cursor.execute(sql_script)
+            cursor.execute(student_answer)
 
-            res = get_table_contents(cursor, sql_script)
+            res = get_table_contents(cursor, student_answer)
             conn.commit() 
         
         except sqlite3.Error as e:

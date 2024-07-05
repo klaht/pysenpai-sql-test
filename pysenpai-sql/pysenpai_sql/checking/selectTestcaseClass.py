@@ -39,22 +39,12 @@ class SQLSelectTestCase(SQLTestCase):
             tuple: A tuple containing the reference query result, student query result, and column names.
         """
     
-        # Open student answer
-        try :
-            sql_file = open(student_answer, 'r')
-     
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
-        
-
         # Run student answer
         try: 
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
        
-            cursor.execute(sql_script)
+            cursor.execute(student_answer)
             column_names = [column[0] for column in cursor.description]
 
             res = cursor.fetchall()

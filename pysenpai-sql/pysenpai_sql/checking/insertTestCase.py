@@ -26,28 +26,17 @@ class SQLInsertTestCase(SQLTestCase):
             Tuple: The reference answer, student answer, and result list.
         """
 
-        # Insert and update are both tested with this
-
-        # Open student answer
-        try :
-            sql_file = open(student_answer, 'r')
-            sql_script = sql_file.read()
-        except FileNotFoundError as e:
-            print("File not found")
-            output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
-
         # Run student answer
         try: 
             conn = sqlite3.connect("mydatabase1.db")
 
             cursor = conn.cursor()
 
-            cursor.execute(sql_script)
+            cursor.execute(student_answer)
 
             conn.commit()
 
-            res = getLastInsertedRow(cursor, sql_script)
+            res = getLastInsertedRow(cursor, student_answer)
 
             try:
                 result_list = [list(row) for row in res][0] # Arrange result to list
