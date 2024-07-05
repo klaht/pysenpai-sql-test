@@ -228,7 +228,7 @@ program:
     {emsg}
   incorrectSelectedColumns: |-
     Kysely käytti vääriä sarakkeita.
-  output_not_distinct: |- 
+  outputNotDistinct: |- 
     Kysely ei palauttanut uniikkeja arvoja.
   DatabaseError: |- 
     Tietokanta virhe.
