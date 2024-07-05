@@ -76,6 +76,8 @@ class SQLTestCase(object):
             
                 return feedback_results
 
+        return [(None, None)]
+
     def parse(self, output):
         return output
     
@@ -176,16 +178,19 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                 ref=test.present_object("ref", ref)
             )
 
-            output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
-                
             #Extra feedback
+            printed_additional_test_message = False
             for msg_key, test_output in test.feedback(res, ref, config_file):
+                '''Only print additional tests message if there are messages to display'''
+                if not printed_additional_test_message and msg_key:
+                    output(msgs.get_msg("AdditionalTests", lang), Codes.INFO)
+                    printed_additional_test_message = True
+
                 if test_output == None and msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO)
                 elif msg_key:
                     output(msgs.get_msg(msg_key, lang), Codes.INFO, output=test_output)
-
-       
+                
         test.teardown()
     
     return grader(test_cases)

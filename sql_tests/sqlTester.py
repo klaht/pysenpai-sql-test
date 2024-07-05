@@ -79,7 +79,6 @@ def gen_program_vector(ref_query, res):
     """
     test_class = None # Test class based on assignment type
    
-    # hash map?
     # Set the test class based on the assignment type
     match assignmentType.upper():
         case "SELECT":
