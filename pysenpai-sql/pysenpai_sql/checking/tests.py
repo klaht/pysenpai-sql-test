@@ -289,54 +289,13 @@ def get_table_primary_key(cursor, query):
                 raise IndexError
 
 def get_table_names_from_query(query):
-   
-    table_ids = None
-    table_names = ""
-    ignore_once = False
+    result = re.search(r"\b(?:FROM|INTO|TABLE)\s+(\w+(?:,\s*\w+)*).*;", query, re.IGNORECASE)
 
-    #TODO use regex
-    
-    if "FROM" in query:
-        table_ids = query.index("FROM") + 5
-    if "INTO" in query:
-        table_ids = query.index("INTO") + 5
-    if "TABLE" in query:
-        table_ids = query.index("TABLE") + 6
-   
-    if table_ids != None:
-        while table_ids < len(query) and (query[table_ids] != " " and query[table_ids] != ";") or ignore_once == True:
-            table_names += query[table_ids]
-            table_ids += 1
-            ignore_once = False
-            if table_names[len(table_names)-1] == ",": #if multpiple tables they are separated by a comma
-                ignore_once = True
-    
-    return table_names
+    return result.group(1).replace(" ", "")
+
 
 def get_column_names_from_query(query):
-    
-    column_ids = None
-    column_names = ""
-    ignore_once = False
+    '''TODO Support for other query types'''
+    result = re.search(r"\b(?:SELECT(?: DISTINCT)?)(\s+\w+(?:,\s*\w+)*).*;", query, re.IGNORECASE)
 
-    #TODO use regex
-    
-    if "SELECT" in query:
-        column_ids = query.index("SELECT") + 7
-    if "UPDATE" in query:
-        column_ids = query.index("UPDATE") + 7
-    if "DISTINCT" in query:
-        column_ids = query.index("DISTINCT") + 9
-    if "SET" in query:
-        column_ids = query.index("SET") + 4
-    
-    if column_ids != None:
-        while column_ids < len(query) and (query[column_ids] != " " and query[column_ids] != ";") or ignore_once == True:
-            column_names += query[column_ids]
-            column_ids += 1
-            ignore_once = False
-            if column_names[len(column_names)-1] == ",":
-                ignore_once = True
-                
-    return column_names
-    
+    return result.group(1).replace(" ", "")
