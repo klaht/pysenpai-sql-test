@@ -17,8 +17,6 @@ function:
     {emsg}
   FunctionName: |-
     Testing function {name}...
-  TargetName: |-
-    Testing function {name}...    
   GenericErrorMsg: |-
     An error occurred while calling the function.
     Additional information:
@@ -31,12 +29,14 @@ function:
   IsNotFunction: |-
     An object called {name} was found, but it was not a function.
     Take care to not overwrite the function with another value in your main program!
-  MessageInfo: ""
+  MessageInfo: |-
+    
   OutputParseError: |-
     Parsing the function's output for result values was not successful.
     Check that your function uses the specified formatting when printing.
     Reason provided by the checker:{reason}
-  OutputPatternInfo: ""
+  OutputPatternInfo: |-
+    
   PrintExcLine: |-
     Caused by line {lineno}:
     {{{{{{{line}}}}}}}
@@ -50,12 +50,12 @@ function:
     {output}
   PrintStudentResult: |-
     Your function returned: {res}
-  PrintTestVector: |-
-    Function call used:
-    {call}
   PrintTestData: |-
     Data used in the test:
     {data}
+  PrintTestVector: |-
+    Function call used:
+    {call}
   RepeatingResult: |-
     The function produced the same result twice in succession. This usually means the function is not reacting properly to arguments or inputs.
     This is especially likely if this message pops up repeatedly.
@@ -63,22 +63,21 @@ function:
     The program was terminated through the use of:
     quit(), exit(), sys.exit(), raise SystemExit (etc.)
     Your program needs to be implemented such a way that it doesn't need any of these.
+  TargetName: |-
+    Testing function {name}...    
   TypeError: |-
     The function expects an incorrect number of arguments. Alternatively another kind of TypeError occurred while calling the function.
     Additional information:
     {emsg}
 import:
-  FileOpenError: |-
-    File open failed
-    {emgs}
-  DatabaseError: |-
-    A database error occurred while calling the function.
-    {emsg}
-  DatabaseCreationError : |-
-    A database creation error occurred while creating the database.
   BadModuleName: |-
     The filename contained unsupported characters.
     Only letters of the English alphabet, numbers and underscore are allowed.
+  DatabaseCreationError: |-
+    A database creation error occurred while creating the database.
+  DatabaseError: |-
+    A database error occurred while calling the function.
+    {emsg}
   DisallowedOutput: |-
     Your main program produced output, even though it's been specifically unallowed for this assignment. Please make sure your program doesn't execute extra code when being imported. Here is your program's output:
     {output}
@@ -86,6 +85,9 @@ import:
     An EOFError occurred while importing the module. The most likely cause is calling input too many times.
     Additional information:
     {emsg}
+  FileOpenError: |-
+    File open failed
+    {emgs}
   GenericErrorMsg: |-
     An error occurred while importing the module.
     {ename}: {emsg}
@@ -101,7 +103,7 @@ import:
     Loading module {name} for evaluation xd lol...
   MissingFileExtension: |-
     The file is missing the .py extension, which is required of Python code files.
-  NameError: |- 
+  NameError: |-
     The program has an execution path where it tries to access an undefined variable.
     Additional information:
     {emsg}"
@@ -159,75 +161,6 @@ lint:
     Your code received too low quality score ({stats.global_note:.1f} / 10.0).
     Target: 9+ / 10.0.
 program:
-  incorrectPrimaryKey: |-
-    Incorrect primary key at table {output}.
-  incorrectDefaultValue: |-
-    Incorrect default value at table {output}.
-  incorrectNotNull: |-
-    Incorrect NOT NULL at table {output}.
-  incorrectDataType: |-
-    Incorrect data type at table {output}.
-  multiIncorrectTableContent: |-
-    Table {output} contains incorrect values.
-  noDistinctKeyword: |-
-    DISTINCT keyword wasn't used.
-  TooGeneralizedIdentifier: |- 
-      The query used too generic identifiers. Use more specific identifiers.
-  IncorrectUpdatedValues: |-
-    The query updated one of the following fields incorrectly:
-    {output}
-  UnidentifiableRecord: |-
-    Could not identify the inserted record.
-  IncorrectInsertError: |-
-    Inserted values were incorrect. Incorrect value was: {output}
-  MissingInsertedValueError: |-
-    Too few values were inserted.
-  incorrectColumnName: |- 
-    Column name is incorrect.
-    Make sure you use the name specified in the assignment.
-  incorrectColunmOrder: |- 
-    Column order is incorrect.
-    Make sure you use the order specified in the assignment.
-  incorrectReturnOrder: |- 
-    The order of the returned values is incorrect.
-    Make sure you return the values in the order specified in the assignment.
-  outputNotDistinct: |- 
-    The query returned non-distinct values.
-  incorrectSelectedColumn: |-
-    The query used incorrect columns.
-  incorrectSelectedRows: |-
-    WHERE clause returned incorrect rows.
-  incorrectTableName: |- 
-    Table name is incorrect.
-    Make sure you use the name specified in the assignment.
-  missingPrimarykey: |- 
-    Table is missing a primary key.
-    Make sure you define a primary key for the table.
-  tooManyReturnValues2: |- 
-    Query returned too many values.
-    Make sure you only select PAINTINGS.
-    Excessive values.
-    {output}
-  tooManyReturnValues0: |-
-    Query returned too many values.
-    Excessive values.
-    {output}
-  tooLitteReturnValues0: |- 
-    Query returned too few values.
-    Missing values.
-    {output}
-    A database error occurred while calling the function.
-    {emsg}
-  DatabaseCreationError : |-
-    A database creation error occurred while creating the database.
-  DatabaseError: |- 
-    Database Error.
-    {emsg}
-  FileOpenError: |-
-      File open failed
-      {emgs}
-  incorrectSelectedColumns: |-
-    The query used incorrect columns.
   AdditionalInfo: |-
     The checker gave the following as additional information asdasdads:
   AdditionalTests: |-
@@ -236,38 +169,52 @@ program:
     The program's output was correct.
   CorrectResult: |-
     The program performed correctly.
+  DatabaseCreationError: |-
+    A database creation error occurred while creating the database.
+  DatabaseError: |-
+    Database Error.
+    {emsg}
   EOFError: |-
     The program prompted for more inputs than were provided by the tester. This is likely caused by faulty end condition handling.
     Additional information:
     {emsg}
+  FileOpenError: |-
+    File open failed
+    {emgs}
   GenericErrorMsg: |-
     An error occurred while running the program.
     Additional information:
     {ename}: {emsg}
     Test the program on your computer to get more information.
+  IncorrectInsertError: |-
+    Inserted values were incorrect. Incorrect value was: {output}
   IncorrectMessage: |-
     The program's output was incorrect.
   IncorrectResult: |-
     The program's output contained incorrect results.
+  IncorrectUpdatedValues: |-
+    The query updated one of the following fields incorrectly:
+    {output}
   IndexError: |-
     An IndexError occurred while running the program. This can be caused by improper handling of split inputs, i.e. failing to check that the input contained enough parameters using the correct separator.
     Additional information:
     {emsg}
-  MessageInfo: ""
+  MessageInfo: |-
+    
+  MissingInsertedValueError: |-
+    Too few values were inserted.
   OutputParseError: |-
     Parsing the program's output for result values was not successful.
     Check that your program uses the specified formatting when printing.
     Reason provided by the checker:{reason}
-  OutputPatternInfo: ""
+  OutputPatternInfo: |-
+    
   PrintExcLine: |-
     Caused by line {lineno}:
     {{{{{{{line}}}}}}}
   PrintInputVector: |-
     Using inputs:
     {inputs}
-  PrintTestData: |-
-    Data used in the test:
-    {data}
   PrintReference: |-
     Expected to find these values:
     {ref}
@@ -277,6 +224,9 @@ program:
   PrintStudentResult: |-
     The following values were parsed from your program's output:
     {parsed}
+  PrintTestData: |-
+    Data used in the test:
+    {data}
   ProgramName: |-
     Testing program...
   RepeatingResult: |-
@@ -288,18 +238,71 @@ program:
     Your program needs to be implemented such a way that it doesn't need any of these.
   TargetName: |-
     Testing program...
+  TooGeneralizedIdentifier: |-
+    The query used too generic identifiers. Use more specific identifiers.
   TypeError: |-
     A TypeError occurred while running the program. This can be the result of not converting user inputs into proper types (inputs are always strings).
     Additional information:
     {emsg}
+  UnidentifiableRecord: |-
+    Could not identify the inserted record.
   ValueError: |-
     A ValueError occurred while running the program. This is likely caused by faulty handling of erroneous inputs.
     Additional information:
     {emsg}
+  incorrectColumnName: |-
+    Column name is incorrect.
+    Make sure you use the name specified in the assignment.
+  incorrectColunmOrder: |-
+    Column order is incorrect.
+    Make sure you use the order specified in the assignment.
+  incorrectDataType: |-
+    Incorrect data type at table {output}.
+  incorrectDefaultValue: |-
+    Incorrect default value at table {output}.
+  incorrectNotNull: |-
+    Incorrect NOT NULL at table {output}.
+  incorrectPrimaryKey: |-
+    Incorrect primary key at table {output}.
+  incorrectReturnOrder: |-
+    The order of the returned values is incorrect.
+    Make sure you return the values in the order specified in the assignment.
+  incorrectSelectedColumn: |-
+    The query used incorrect columns.
+  incorrectSelectedColumns: |-
+    The query used incorrect columns.
+  incorrectSelectedRows: |-
+    WHERE clause returned incorrect rows.
+  incorrectTableName: |-
+    Table name is incorrect.
+    Make sure you use the name specified in the assignment.
+  missingPrimarykey: |-
+    Table is missing a primary key.
+    Make sure you define a primary key for the table.
+  multiIncorrectTableContent: |-
+    Table {output} contains incorrect values.
+  noDistinctKeyword: |-
+    DISTINCT keyword wasn't used.
+  noOrderByKeyword: |-
+    ORDER BY keyword not found.
+  outputNotDistinct: |-
+    The query returned non-distinct values.
+  tooLitteReturnValues0: |-
+    Query returned too few values.
+    Missing values.
+    {output}
+    A database error occurred while calling the function.
+    {emsg}
+  tooManyReturnValues0: |-
+    Query returned too many values.
+    Excessive values.
+    {output}
+  tooManyReturnValues2: |-
+    Query returned too many values.
+    Make sure you only select PAINTINGS.
+    Excessive values.
+    {output}
 snippet:
-  FileOpenError: |-
-      File open failed
-      {emgs}
   AdditionalInfo: |-
     The checker gave the following as additional information:
   AdditionalTests: |-
@@ -308,6 +311,9 @@ snippet:
     The code's output was correct.
   CorrectResult: |-
     The code performed correctly.
+  FileOpenError: |-
+    File open failed
+    {emgs}
   GenericErrorMsg: |-
     An error occurred while running the program.
     Additional information:
@@ -317,21 +323,20 @@ snippet:
     The code's output was incorrect.
   IncorrectResult: |-
     The code performed incorrectly.
-  MessageInfo: ""
+  MessageInfo: |-
+    
   OutputParseError: |-
     Parsing the program's output for result values was not successful.
     Check that your program uses the specified formatting when printing.
     Reason provided by the checker: {reason}
-  OutputPatternInfo: ""
+  OutputPatternInfo: |-
+    
   PrintConstructedCode: |-
     Your answer inserted into a complete program:
     {code}
   PrintInputVector: |-
     While using inputs:
     {inputs}
-  PrintTestData: |-
-    Data used in the test:
-    {data}
   PrintReference: |-
     Expected variables:
     {ref}
@@ -341,18 +346,21 @@ snippet:
   PrintStudentResult: |-
     Variables after execution:
     {res}
+  PrintTestData: |-
+    Data used in the test:
+    {data}
   SnippetTest: |-
     Testing code snippet...
   TargetName: |-
     Testing code snippet...
 static:
-  FileOpenError: |-
-      File open failed
-      {emgs}
   AttributeError: |-
     A function called {fname} was not found from your code file.
   CorrectResult: |-
     No problems were found in the source code.
+  FileOpenError: |-
+    File open failed
+    {emgs}
   GenericErrorMsg: |-
     Something went wrong while reading the source code.
     Addional information:

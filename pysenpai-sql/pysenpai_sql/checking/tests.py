@@ -12,6 +12,12 @@ schema_indices = [
 
 def assert_order(res, correct, feedback_params=None):
     '''Checks if the list is sorted in ascending order'''
+
+    student_answer = feedback_params['res']
+    #Check if query contains order keyword
+    if not re.search(r"\bORDER\s+BY\b", student_answer, re.IGNORECASE):
+        return "noOrderByKeyword", None
+
     if res != correct and set(res) == set(correct):
         return "incorrectReturnOrder", None
 

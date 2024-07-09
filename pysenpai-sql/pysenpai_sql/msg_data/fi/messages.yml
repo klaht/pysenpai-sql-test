@@ -10,135 +10,138 @@ function:
     Funktion tulosteet olivat oikein.
   CorrectResult: |-
     Funktio palautti oikean tuloksen.
-  EOFError: |- 
+  EOFError: |-
     Funktio pyysi enemmän syötteitä kuin testausohjelma antoi. Tämä voi johtua väärin käsitellystä funktion lopetusehdosta.
     Lisätietoja:
     {emsg}
-  TargetName: |-
-    Testataan {name}-funktiota...
-  GenericErrorMsg: |- 
+  GenericErrorMsg: |-
     Funktiota kutsuttaessa tapahtui poikkeus.
     Lisätietoja:
     {ename}: {emsg}.
     Testaa funktiota omalla koneellasi saadaksesi lisätietoja.
   IncorrectMessage: |-
     Funktion tuloste oli virheellinen.
-  IncorrectResult: |- 
+  IncorrectResult: |-
     Funktio palautti väärän tuloksen.
-  IsNotFunction: |- 
+  IsNotFunction: |-
     Objekti nimeltä {name} löytyi, mutta se ei ollut funktio.
     Varmista, että olet käyttänyt oikeaa funktion nimeä, ja että funktion päälle ei pääohjelmassa kirjoiteta jotain muuta samalla nimellä.
-  MessageInfo: ""
-  OutputParseError: |- 
+  MessageInfo: |-
+    
+  OutputParseError: |-
     Funktion tulosteesta ei löytynyt kaikkia arvoja.
     Varmista että käytät tehtävänannossa määriteltyä muotoilua tulosteille.
     Epäonnistumisen syy: {reason}
-  OutputPatternInfo: ""
+  OutputPatternInfo: |-
+    
   PrintExcLine: |-
     Aiheutui rivistä {lineno}:
     {{{{{{{line}}}}}}}
-  PrintInputVector: |- 
+  PrintInputVector: |-
     Kokeiltiin syötteillä:
     {inputs}
-  PrintTestData: |-
-    Testidata:
-    {data}
-  PrintReference: |- 
+  PrintReference: |-
     Olisi pitänyt palauttaa: {ref}
   PrintStudentOutput: |-
     Funktiosi koko tuloste:
     {output}
   PrintStudentResult: |-
     Funktio palautti: {res}
+  PrintTestData: |-
+    Testidata:
+    {data}
   PrintTestVector: |-
     Käytetty funktiokutsu:
     {call}
-  RepeatingResult: |- 
+  RepeatingResult: |-
     Funktio tuotti kahdesti peräkkäin saman tuloksen. Tämä yleensä tarkoittaa, että funktio ei reagoi odotetulla tavalla sille annettuihin argumentteihin tai syötteisiin.
     Tämä pätee erityisesti jos tämä viesti toistuu.
-  SystemExit: |- 
+  SystemExit: |-
     Koodin suoritus on lopetettu väärin käyttämällä jotain seuraavista:
     quit(), exit(), sys.exit(), raise SystemExit
     Toteuta ohjelma siten, että näille tai vastaaville keinoille ei ole tarvetta!"
-  TypeError: | 
+  TargetName: |-
+    Testataan {name}-funktiota...
+  TypeError: |-
     Funktiolle on määritelty väärä määrä parametreja, tai sitä kutsuttaessa tapahtui jokin muu TypeError.
     Tarkista tehtävänannosta millaset parametrit funktiolla tulisi olla
     Lisätietoja:
     {emsg}
+    
 import:
-  DatabaseCreationError : |-
-    Tietokanta virhe tietokannan luonnissa.
-  FileOpenError: |- 
+  BadModuleName: |-
+    Tiedoston nimessä oli merkkejä joiden takia tarkistin ei pysty sitä avaamaan. Käytä vain englanninkielisiä aakkosia, numeroita ja alaviivaa nimessä."
+  DataFileOpenError: |-
     Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
-  DatabaseError: |- 
+  DatabaseCreationError: |-
+    Tietokanta virhe tietokannan luonnissa.
+  DatabaseError: |-
     Tietokanta virhe.
     {emsg}
-  DataFileOpenError: |- 
-    Tiedoston avaaminen epäonnistui.
-    Lisätietoja:
-    {emsg}
-  BadModuleName: |- 
-    Tiedoston nimessä oli merkkejä joiden takia tarkistin ei pysty sitä avaamaan. Käytä vain englanninkielisiä aakkosia, numeroita ja alaviivaa nimessä."
-  DisallowedOutput: |- 
+  DisallowedOutput: |-
     Pääohjelmasi tuotti tulosteita, vaikka sen ei pitäisi. Muista varmistaa, että ohjelmasi ei suorita ylimääräisiä koodiriviejä kun se importataan. Ohjelma tulosti seuraavaa:
     {output}
-  EOFError: |- 
+  EOFError: |-
     Ohjelman suorituksessa tapahtui EOFError. Todennäköisin syy on input-funktion kutsuminen liian monta kertaa.
+    Lisätietoja:
+    {emsg}
+  FileOpenError: |-
+    Tiedoston avaaminen epäonnistui.
     Lisätietoja:
     {emsg}
   GenericErrorMsg: |-
     Ohjelmaa ladattaessa tapahtui poikkeus.
     {ename}: {emsg}
-  ImportError: |- 
+  ImportError: |-
     Ohjelmaa ei löytynyt tai sen lataamisessa tapahtui ImportError.
     Lisätietoja:
     {emsg}
-  IndentationError: |- 
+  IndentationError: |-
     Koodi sisälsi sisennysvirheitä. Älä käytä tarkistusta Python-tulkkina!
     Korjaa koodisi virheet omalla koneella suorittamalla, jolloin saat tarkkaa tietoa missä ja millaisia virheet ovat.
     Palauta koodisi vasta kun saat sen komentorivillä toimimaan alusta loppuun!
   LoadingModule: |-
     Ladataan moduuli {name} arvioitavaksi...
-  MissingFileExtension: |- 
+  MissingFileExtension: |-
     Tiedostosta puuttuu .py-pääte, joka tulisi olla kaikissa Python-tiedostoissa.
-  PrintExcLine: |- 
+  PrintExcLine: |-
     Aiheutui rivistä {lineno}:
     {{{{{{{line}}}}}}}
-  PrintInputVector: |- 
+  PrintInputVector: |-
     Käytettiin syötteitä:
     {inputs}
   PrintStudentOutput: |-
     Ohjelmasi tuloste ladatessa:
     {output}
-  SyntaxError: |- 
+  SyntaxError: |-
     Koodi sisälsi syntaksivirheitä. Älä käytä tarkistusta Python-tulkkina!
     Korjaa koodisi virheet omalla koneella suorittamalla, jolloin saat tarkkaa tietoa missä ja millaisia virheet ovat.
     Palauta koodisi vasta kun saat sen komentorivillä toimimaan alusta loppuun!
-  SystemExit: |- 
+  SystemExit: |-
     Koodin suoritus on lopetettu väärin käyttämällä jotain seuraavista:
     quit(), exit(), sys.exit(), raise SystemExit
     Toteuta ohjelma siten, että näille tai vastaaville keinoille ei ole tarvetta!
-  SystemModuleName: |- 
+  SystemModuleName: |-
     Palautetun moduulin nimi {name} on sama kuin järjestelmämoduulin. Vaihda tiedoston nimi.
 lint:
-  GenericErrorMsg: |- 
+  GenericErrorMsg: |-
     Testaus epäonnistui.
     Lisätietoja:
     {ename}: {emsg}.
-  LintConvention: |- 
+  LintConvention: |-
     Käytäntöjä rikkovaa koodia tiedostossa {lintmsg.module}, rivillä {lintmsg.line}. Selitys:
     {lintmsg.msg} ({lintmsg.symbol})
-  LintError: |- 
+  LintError: |-
     Todennäköinen ongelmien aiheuttajat tiedostossa {lintmsg.module}, rivillä {lintmsg.line}. Selitys:
     {lintmsg.msg} ({lintmsg.symbol})
-  LintFailMessage: |- 
+  LintFailMessage: |-
     Koodisi ei läpäissyt laatutarkistusta.
   LintFatal: |-
     Tarkistuksen keskeyttänyt ongelma tiedostossa {lintmsg.module}, rivillä {lintmsg.line}. Selitys:
     {lintmsg.msg} ({lintmsg.symbol})
-  LintMessage: |- 
+  LintMessage: |-
     Tarkistin ilmoitti rivistä {lintmsg.line}. Selitys:
     {lintmsg.msg}
   LintMessagesBegin: |-
@@ -146,139 +149,77 @@ lint:
   LintRefactor: |-
     Huonolaatuista koodia tiedostossa {lintmsg.module}, rivillä {lintmsg.line}. Selitys:
     {lintmsg.msg} ({lintmsg.symbol})
-  LintSuccess: |- 
+  LintSuccess: |-
     Koodisi läpäisi laatutarkistuksen pisteillä {stats.global_note:.1f} / 10.0.
   LintTest: |-
     Tarkistetaan koodin laatua...
-  LintWarning: |- 
+  LintWarning: |-
     Mahdollinen ongelmien aiheuttaja tiedostossa {lintmsg.module}, rivillä {lintmsg.line}. Selitys:
     {lintmsg.msg} ({lintmsg.symbol})
   pylintFailLowScore: |-
     Koodisi sai liian pienet laatupisteet ({stats.global_note:.1f} / 10.0).
     Tavoite: 9+ / 10.0.
 program:
-  incorrectPrimaryKey: |-
-    Väärä primary key taulussa {output}.
-  incorrectDefaultValue: |-
-    Väärä default arvo taulussa {output}.
-  incorrectNotNull: |-
-    Väärä NOT NULL taulussa {output}.
-  incorrectDataType: |-
-    Väärä data tyyppi taulussa {output}.
-  multiIncorrectTableContent: |-
-    Tauluun {output} lisätty virheellisiä arvoja.
-  incorrectColumnName: |- 
-    Sarakkeen nimi on väärin.
-    Varmista, että käytät tehtävänannossa määriteltyä nimeä.
-  incorrectColumnOrder: |-
-    Sarakkeiden järjestys on väärä.
-    Varmista, että käytät tehtävänannossa määriteltyä järjestystä.
-  incorrectSelectedColumn: |-
-    Kysely käytti vääriä sarakkeita.
-  incorrectSelectedRows: |-
-    WHERE lauseke koski vääriä rivejä.
-  TooGeneralizedIdentifier: |-
-    Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
-  IncorrectUpdatedValues: |-
-    Kysely ei päivittänyt seuraavien kenttien arvoja oikein:
-    {output}
-  UnidentifiableRecord: |-
-    Sijoitettua tietuetta ei voitu tunnistaa.
-  IncorrectInsertError: |-
-    Taulukkoon sijoitetut arvot olivat väärin. Väärä arvo oli: {output}
-  MissingInsertedValueError: |-
-    Taulukkoon sijoitettiin liian vähän arvoja.
-  noDistinctKeyword: |-
-    DISTINCT sanaa ei löytynyt vastauksesta.
-  incorrectTableName: |- 
-    Taulukon nimi on väärin.
-    Varmista, että käytät tehtävänannossa määriteltyä nimeä.
-  missingPrimarykey: |- 
-    Taulukosta puuttuu pääavain.
-    Lisää taulukkoon pääavain.
-  tooManyReturnValues2: |- 
-    Kysely palautti liian monta arvoa.
-    Varmista, että valitset vain MAALAUKSIA.
-    Ylimääräiset arvot:
-    {output}
-  tooManyReturnValues0: |- 
-    Kysely palautti liian monta arvoa.
-    Ylimääräiset arvot:
-    {output}
-  tooLittleReturnValues0: |- 
-    Kysely palautti liian vähän arvoja.
-    Puuttuvat arvot:
-    {output}
-  tooLittleDeleted: |- 
-    Kysely poisti liian vähän rivejä.
-  tooManyDeleted: |- 
-    kyely poisti liian monta riviä.
-
-  DatabaseCreationError : |-
-    Tietokanta virhe tietokannan luonnissa.
-  EmptyAnswer: |-
-    Vastaus on tyhjä.
-  TooLittleDeleted: |-
-    Kysely poisti liian vähän rivejä.
-  TooManyDeleted: |-
-    Kysely poisti liian monta riviä.
-  FileOpenError: |- 
-    Tiedoston avaaminen epäonnistui.
-    Lisätietoja:
-    {emsg}
-  incorrectSelectedColumns: |-
-    Kysely käytti vääriä sarakkeita.
-  outputNotDistinct: |- 
-    Kysely ei palauttanut uniikkeja arvoja.
-  DatabaseError: |- 
-    Tietokanta virhe.
-    {emsg}
-  DataFileOpenError: |- 
-    Tiedoston avaaminen epäonnistui.
-    Lisätietoja:
-    {emsg}
-  incorrectReturnOrder: |-
-    Palautettujen arvojen järjestys on väärä.
-    Varmista, että palautat arvot oikeassa järjestyksessä.
-  AdditionalInfo: |- 
+  AdditionalInfo: |-
     Tarkistin antoi myös seuraavat lisätiedot:
-  AdditionalTests: |- 
+  AdditionalTests: |-
     Suoritetaan lisätestejä, jotka saattavat kertoa mistä virhe johtuu...
   CorrectMessage: |-
     Ohjelman tulosteet olivat oikein.
   CorrectResult: |-
     Ohjelma toimi oikein.
-  EOFError: |- 
+  DataFileOpenError: |-
+    Tiedoston avaaminen epäonnistui.
+    Lisätietoja:
+    {emsg}
+  DatabaseCreationError: |-
+    Tietokanta virhe tietokannan luonnissa.
+  DatabaseError: |-
+    Tietokanta virhe.
+    {emsg}
+  EOFError: |-
     Ohjelma pyysi enemmän syötteitä kuin testausohjelma antoi. Tämä voi johtua väärin käsitellystä ohjelman lopetusehdosta. Lisätietoja:
     {emsg}
-  GenericErrorMsg: |- 
+  EmptyAnswer: |-
+    Vastaus on tyhjä.
+  FileOpenError: |-
+    Tiedoston avaaminen epäonnistui.
+    Lisätietoja:
+    {emsg}
+  GenericErrorMsg: |-
     Ohjelmaa suorittaessa tapahtui poikkeus.
     Lisätietoja:
     {ename}: {emsg}
     Testaa ohjelmaa omalla koneellasi saadaksesi lisätietoja.
+  IncorrectInsertError: |-
+    Taulukkoon sijoitetut arvot olivat väärin. Väärä arvo oli: {output}
   IncorrectMessage: |-
     Ohjelman tuloste oli virheellinen.
-  IncorrectResult: |- 
+  IncorrectResult: |-
     Ohjelman tuloste sisälsi virheellisiä arvoja.
-  IndexError: |- 
+  IncorrectUpdatedValues: |-
+    Kysely ei päivittänyt seuraavien kenttien arvoja oikein:
+    {output}
+  IndexError: |-
     Ohjelmaa suorittaessa tapahtui IndexError. Tämä voi johtua siitä, että ohjelma ei käsittele oikein moniosaisia syötteitä, joista puuttuu osia, tai joissa on väärä erotin.
     Lisätietoja:
     {emsg}
-  MessageInfo: ""
+  MessageInfo: |-
+    
+  MissingInsertedValueError: |-
+    Taulukkoon sijoitettiin liian vähän arvoja.
   OutputParseError: |-
     Ohjelman tulosteesta ei löytynyt kaikkia arvoja.
     Varmista että käytät tehtävänannossa määriteltyä muotoilua tulosteille.
     Epäonnistumisen syy: {reason}
-  OutputPatternInfo: ""
+  OutputPatternInfo: |-
+    
   PrintExcLine: |-
     Aiheutui rivistä {lineno}:
     {{{{{{{line}}}}}}}
-  PrintInputVector: |- 
+  PrintInputVector: |-
     Käytettiin syötteitä:
     {inputs}
-  PrintTestData: |-
-    Testidata:
-    {data}
   PrintReference: |-
     Arvot joiden olisi pitänyt löytyä:
     {ref}
@@ -288,81 +229,148 @@ program:
   PrintStudentResult: |-
     Ohjelman tulosteesta löytyneet arvot:
     {parsed}
-  TargetName: |-
-    Testataan ohjelmaa...
-  RepeatingResult: |- 
+  PrintTestData: |-
+    Testidata:
+    {data}
+  RepeatingResult: |-
     Ohjelma tuotti kahdesti peräkkäin saman tuloksen. Tämä yleensä tarkoittaa, että ohjelma ei reagoi odotetulla tavalla sille annettuihin syötteisiin.
     Tämä pätee erityisesti jos tämä viesti toistuu.
-  SystemExit: |- 
+  SystemExit: |-
     Koodin suoritus on lopetettu väärin käyttämällä jotain seuraavista:
     quit(), exit(), sys.exit(), raise SystemExit
     Toteuta ohjelma siten, että näille tai vastaaville keinoille ei ole tarvetta!
-  TypeError: |- 
+  TargetName: |-
+    Testataan ohjelmaa...
+  TooGeneralizedIdentifier: |-
+    Kyselyssä käytettiin liian yleisiä tunnisteita. Käytä tarkempia tunnisteita.
+  TooLittleDeleted: |-
+    Kysely poisti liian vähän rivejä.
+  TooManyDeleted: |-
+    Kysely poisti liian monta riviä.
+  TypeError: |-
     Ohjelmaa suorittaessa tapahtui TypeError. Tämä voi johtua siitä, että syötteitä ei muuteta ennen käyttöä (syötteet ovat aina merkkijonoja).
     Lisätietoja:
     {emsg}
-  ValueError: |- 
+  UnidentifiableRecord: |-
+    Sijoitettua tietuetta ei voitu tunnistaa.
+  ValueError: |-
     Ohjelmaa suorittaessa tapahtui ValueError. Tämä voi johtua siitä, että virheellisiä syötteitä ei ole käsitelty oikein.Lisätietoja:
     {emsg}
+  incorrectColumnName: |-
+    Sarakkeen nimi on väärin.
+    Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  incorrectColumnOrder: |-
+    Sarakkeiden järjestys on väärä.
+    Varmista, että käytät tehtävänannossa määriteltyä järjestystä.
+  incorrectDataType: |-
+    Väärä data tyyppi taulussa {output}.
+  incorrectDefaultValue: |-
+    Väärä default arvo taulussa {output}.
+  incorrectNotNull: |-
+    Väärä NOT NULL taulussa {output}.
+  incorrectPrimaryKey: |-
+    Väärä primary key taulussa {output}.
+  incorrectReturnOrder: |-
+    Palautettujen arvojen järjestys on väärä.
+    Varmista, että palautat arvot oikeassa järjestyksessä.
+  incorrectSelectedColumn: |-
+    Kysely käytti vääriä sarakkeita.
+  incorrectSelectedColumns: |-
+    Kysely käytti vääriä sarakkeita.
+  incorrectSelectedRows: |-
+    WHERE lauseke koski vääriä rivejä.
+  incorrectTableName: |-
+    Taulukon nimi on väärin.
+    Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  missingPrimarykey: |-
+    Taulukosta puuttuu pääavain.
+    Lisää taulukkoon pääavain.
+  multiIncorrectTableContent: |-
+    Tauluun {output} lisätty virheellisiä arvoja.
+  noDistinctKeyword: |-
+    DISTINCT sanaa ei löytynyt vastauksesta.
+  noOrderByKeyword: |-
+    ORDER BY keyword puuttuu
+  outputNotDistinct: |-
+    Kysely ei palauttanut uniikkeja arvoja.
+  tooLittleDeleted: |-
+    Kysely poisti liian vähän rivejä.
+  tooLittleReturnValues0: |-
+    Kysely palautti liian vähän arvoja.
+    Puuttuvat arvot:
+    {output}
+  tooManyDeleted: |-
+    kyely poisti liian monta riviä.
+  tooManyReturnValues0: |-
+    Kysely palautti liian monta arvoa.
+    Ylimääräiset arvot:
+    {output}
+  tooManyReturnValues2: |-
+    Kysely palautti liian monta arvoa.
+    Varmista, että valitset vain MAALAUKSIA.
+    Ylimääräiset arvot:
+    {output}
 snippet:
   AdditionalInfo: |-
     Tarkistin antoi myös seuraavat lisätiedot:
-  AdditionalTests: |- 
+  AdditionalTests: |-
     Suoritetaan lisätestejä, jotka saattavat kertoa mistä virhe johtuu...
   CorrectMessage: |-
     Koodin tulosteet olivat oikein.
   CorrectResult: |-
     Koodi toimi oikein.
-  GenericErrorMsg: |- 
+  GenericErrorMsg: |-
     Koodia suorittaessa tapahtui poikkeus.
     Lisätietoja:
     {ename}: {emsg}
     Testaa koodia omalla koneellasi ohjeita seuraten saadaksesi lisätietoja.
   IncorrectMessage: |-
     Koodin tuloste oli virheellinen.
-  IncorrectResult: |- 
+  IncorrectResult: |-
     Koodi toimi väärin.
-  MessageInfo: ""
-  OutputParseError: |- 
+  MessageInfo: |-
+    
+  OutputParseError: |-
     Koodin tulosteesta ei löytynyt kaikkia arvoja.
     Varmista että käytät tehtävänannossa määriteltyä muotoilua tulosteille.
     Epäonnistumisen syy: {reason}
-  OutputPatternInfo: ""
+  OutputPatternInfo: |-
+    
   PrintConstructedCode: |-
     Vastauksesi sijoitettuna kokonaiseen ohjelmaan:
     {code}
-  PrintInputVector: |- 
+  PrintInputVector: |-
     Käytettiin syötteitä:
     {inputs}
-  PrintTestData: |-
-    Testidata:
-    {data}
   PrintReference: |-
     Odotetut muuttujien arvot:
     {ref}
   PrintStudentOutput: |-
     Koodin tuloste:
     {output}
-  PrintStudentResult: |- 
+  PrintStudentResult: |-
     Muuttujien arvot suorituksen jälkeen:\n{res}
-  TargetName: |- 
+  PrintTestData: |-
+    Testidata:
+    {data}
+  TargetName: |-
     Testataan koodipätkää...
   failMissingVariable: |-
     Koodissa ei luotu pyydettyä muuttujaa.
-  failVariableValue: |- 
+  failVariableValue: |-
     Koodi sijoitti muuttujaan väärän arvon.
 static:
-  AttributeError: |- 
+  AttributeError: |-
     {fname}-nimistä funktiota ei löytynyt kooditiedostosta.
-  CorrectResult: |- 
+  CorrectResult: |-
     Koodista ei löytynyt ongelmia.
-  GenericErrorMsg: |- 
+  GenericErrorMsg: |-
     Jokin meni pieleen lähdekoodia luettaessa.
     Lisätietoja:
     {ename}: {emsg}
-  OSError: |- 
+  OSError: |-
     Lähdekoodin lukeminen epäonnistui.
-  StaticTest: |- 
+  StaticTest: |-
     Tarkistetaan noudattaako koodi tehtävänannon rajoituksia...
-  StaticTestInfo: |- 
+  StaticTestInfo: |-
     Etsitään koodista mahdollisia ongelmia...
