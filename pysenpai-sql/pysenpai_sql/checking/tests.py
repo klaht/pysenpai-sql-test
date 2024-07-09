@@ -12,7 +12,6 @@ schema_indices = [
 
 def assert_order(res, correct, feedback_params=None):
     '''Checks if the list is sorted in ascending order'''
-
     if res != correct and set(res) == set(correct):
         return "incorrectReturnOrder", None
 
@@ -50,11 +49,7 @@ def evaluate_variables(res, correct, feedback_params=None):
 
 def assert_distinct(res, correct, feedback_params=None):
     '''Checks if the list contains only distinct values and if the query contains distinct keyword'''
-    answer_query_file = feedback_params['res']
-    try :
-        student_answer= open(answer_query_file, 'r').read()
-    except FileNotFoundError as e:
-        return None, None
+    student_answer = feedback_params['res']
     if not re.search(r"\bDISTINCT\b", student_answer, re.IGNORECASE):
         return "noDistinctKeyword", None
     

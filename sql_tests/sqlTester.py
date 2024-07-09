@@ -171,11 +171,16 @@ if __name__ == "__main__":
     
     # If the answer file exists and is not empty, run the tests
     if os.path.exists(answerFile) and os.stat(answerFile).st_size > 0:
+        #Open student answer
+        try :
+            student_answer= open(answerFile, 'r').read()
+        except FileNotFoundError as e:
+            output(msgs.get_msg("EmptyStudentAnswer", lang), Codes.INCORRECT)
         if st_module: # if fails to load module, don't run tests
             score += run_sql_test_cases("program",
                                         assignmentType.upper(),
                                         answerFile,
-                                        lambda: gen_program_vector(reference_query, answerFile), #needs to be callable
+                                        lambda: gen_program_vector(reference_query, student_answer), #needs to be callable
                                         lang, custom_msgs=msgs,
                                         config_file=config_file,
                                     )
