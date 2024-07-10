@@ -54,7 +54,7 @@ class SQLUpdateTestCase(SQLTestCase):
            
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
+            return 0, 0
         
         # Run reference answer
         try: 
@@ -77,12 +77,12 @@ class SQLUpdateTestCase(SQLTestCase):
 
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
+            return 0, 0
         
         self.feedback_params['res_affected_ids'] = ans_affected_ids
         self.feedback_params['correct_affected_ids'] = ref_affected_ids
 
-        return ref, res, result_list
+        return ref, res
 
 def get_affected_row_ids(cursor: sqlite3.Cursor, query):
     """

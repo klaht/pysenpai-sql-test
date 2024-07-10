@@ -39,7 +39,7 @@ class SQLAlterTestCase(SQLTestCase):
             conn.close()
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
         # Run reference answer
         try: 
@@ -52,12 +52,12 @@ class SQLAlterTestCase(SQLTestCase):
             conn2.close()
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
         res.append(get_table_name(student_answer))
         ref.append(get_table_name(ref_answer))
 
-        return ref, res, ""
+        return ref, res
 
 def get_table_information(cursor, query):
     """

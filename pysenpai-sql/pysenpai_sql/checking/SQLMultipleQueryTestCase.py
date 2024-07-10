@@ -34,7 +34,7 @@ class SQLMultipleQueryTestCase(SQLTestCase):
             conn.close()
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
         try:
             conn2 = sqlite3.connect("mydatabase2.db")
@@ -50,16 +50,16 @@ class SQLMultipleQueryTestCase(SQLTestCase):
 
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
         try:
             res, ref = create_list_for_validator(ref_results, ans_results, self)
         except KeyError as e:
             output(msgs.get_msg("incorrect_table_name", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
 
-        return ref, res, ""
+        return ref, res
 
 def create_list_for_validator(ref_dict: dict, ans_dict: dict, test_class: SQLMultipleQueryTestCase):
     """

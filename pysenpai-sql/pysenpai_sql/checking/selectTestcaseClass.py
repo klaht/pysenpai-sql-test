@@ -45,7 +45,6 @@ class SQLSelectTestCase(SQLTestCase):
             cursor = conn.cursor()
        
             cursor.execute(student_answer)
-            column_names = [column[0] for column in cursor.description]
 
             res = cursor.fetchall()
         
@@ -53,7 +52,7 @@ class SQLSelectTestCase(SQLTestCase):
             conn.close()
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
         # Run reference answer
         try: 
@@ -68,6 +67,6 @@ class SQLSelectTestCase(SQLTestCase):
             conn.close()
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
-        return ref, res, column_names
+        return ref, res

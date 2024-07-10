@@ -37,7 +37,7 @@ class SQLDeleteTestCase(SQLTestCase):
         
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
+            return 0, 0
 
         # Run reference answer
         try:
@@ -51,13 +51,15 @@ class SQLDeleteTestCase(SQLTestCase):
         
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
+            return 0, 0
 
-        return ref, res, ""
+        return ref, res
 
+def get_table_name(query):
+    return re.search(r"^DELETE\s+FROM\s+`?(\w+)`?\s*", query, re.IGNORECASE).group(1)
 
 def get_table_contents(cursor: sqlite3.Cursor, query: str):
-    table_name = query.split()[2]
+    table_name = get_table_name(query)
     select_query = "SELECT * FROM " + table_name
 
     cursor.execute(select_query)

@@ -49,7 +49,7 @@ class SQLCreateTestCase(SQLTestCase):
            
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return "ForMoreTestsIgnoreThis", "notCorrect", ""
+            return "ForMoreTestsIgnoreThis", "notCorrect"
         
         # Run reference answer
         try: 
@@ -65,7 +65,7 @@ class SQLCreateTestCase(SQLTestCase):
 
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, ""
+            return 0, 0
 
         #Add table name to the comparison list
         res.append(get_table_name(student_answer))
@@ -74,7 +74,7 @@ class SQLCreateTestCase(SQLTestCase):
 
 
         #TODO Different validator for CREATE queries
-        return ref, res, ""
+        return ref, res
 
 def get_table_name(query):
     return re.search("CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*", query, flags=re.IGNORECASE).group(2)

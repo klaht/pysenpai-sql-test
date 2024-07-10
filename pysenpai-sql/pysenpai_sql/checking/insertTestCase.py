@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 import pysenpai.callbacks.convenience as convenience
 from pysenpai_sql.checking.testcase import SQLTestCase
@@ -42,7 +43,7 @@ class SQLInsertTestCase(SQLTestCase):
                 result_list = [list(row) for row in res][0] # Arrange result to list
             except IndexError as e:
                 output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
-                return 0, 0, None
+                return 0, 0
 
             conn.commit()
             cursor.close()
@@ -50,7 +51,7 @@ class SQLInsertTestCase(SQLTestCase):
            
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
+            return 0, 0
         
         # Run reference answer
         try: 
@@ -70,9 +71,12 @@ class SQLInsertTestCase(SQLTestCase):
 
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return 0, 0, None
+            return 0, 0
         
-        return ref, res, result_list
+        return ref, res
+
+def get_table_name(query):
+    return re.search(r"^INSERT\s+INTO\s+`?(\w+)`?\s*", query, re.IGNORECASE).group(1)
 
 def getLastInsertedRow(cursor, query):
     
@@ -92,7 +96,7 @@ def getLastInsertedRow(cursor, query):
 
     id_of_inserted = cursor.lastrowid
 
-    table_name = query.split()[2]
+    table_name = get_table_name(query)
 
     columns_query = "PRAGMA table_info(" + table_name + ")"
 
