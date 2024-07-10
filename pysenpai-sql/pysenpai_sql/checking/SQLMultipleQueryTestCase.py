@@ -11,12 +11,12 @@ from pysenpai_sql.checking.tests import *
 from pysenpai_sql.checking.schema_tests import *
 
 table_regex_from_query_type = {
-    "SELECT": "SELECT\s+.*?\s+FROM\s+`?(\w+)`?(\s|;|$)",
+    "SELECT": "SELECT\s+.*?\s+FROM\s+`?(\w+)`?\s+",
     "UPDATE": "UPDATE\s+`?(\w+)`?\s+SET",
-    "CREATE": "CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*\(",
+    "CREATE": "CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*\(",
     "ALTER": "ALTER\s+TABLE\s+`?(\w+)`?\s+",
     "INSERT": "INSERT\s+INTO\s+`?(\w+)`?\s*",
-    "DELETE": "DELETE\s+FROM\s+`?(\w+)`?(\s|;|$)"
+    "DELETE": "DELETE\s+FROM\s+`?(\w+)`?\s+"
 }
 
 class SQLMultipleQueryTestCase(SQLTestCase):
@@ -121,11 +121,7 @@ def get_table_name(query: str, query_type: str):
 
     match = re.search(table_regex_from_query_type[query_type.upper()], query, flags=re.IGNORECASE)
         
-    #If group 2 doesn't exist, the query has only 1 group
-    try:
-        return match.group(2)
-    except IndexError:
-        return match.group(1)
+    return match.group(1)
 
 def get_table_data(table: str, cursor: sqlite3.Cursor):
     cursor.execute("PRAGMA table_info(" + table + ")")
