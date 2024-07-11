@@ -262,7 +262,7 @@ feedback_functions = {
     "multi_schema": evaluate_multi_query_schema,
     "table_name": check_table_names_from_query,
     "column_names": check_table_columns,
-    "group": check_group_by
+    "group_by": check_group_by
 }
 
 #Helper functions
