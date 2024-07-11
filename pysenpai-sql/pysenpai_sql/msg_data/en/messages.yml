@@ -260,6 +260,8 @@ program:
     Incorrect data type at table {output}.
   incorrectDefaultValue: |-
     Incorrect default value at table {output}.
+  incorrectGroupBy: |-
+    Incorrect value given to GROUP BY function. Check the assignment.
   incorrectNotNull: |-
     Incorrect NOT NULL at table {output}.
   incorrectPrimaryKey: |-
@@ -283,6 +285,8 @@ program:
     Table {output} contains incorrect values.
   noDistinctKeyword: |-
     DISTINCT keyword wasn't used.
+  noGroupByKeyword: |-
+    GROUP BY keyword not found in answer query.
   noOrderByKeyword: |-
     ORDER BY keyword not found.
   outputNotDistinct: |-

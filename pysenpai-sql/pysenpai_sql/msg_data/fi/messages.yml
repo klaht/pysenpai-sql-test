@@ -67,7 +67,6 @@ function:
     Tarkista tehtävänannosta millaset parametrit funktiolla tulisi olla
     Lisätietoja:
     {emsg}
-    
 import:
   BadModuleName: |-
     Tiedoston nimessä oli merkkejä joiden takia tarkistin ei pysty sitä avaamaan. Käytä vain englanninkielisiä aakkosia, numeroita ja alaviivaa nimessä."
@@ -266,6 +265,8 @@ program:
     Väärä data tyyppi taulussa {output}.
   incorrectDefaultValue: |-
     Väärä default arvo taulussa {output}.
+  incorrectGroupBy: |-
+    Väärä arvo annettu GROUP BY funktiolle. Tarkasta tehtävänanto.
   incorrectNotNull: |-
     Väärä NOT NULL taulussa {output}.
   incorrectPrimaryKey: |-
@@ -289,6 +290,8 @@ program:
     Tauluun {output} lisätty virheellisiä arvoja.
   noDistinctKeyword: |-
     DISTINCT sanaa ei löytynyt vastauksesta.
+  noGroupByKeyword: |-
+    GROUP BY funktiota ei löytynyt vastauksesta.
   noOrderByKeyword: |-
     ORDER BY keyword puuttuu
   outputNotDistinct: |-
