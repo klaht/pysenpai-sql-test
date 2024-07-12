@@ -267,6 +267,8 @@ program:
     Väärä default arvo taulussa {output}.
   incorrectGroupBy: |-
     Väärä arvo annettu GROUP BY funktiolle. Tarkasta tehtävänanto.
+  incorrectHavingKeyword: |-
+    GROUP BY:n yhteydessä käytetty HAVING saattaa olla väärin.
   incorrectNotNull: |-
     Väärä NOT NULL taulussa {output}.
   incorrectPrimaryKey: |-
@@ -292,6 +294,8 @@ program:
     DISTINCT sanaa ei löytynyt vastauksesta.
   noGroupByKeyword: |-
     GROUP BY funktiota ei löytynyt vastauksesta.
+  noHavingKeyword: |-
+    HAVING funktiota ei käytetty GROUP BY:n yhteydessä.
   noOrderByKeyword: |-
     ORDER BY keyword puuttuu
   outputNotDistinct: |-

@@ -91,3 +91,133 @@ def test_distinct():
     assert compare_messages(returned_msgs, correct_msgs)
 
     assert not answer
+
+def test_no_group_by():
+    ans_query = """
+        SELECT name FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID  
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionid  
+        ORDER BY name ASC; 
+    """
+    ref_query = """
+        SELECT name FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID  
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionid  
+        GROUP BY name HAVING MIN(on_exhibition.numberoflikes) > 0 
+        ORDER BY name ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=group_by"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["noGroupByKeyword", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_incorrect_group_by():
+    ans_query = """
+        SELECT name FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID  
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionid  
+        GROUP BY on_exhibition.exhibitionID HAVING MIN(on_exhibition.numberoflikes) > 0 
+        ORDER BY name ASC; 
+    """
+    ref_query = """
+        SELECT name FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID  
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionid  
+        GROUP BY name HAVING MIN(on_exhibition.numberoflikes) > 0 
+        ORDER BY name ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=group_by"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["incorrectGroupBy", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_no_having():
+    ans_query = """
+        SELECT exhibition.title, artist.name, numberofvisitors 
+        FROM on_exhibition, artwork, artist, exhibition 
+        WHERE on_exhibition.exhibitionid = exhibition.exhibitionid 
+        AND on_exhibition.artworkid = artwork.artworkid 
+        AND artwork.artistid = artist.artistid 
+        GROUP BY exhibition.exhibitionid 
+        ORDER BY exhibition.title;
+    """
+    ref_query = """
+        SELECT exhibition.title, artist.name, numberofvisitors 
+        FROM on_exhibition, artwork, artist, exhibition 
+        WHERE on_exhibition.exhibitionid = exhibition.exhibitionid 
+        AND on_exhibition.artworkid = artwork.artworkid 
+        AND artwork.artistid = artist.artistid 
+        GROUP BY exhibition.exhibitionid 
+        HAVING COUNT(artwork.artistid) < 4 
+        ORDER BY exhibition.title;
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=group_by"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["noHavingKeyword", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_incorrect_having():
+    ans_query = """
+        SELECT name FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID  
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionid  
+        GROUP BY name HAVING MAX(on_exhibition.numberoflikes) = 2
+        ORDER BY name ASC; 
+    """
+    ref_query = """
+        SELECT name FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID  
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionid  
+        GROUP BY name HAVING MIN(on_exhibition.numberoflikes) > 0 
+        ORDER BY name ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=group_by"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["incorrectHavingKeyword", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer

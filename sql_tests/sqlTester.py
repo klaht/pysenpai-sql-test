@@ -173,7 +173,8 @@ if __name__ == "__main__":
     if os.path.exists(answerFile) and os.stat(answerFile).st_size > 0:
         #Open student answer
         try :
-            student_answer= open(answerFile, 'r').read()
+            student_answer = open(answerFile, 'r').read()
+            student_answer = student_answer.replace("\n", " ")
         except FileNotFoundError as e:
             output(msgs.get_msg("EmptyStudentAnswer", lang), Codes.INCORRECT)
         if st_module: # if fails to load module, don't run tests

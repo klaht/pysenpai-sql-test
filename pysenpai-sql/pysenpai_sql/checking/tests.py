@@ -230,7 +230,7 @@ def evaluate_multi_query_schema(res, correct, feedback_params=None):
 
     return None, None
 
-def check_group_by(res,correct, feedback_params=None):
+def check_group_by(res, correct, feedback_params=None):
     '''
     Test if query contains GROUP BY keyword
     and correct parameters are used
@@ -247,6 +247,16 @@ def check_group_by(res,correct, feedback_params=None):
     if reference_group_by and (student_group_by != reference_group_by):
         return "incorrectGroupBy", None
 
+    answer_having_param = get_group_by_having_paramater(student_answer)
+    reference_having_param = get_group_by_having_paramater(reference_answer)
+
+    if reference_having_param and not answer_having_param:
+        return "noHavingKeyword", None
+
+    if reference_having_param and answer_having_param != reference_having_param:
+        return "incorrectHavingKeyword", None
+    
+    return None, None
 
 feedback_functions = {
     "value": evaluate_variables,
@@ -273,7 +283,13 @@ def get_group_by_parameter_from_query(query):
         return group_by_param.group(1)
     
     return False
+
+def get_group_by_having_paramater(query):
+    having_param = re.search(r"\bGROUP\s+BY\s+[\w\.]+\s+HAVING\s+(.+)(?:;|\bORDER\s+BY\b)", query, re.IGNORECASE)
+    if having_param:
+        return having_param.group(1)
     
+    return False
             
 def get_affected_row_ids(cursor: sqlite3.Cursor, query):
     """
