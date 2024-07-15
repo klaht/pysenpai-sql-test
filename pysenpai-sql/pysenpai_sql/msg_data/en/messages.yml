@@ -264,6 +264,8 @@ program:
     Incorrect value given to GROUP BY function. Check the assignment.
   incorrectHavingKeyword: |-
     HAVING keyword used with GROUP BY might be incorrect.
+  incorrectJoin: |-
+    The JOIN statements didn't match the reference answer.
   incorrectNotNull: |-
     Incorrect NOT NULL at table {output}.
   incorrectPrimaryKey: |-

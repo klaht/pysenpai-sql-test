@@ -258,6 +258,18 @@ def check_group_by(res, correct, feedback_params=None):
     
     return None, None
 
+def evaluate_joins(res:list, correct:list, feedback_params=None):
+    student_answer = feedback_params['res']
+    reference_answer = feedback_params['ref']
+
+    student_joins = get_joins(student_answer)
+    reference_joins = get_joins(reference_answer)
+
+    if student_joins != reference_joins:
+        return "incorrectJoin", None
+
+    return None, None
+
 feedback_functions = {
     "value": evaluate_variables,
     "schema": check_table_schema,
@@ -272,10 +284,38 @@ feedback_functions = {
     "multi_schema": evaluate_multi_query_schema,
     "table_name": check_table_names_from_query,
     "column_names": check_table_columns,
-    "group_by": check_group_by
+    "group_by": check_group_by,
+    "join": evaluate_joins
 }
 
 #Helper functions
+
+def get_joins(query:str) -> list:
+    joins = []
+    aliases = get_aliases(query)
+    raw_joins = re.findall("JOIN\s+(\w+)(?:\s+AS\s+\w+)?\s+ON\s+([\.\w]+)\s*=\s*([\.\w]+)", query, re.IGNORECASE)
+
+    for table_name, left, right in raw_joins:
+        joins.append((replace_with_alias(left, aliases), replace_with_alias(right, aliases)))
+    
+    return joins
+        
+        
+
+def replace_with_alias(join_param:str, aliases:dict):
+    table, column = join_param.split(".")
+    
+    return aliases.get(table, table) + "." + column
+
+
+def get_aliases(query:str) -> dict:
+    alias_and_value = {}
+    aliases = re.findall(r"(\w+)\s+AS\s+(\w+)", query, flags=re.IGNORECASE)
+    for alias in aliases:
+       alias_and_value[alias[1]] = alias[0]
+    
+    return alias_and_value
+
 
 def get_group_by_parameter_from_query(query):
     group_by_param = re.search(r"\bGROUP\s+BY\s+(\w+)\b", query, re.IGNORECASE)

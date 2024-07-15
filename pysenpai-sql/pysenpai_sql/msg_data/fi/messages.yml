@@ -269,6 +269,8 @@ program:
     Väärä arvo annettu GROUP BY funktiolle. Tarkasta tehtävänanto.
   incorrectHavingKeyword: |-
     GROUP BY:n yhteydessä käytetty HAVING saattaa olla väärin.
+  incorrectJoin: |-
+    Käyttämäsi JOIN lauseet eivät vastanneet esimerkkivastausta.
   incorrectNotNull: |-
     Väärä NOT NULL taulussa {output}.
   incorrectPrimaryKey: |-
