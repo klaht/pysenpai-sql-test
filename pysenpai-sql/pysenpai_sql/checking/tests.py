@@ -265,7 +265,16 @@ def evaluate_joins(res:list, correct:list, feedback_params=None):
     student_joins = get_joins(student_answer)
     reference_joins = get_joins(reference_answer)
 
-    if student_joins != reference_joins:
+    for table, joins in reference_joins.items():
+        student_join_for_table = student_joins.get(table, None)
+
+        if not student_join_for_table:
+            return "tableNotJoined", table
+        
+        if student_join_for_table != joins:
+            return "incorrectJoin", None
+
+    if len(student_joins) != len(reference_joins):
         return "incorrectJoin", None
 
     return None, None
@@ -290,19 +299,22 @@ feedback_functions = {
 
 #Helper functions
 
-def get_joins(query:str) -> list:
-    joins = []
+def get_joins(query:str) -> dict:
+    joins = {}
     aliases = get_aliases(query)
     raw_joins = re.findall("JOIN\s+(\w+)(?:\s+AS\s+\w+)?\s+ON\s+([\.\w]+)\s*=\s*([\.\w]+)", query, re.IGNORECASE)
 
     for table_name, left, right in raw_joins:
-        joins.append((replace_with_alias(left, aliases), replace_with_alias(right, aliases)))
+        joins[aliases.get(table_name, table_name)] = (
+            replace_alias(left, aliases), 
+            replace_alias(right, aliases)
+        )
     
     return joins
         
         
 
-def replace_with_alias(join_param:str, aliases:dict):
+def replace_alias(join_param:str, aliases:dict):
     table, column = join_param.split(".")
     
     return aliases.get(table, table) + "." + column

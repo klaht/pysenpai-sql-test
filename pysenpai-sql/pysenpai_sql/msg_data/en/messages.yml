@@ -297,6 +297,8 @@ program:
     ORDER BY keyword not found.
   outputNotDistinct: |-
     The query returned non-distinct values.
+  tableNotJoined: |-
+    Required table {output} not JOINed.
   tooLitteReturnValues0: |-
     Query returned too few values.
     Missing values.
