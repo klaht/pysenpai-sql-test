@@ -303,7 +303,7 @@ program:
   outputNotDistinct: |-
     Kysely ei palauttanut uniikkeja arvoja.
   tableNotJoined: |-
-    Vaadittua taulua {output} ei ole liitetty JOIN:n avulla.
+    Vaadittua taulua '{output}' ei ole liitetty JOIN:n avulla.
   tooLittleDeleted: |-
     Kysely poisti liian vähän rivejä.
   tooLittleReturnValues0: |-

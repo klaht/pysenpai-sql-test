@@ -221,3 +221,68 @@ def test_incorrect_having():
     assert compare_messages(returned_msgs, correct_msgs)
 
     assert not answer
+
+def test_missing_join():
+    ans_query = """
+        SELECT DISTINCT artist.name, exhibition.title FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID 
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionID 
+        ORDER BY artist.name ASC, exhibition.title ASC; 
+    """
+    ref_query = """
+        SELECT DISTINCT artist.name, exhibition.title, location.city FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID 
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionID 
+        JOIN location ON exhibition.locationID = location.locationID 
+        WHERE artist.birthplace = location.city 
+        ORDER BY artist.name ASC, exhibition.title ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=join"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["tableNotJoined", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_incorrect_join():
+    ans_query = """
+        SELECT DISTINCT artist.name, exhibition.title, location.city FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID 
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionID 
+        JOIN location ON exhibition.title = location.city 
+        ORDER BY artist.name ASC, exhibition.title ASC; 
+    """
+    ref_query = """
+        SELECT DISTINCT artist.name, exhibition.title, location.city FROM artist 
+        JOIN artwork ON artist.artistID = artwork.artistID 
+        JOIN on_exhibition ON artwork.artworkID = on_exhibition.artworkID 
+        JOIN exhibition ON on_exhibition.exhibitionID = exhibition.exhibitionID 
+        JOIN location ON exhibition.locationID = location.locationID 
+        WHERE artist.birthplace = location.city 
+        ORDER BY artist.name ASC, exhibition.title ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=join"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["incorrectJoin", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer

@@ -298,7 +298,7 @@ program:
   outputNotDistinct: |-
     The query returned non-distinct values.
   tableNotJoined: |-
-    Required table {output} not JOINed.
+    Required table '{output}' not JOINed.
   tooLitteReturnValues0: |-
     Query returned too few values.
     Missing values.
