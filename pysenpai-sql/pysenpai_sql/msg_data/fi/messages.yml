@@ -280,6 +280,8 @@ program:
     Varmista, että palautat arvot oikeassa järjestyksessä.
   incorrectSelectedColumn: |-
     Kysely käytti vääriä sarakkeita.
+  incorrectSelectedColumnAmount: |-
+    Väärä määrä sarakkeita valittu. Tarkista tehtävänanto.
   incorrectSelectedColumns: |-
     Kysely käytti vääriä sarakkeita.
   incorrectSelectedRows: |-
@@ -300,6 +302,8 @@ program:
     HAVING funktiota ei käytetty GROUP BY:n yhteydessä.
   noOrderByKeyword: |-
     ORDER BY keyword puuttuu
+  noSelectedRows: |-
+    Hakulauseke ei palauttanut yhtäkään riviä.
   outputNotDistinct: |-
     Kysely ei palauttanut uniikkeja arvoja.
   tableNotJoined: |-
@@ -321,6 +325,8 @@ program:
     Varmista, että valitset vain MAALAUKSIA.
     Ylimääräiset arvot:
     {output}
+  unmatchedColumn: |-
+    Vastauksen sarake '{output}' ei vastannut tehtävänantoa. Tarkista järjestys ja käytettävät sarakkeet.
 snippet:
   AdditionalInfo: |-
     Tarkistin antoi myös seuraavat lisätiedot:

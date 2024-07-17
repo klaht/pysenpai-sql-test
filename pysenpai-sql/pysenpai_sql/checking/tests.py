@@ -26,15 +26,26 @@ def assert_order(res, correct, feedback_params=None):
 def assert_selected_variables(res, correct, feedback_params=None):
     '''Checks if the list contains the correct variables and that they are in the correct order'''
 
+    correct_answer = feedback_params['ref']
+    student_answer = feedback_params['res']
+
     if res == correct:
         return None, None
 
-    for i, value in enumerate(correct):
-        if len(res[i]) != len(value):
-            return "incorrectSelectedColumns", None
+    if len(res) == 0:
+        return "noSelectedRows", None
+
+    student_columns = get_column_names_from_query(student_answer).split(",")
+    reference_columns = get_column_names_from_query(correct_answer).split(",")
+
+    if len(student_columns) != len(reference_columns):
+        return "incorrectSelectedColumnAmount", None
+
+    for i, column in enumerate(reference_columns):
+        if column.strip() != student_columns[i].strip():
+            return "unmatchedColumn", student_columns[i]
+
         
-        #Only need to compare the first indices
-        break
 
     return None, None
 
@@ -140,13 +151,7 @@ def check_table_columns(res, correct, feedback_params=None):
     '''Checks if the table columns are correct'''
 
     correct_answer = feedback_params['ref']
-    student_answer_file = feedback_params['res']
-    
-    try :
-        student_answer1 = open(student_answer_file, 'r')
-        student_answer = student_answer1.read()
-    except FileNotFoundError as e:
-        return None, None
+    student_answer = feedback_params['res']
     
     correct_column_names = get_column_names_from_query(correct_answer)
     res_column_names = get_column_names_from_query(student_answer)
@@ -391,6 +396,6 @@ def get_table_names_from_query(query):
 
 def get_column_names_from_query(query):
     '''TODO Support for other query types'''
-    result = re.search(r"\b(?:SELECT(?: DISTINCT)?)(\s+\w+(?:,\s*\w+)*).*;", query, re.IGNORECASE)
+    result = re.search(r"\b(?:SELECT(?: DISTINCT)?)(.*)\bFROM\b", query, re.IGNORECASE)
 
     return result.group(1).replace(" ", "")

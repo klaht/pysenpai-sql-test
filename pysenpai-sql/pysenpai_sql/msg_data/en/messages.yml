@@ -275,6 +275,8 @@ program:
     Make sure you return the values in the order specified in the assignment.
   incorrectSelectedColumn: |-
     The query used incorrect columns.
+  incorrectSelectedColumnAmount: |-
+    Incorrect amount of columns selected. Check the assignment.
   incorrectSelectedColumns: |-
     The query used incorrect columns.
   incorrectSelectedRows: |-
@@ -295,6 +297,8 @@ program:
     HAVING wasn't used with GROUP BY.
   noOrderByKeyword: |-
     ORDER BY keyword not found.
+  noSelectedRows: |-
+    SELECT query didn't return any rows.
   outputNotDistinct: |-
     The query returned non-distinct values.
   tableNotJoined: |-
@@ -314,6 +318,8 @@ program:
     Make sure you only select PAINTINGS.
     Excessive values.
     {output}
+  unmatchedColumn: |-
+    The column '{output}' didn't match the assignment. Check the order and the columns used.
 snippet:
   AdditionalInfo: |-
     The checker gave the following as additional information:
