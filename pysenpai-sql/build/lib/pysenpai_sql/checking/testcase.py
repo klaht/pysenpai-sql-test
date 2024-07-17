@@ -180,11 +180,13 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
         except AssertionError as e:
             # Result was incorrect
             output(msgs.get_msg(e, lang, "IncorrectResult"), Codes.INCORRECT)
-            output(
-                msgs.get_msg("PrintReference", lang),
-                Codes.DEBUG,
-                ref=test.present_object("ref", ref)
-            )
+            for setting in open(config_file, "r").readlines():
+                if setting.find("show_reference") >= 0:
+                    output(
+                        msgs.get_msg("PrintReference", lang),
+                        Codes.DEBUG,
+                        ref=test.present_object("ref", ref)
+                    )
 
             #Extra feedback
             printed_additional_test_message = False

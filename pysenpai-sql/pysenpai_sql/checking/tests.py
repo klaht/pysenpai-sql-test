@@ -107,14 +107,8 @@ def check_table_names_from_query(res, correct, feedback_params=None):
     ''' 
     
     correct_answer = feedback_params['ref']
-    student_answer_file = feedback_params['res']
+    student_answer = feedback_params['res']
     
-    try :
-        student_answer1 = open(student_answer_file, 'r')
-        student_answer = student_answer1.read()
-    except FileNotFoundError as e:
-        return None, None
-        
     correct_table_names = get_table_names_from_query(correct_answer)
     res_table_names = get_table_names_from_query(student_answer)
     
