@@ -1,0 +1,12 @@
+[project]
+name = "pysenpai_sql"
+version = "0.1"
+
+[build-system]
+requires = [
+    "setuptools"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"pysenpai_sql.msg_data" = ["*/messages.yml"]
