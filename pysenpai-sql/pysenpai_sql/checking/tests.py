@@ -2,12 +2,12 @@ import sqlite3
 import re
 
 schema_indices = [
-    "incorrect_query",
-    "incorrect_column_name",
-    "incorrect_data_type",
-    "incorrect_not_null",
-    "incorrect_default_value",
-    "incorrect_primary_key",
+    "incorrectQuery",
+    "incorrectColumnName",
+    "incorrectDataType",
+    "incorrectNotNull",
+    "incorrectDefaultValue",
+    "incorrectPrimaryKey",
 ]
 
 def assert_order(res, correct, feedback_params=None):
@@ -194,7 +194,7 @@ def check_table_schema(res, correct, feedback_params=None):
     for i, value in enumerate(correct):
         for j in range (0, 6):
             if res[i][j] != value[j]:
-                return schema_indices[j], None
+                return schema_indices[j], correct_table_name
 
 def check_table_content_after_delete(res, correct, feedback_params=None):
     if len(correct) > len(res):

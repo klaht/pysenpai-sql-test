@@ -71,8 +71,6 @@ class SQLCreateTestCase(SQLTestCase):
         res.append(get_table_name(student_answer))
         ref.append(get_table_name(ref_answer))
 
-
-
         #TODO Different validator for CREATE queries
         return ref, res
 
@@ -84,7 +82,12 @@ def get_column_data(cursor, query):
 
     columns_query = "PRAGMA table_info(" + table_name + ")"
 
-    columns = cursor.execute(columns_query).fetchall()
+    columns = list(cursor.execute(columns_query).fetchall())
+
+    for i, column in enumerate(columns):
+        columns[i] = list(column)
+        #Process datatypes uppercase and without whitespace
+        columns[i][2] = re.sub(r"\s", "", columns[i][2]).upper()
 
     return columns
 
