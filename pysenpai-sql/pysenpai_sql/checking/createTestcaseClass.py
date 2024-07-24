@@ -49,7 +49,7 @@ class SQLCreateTestCase(SQLTestCase):
            
         except sqlite3.Error as e:
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
-            return "ForMoreTestsIgnoreThis", "notCorrect"
+            return 0, 0 
         
         # Run reference answer
         try: 

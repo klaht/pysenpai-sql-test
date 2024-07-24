@@ -1,5 +1,19 @@
 from test_utils import *
 
+def test_correct_feedback():
+    ans_query = "CREATE TABLE testtable (Id INTEGER PRIMARY KEY, age VARCHAR (50) NOT NULL);"
+    ref_query = "CREATE TABLE testtable (Id INTEGER PRIMARY KEY, age VARCHAR (50) NOT NULL);"
+    args = ["exNumber = 0", "show_answer_difference", "feedback=schema"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    error_keys = ["CorrectResult"]
+
+    correct_msgs = get_msg("en", error_keys)
+    returned_msgs = parse_flag_msg(output, 1)
+
+    assert compare_messages(returned_msgs, correct_msgs)
+    assert answer
+
 def test_incorrect_table_name():
     ans_query = "CREATE TABLE test (Id INTEGER PRIMARY KEY, age VARCHAR (50) NOT NULL);"
     ref_query = "CREATE TABLE testtable (Id INTEGER PRIMARY KEY, age VARCHAR (50) NOT NULL);"
