@@ -159,12 +159,12 @@ def evaluate_updated_values(res, correct, feedback_params=None):
     incorrect_where_clause = feedback_params['res_affected_ids'] != feedback_params['correct_affected_ids']
     '''Check if correct rows have been affected'''
     if len(res) != len(correct) or incorrect_where_clause:
-        return "incorrectSelectedRows", res
+        return "incorrectSelectedRows", None
 
     '''Checks if the updated values contains correct values'''
     for i, value in enumerate(res):
         if value != correct[i]:
-            return ("IncorrectUpdatedValues"), res
+            return "IncorrectUpdatedValues", res
 
     return None, None
 
