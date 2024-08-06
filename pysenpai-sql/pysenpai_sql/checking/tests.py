@@ -336,7 +336,7 @@ def get_group_by_parameter_from_query(query):
     return False
 
 def get_group_by_having_paramater(query):
-    having_param = re.search(r"\bGROUP\s+BY\s+[\w\.]+\s+HAVING\s+(.+)(?:;|\bORDER\s+BY\b)", query, re.IGNORECASE)
+    having_param = re.search(r"\bGROUP\s+BY\s+[\w\.]+\s+HAVING\s+(.+?)(?:;|\bORDER\s+BY\b)", query, re.IGNORECASE)
     if having_param:
         return having_param.group(1)
     
