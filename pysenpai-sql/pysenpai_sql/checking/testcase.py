@@ -165,7 +165,8 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
         #Run test
         ref, res = test.wrap(test.ref_result, student_answer, lang, msgs)
         if (ref == 0 or res == 0):
-            output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
+            #Don't print output as zero, could be confusing for the student
+            #output(msgs.get_msg("PrintStudentOutput", lang), Codes.INFO, output=res)
             return 0
 
         # Validating function results
