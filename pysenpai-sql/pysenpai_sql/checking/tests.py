@@ -73,7 +73,8 @@ def assert_distinct(res, correct, feedback_params=None):
     for thing in res:
         if res.count(thing) > 1:
             return "outputNotDistinct", None
-        return None, None
+    
+    return None, None
 
 def evaluate_amount(res, correct, feedback_params=None):
     '''
@@ -278,6 +279,23 @@ def evaluate_joins(res:list, correct:list, feedback_params=None):
 
     return None, None
 
+def evaluate_where_clause(res:list, correct:list, feedback_params=None):
+    student_answer = feedback_params['res']
+    reference_answer = feedback_params['ref']
+
+    answer_where_clause = get_where_clause_content(student_answer)
+    reference_where_clause = get_where_clause_content(reference_answer)
+
+    if len(answer_where_clause) < len(reference_where_clause):
+        return "tooFewWhereClauses", None
+    
+    for i, reference_clause in enumerate(reference_where_clause):
+        if reference_clause != answer_where_clause[i]:
+            return "incorrectWhereClause", answer_where_clause[i]
+
+
+    return None, None
+
 feedback_functions = {
     "value": evaluate_variables,
     "schema": check_table_schema,
@@ -293,15 +311,58 @@ feedback_functions = {
     "table_name": check_table_names_from_query,
     "column_names": check_table_columns,
     "group_by": check_group_by,
-    "join": evaluate_joins
+    "join": evaluate_joins,
+    "where": evaluate_where_clause
+
 }
 
 #Helper functions
 
+def get_where_clause_content(query:str):
+    conditions = []
+
+    where_clause = get_where_clauses(query)
+    raw_conditions = get_where_conditions_with_operators(where_clause)
+    null_conditions = get_where_null_operators(where_clause)
+
+    for left, operator, right, logical_operator in raw_conditions:
+        if operator == "==":
+            operator = "="
+        elif operator == "<": #Process all is greater/less than as greater than
+            temp = left
+            left = right
+            right = temp
+            operator = ">"
+
+        right = right.replace("\"", "'")
+
+        conditions.append(left + operator + right) 
+    
+    for column, null_condition, logical_operator in null_conditions:
+        if null_condition == "NOT NULL":
+            null_condition = "IS NOT NULL"
+
+        conditions.append(column + null_condition) 
+
+    return conditions
+
+def get_where_clauses(query:str) -> list:
+    result = re.search(r"\bWHERE\b\s+(.*?)\n?(?:\bGROUP\s+BY\b.*|;|\bORDER\s+BY\b)", query, re.IGNORECASE)
+    if result:
+        return result.group(1)
+    
+    return None
+
+def get_where_conditions_with_operators(where_clause:str):
+    return re.findall(r"(.*?)?\s*(<|>|={1,2}|!=)\s*(.*?)(?:(\s+AND\s+|\s+OR\s+)|$)", where_clause, re.IGNORECASE)
+
+def get_where_null_operators(where_clause:str):
+    return re.findall(r"(\S*?)\s+(NOT\s+NULL|IS\s+NULL|IS\s+NOT\s+NULL)(\s+AND\s+|\s+OR\s+)?", where_clause, re.IGNORECASE)
+
 def get_joins(query:str) -> dict:
     joins = {}
     aliases = get_aliases(query)
-    raw_joins = re.findall("JOIN\s+(\w+)(?:\s+AS\s+\w+)?\s+ON\s+([\.\w]+)\s*=\s*([\.\w]+)", query, re.IGNORECASE)
+    raw_joins = re.findall(r"JOIN\s+(\w+)(?:\s+AS\s+\w+)?\s+ON\s+([\.\w]+)\s*=\s*([\.\w]+)", query, re.IGNORECASE)
 
     for table_name, left, right in raw_joins:
         joins[aliases.get(table_name, table_name)] = (

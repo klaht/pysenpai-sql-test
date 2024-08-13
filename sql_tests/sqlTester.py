@@ -147,7 +147,7 @@ if __name__ == "__main__":
             config_file = "setting_arguments.txt"
 
         reference_query = open(referenceFile).read()
-        reference_query = str.replace(reference_query, "\n", "")
+        reference_query = str.replace(reference_query, "\n", " ")
         #Find individual queries. If length of second query is greater than 0 assignment is "MULTI"
         queries = reference_query.split(";")
 
