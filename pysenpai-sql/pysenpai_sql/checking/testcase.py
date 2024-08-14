@@ -76,7 +76,7 @@ class SQLTestCase(object):
             
                 return feedback_results
 
-        return [(None, None)]
+        return (None, None)
 
     def parse(self, output):
         return output

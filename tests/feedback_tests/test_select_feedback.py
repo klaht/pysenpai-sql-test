@@ -354,3 +354,91 @@ def test_incorrect_column_amount():
     assert compare_messages(returned_msgs, correct_msgs)
 
     assert not answer
+
+def test_missing_where_clause():
+    ans_query = """
+    SELECT name, yearborn, birthplace FROM artist ORDER BY name ASC; 
+    """
+    ref_query = """
+    SELECT name, yearborn, birthplace FROM artist WHERE nationality == "Finland" ORDER BY name ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=where"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["noWhereClause", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_incorrect_where_clause():
+    ans_query = """
+    SELECT name, yearborn, birthplace FROM artist WHERE birthplace == "Finland" ORDER BY name ASC; 
+    """
+    ref_query = """
+    SELECT name, yearborn, birthplace FROM artist WHERE nationality = "Finland" ORDER BY name ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=where"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["incorrectWhereClause", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_incorrect_null_clause():
+    ans_query = """
+    SELECT name, yearborn, birthplace FROM artist WHERE birthplace == "Finland" ORDER BY name ASC; 
+    """
+    ref_query = """
+    SELECT name, yearborn, birthplace FROM artist WHERE nationality = "Finland" ORDER BY name ASC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=where"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["incorrectWhereClause", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer
+
+def test_incorrect_null_clause():
+    ans_query = """
+    SELECT title, startDate, endDate, numberofvisitors, name, city, country FROM exhibition, location WHERE numberofvisitors IS NULL AND location.locationid == exhibition.locationid ORDER BY numberofvisitors DESC; 
+    """
+    ref_query = """
+    SELECT title, startDate, endDate, numberofvisitors, name, city, country FROM exhibition, location WHERE numberofvisitors NOT NULL AND location.locationid == exhibition.locationid ORDER BY numberofvisitors DESC; 
+    """
+    args = ["exNumber = 0", "show_answer_difference", "feedback=where"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    returned_msgs = parse_flag_msg(output, 0)
+    error_keys = ["IncorrectResult"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    returned_msgs = parse_flag_msg(output, 2)
+    error_keys = ["incorrectWhereClause", "AdditionalTests"]
+    correct_msgs = get_msg("en", error_keys)
+    assert compare_messages(returned_msgs, correct_msgs)
+
+    assert not answer

@@ -284,6 +284,8 @@ program:
   incorrectTableName: |-
     Table name is incorrect.
     Make sure you use the name specified in the assignment.
+  incorrectWhereClause: |-
+    WHERE clause included wrong condition: {output}
   missingPrimarykey: |-
     Table is missing a primary key.
     Make sure you define a primary key for the table.
@@ -299,10 +301,14 @@ program:
     ORDER BY keyword not found.
   noSelectedRows: |-
     SELECT query didn't return any rows.
+  noWhereClause: |-
+    Rows were not selected according to the assignment. Check the WHERE clause.
   outputNotDistinct: |-
     The query returned non-distinct values.
   tableNotJoined: |-
     Required table '{output}' not JOINed.
+  tooFewWhereClauses: |-
+    WHERE clause included too few conditions.
   tooLitteReturnValues0: |-
     Query returned too few values.
     Missing values.

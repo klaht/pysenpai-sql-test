@@ -283,6 +283,9 @@ def evaluate_where_clause(res:list, correct:list, feedback_params=None):
     student_answer = feedback_params['res']
     reference_answer = feedback_params['ref']
 
+    if not re.search(r"\bWHERE\b", student_answer, re.IGNORECASE):
+        return "noWhereClause", None
+
     answer_where_clause = get_where_clause_content(student_answer)
     reference_where_clause = get_where_clause_content(reference_answer)
 
@@ -292,8 +295,7 @@ def evaluate_where_clause(res:list, correct:list, feedback_params=None):
     for i, reference_clause in enumerate(reference_where_clause):
         if reference_clause != answer_where_clause[i]:
             return "incorrectWhereClause", answer_where_clause[i]
-
-
+    
     return None, None
 
 feedback_functions = {
@@ -313,7 +315,6 @@ feedback_functions = {
     "group_by": check_group_by,
     "join": evaluate_joins,
     "where": evaluate_where_clause
-
 }
 
 #Helper functions
@@ -342,7 +343,7 @@ def get_where_clause_content(query:str):
         if null_condition == "NOT NULL":
             null_condition = "IS NOT NULL"
 
-        conditions.append(column + null_condition) 
+        conditions.append(column + " " + null_condition) 
 
     return conditions
 
@@ -354,7 +355,7 @@ def get_where_clauses(query:str) -> list:
     return None
 
 def get_where_conditions_with_operators(where_clause:str):
-    return re.findall(r"(.*?)?\s*(<|>|={1,2}|!=)\s*(.*?)(?:(\s+AND\s+|\s+OR\s+)|$)", where_clause, re.IGNORECASE)
+    return re.findall(r"(\S*?)?\s*(<|>|={1,2}|!=)\s*(.*?)(?:(\s+AND\s+|\s+OR\s+)|\s*$)", where_clause, re.IGNORECASE)
 
 def get_where_null_operators(where_clause:str):
     return re.findall(r"(\S*?)\s+(NOT\s+NULL|IS\s+NULL|IS\s+NOT\s+NULL)(\s+AND\s+|\s+OR\s+)?", where_clause, re.IGNORECASE)

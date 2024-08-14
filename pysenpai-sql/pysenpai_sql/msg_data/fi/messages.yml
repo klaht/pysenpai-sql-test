@@ -289,6 +289,8 @@ program:
   incorrectTableName: |-
     Taulukon nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  incorrectWhereClause: |-
+    Rivien valitsemiseen käytetty where lauseke sisälsi väärän ehtolausekkeen: {output}
   missingPrimarykey: |-
     Taulukosta puuttuu pääavain.
     Lisää taulukkoon pääavain.
@@ -304,10 +306,14 @@ program:
     ORDER BY keyword puuttuu
   noSelectedRows: |-
     Hakulauseke ei palauttanut yhtäkään riviä.
+  noWhereClause: |-
+    Rivejä ei valittu tehtävänannon mukaisella tavalla. Lue tehtävänanto.
   outputNotDistinct: |-
     Kysely ei palauttanut uniikkeja arvoja.
   tableNotJoined: |-
     Vaadittua taulua '{output}' ei ole liitetty JOIN:n avulla.
+  tooFewWhereClauses: |-
+    Rivien valikointiin käytetty WHERE lauseke ei sisältänyt tarpeeksi montaa ehtoa. Tarkista tehtävänanto.
   tooLittleDeleted: |-
     Kysely poisti liian vähän rivejä.
   tooLittleReturnValues0: |-
