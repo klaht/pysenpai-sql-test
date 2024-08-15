@@ -255,6 +255,9 @@ program:
   ValueError: |-
     Ohjelmaa suorittaessa tapahtui ValueError. Tämä voi johtua siitä, että virheellisiä syötteitä ei ole käsitelty oikein.Lisätietoja:
     {emsg}
+  deleteOutput: |-
+    Taulun sisältö poiston jälkeen:
+    {output}
   incorrectColumnName: |-
     Sarakkeen nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
@@ -291,6 +294,9 @@ program:
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
   incorrectWhereClause: |-
     Rivien valitsemiseen käytetty where lauseke sisälsi väärän ehtolausekkeen: {output}
+  insertOutput: |-
+    Viimeiseksi lisätty rivi:
+    {output}
   missingPrimarykey: |-
     Taulukosta puuttuu pääavain.
     Lisää taulukkoon pääavain.
@@ -310,6 +316,9 @@ program:
     Rivejä ei valittu tehtävänannon mukaisella tavalla. Lue tehtävänanto.
   outputNotDistinct: |-
     Kysely ei palauttanut uniikkeja arvoja.
+  selectOutput: |-
+    SELECT lauseesi tuotti tämän vastauksen 
+    {output}
   tableNotJoined: |-
     Vaadittua taulua '{output}' ei ole liitetty JOIN:n avulla.
   tooFewWhereClauses: |-
@@ -321,7 +330,7 @@ program:
     Puuttuvat arvot:
     {output}
   tooManyDeleted: |-
-    kyely poisti liian monta riviä.
+    Liian monta riviä poistettiin.
   tooManyReturnValues0: |-
     Kysely palautti liian monta arvoa.
     Ylimääräiset arvot:
@@ -333,6 +342,9 @@ program:
     {output}
   unmatchedColumn: |-
     Vastauksen sarake '{output}' ei vastannut tehtävänantoa. Tarkista järjestys ja käytettävät sarakkeet.
+  updateOutput: |-
+    UPDATE lauseesi päivittämät rivit näyttävät tältä päivityksen jälkeen: 
+    {output}
 snippet:
   AdditionalInfo: |-
     Tarkistin antoi myös seuraavat lisätiedot:

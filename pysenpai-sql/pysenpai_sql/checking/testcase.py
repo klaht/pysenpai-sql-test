@@ -10,6 +10,20 @@ from pysenpai_sql.messages import load_messages, Codes
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
 
+def get_assignment_type_output_msg(ref_query:str) -> str:
+    assignmentType = ref_query.split()[0]
+    match assignmentType.upper():
+        case "SELECT":
+            return "selectOutput"
+        case "INSERT":
+            return "insertOutput"
+        case "UPDATE":
+            return "updateOutput"
+        case "DELETE":
+            return "deleteOutput"
+
+    return "PrintStudentOutput"
+
 class SQLTestCase(object):
     
     def __init__(self, ref_result,
@@ -187,6 +201,16 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
                         msgs.get_msg("PrintReference", lang),
                         Codes.DEBUG,
                         ref=test.present_object("ref", ref)
+                    )
+
+                if setting.find("show_output") >= 0:
+                    output(
+                        msgs.get_msg(
+                            get_assignment_type_output_msg(student_answer), 
+                            lang
+                        ),
+                        Codes.DEBUG,
+                        output=test.present_object("parsed", res)
                     )
 
             #Extra feedback

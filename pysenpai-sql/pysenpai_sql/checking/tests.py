@@ -198,9 +198,9 @@ def check_table_schema(res, correct, feedback_params=None):
                 return schema_indices[j], correct_table_name
 
 def check_table_content_after_delete(res, correct, feedback_params=None):
-    if len(correct) > len(res):
-        return "tooFewDeleted", None
-    elif len(correct) < len(res):
+    if len(correct) < len(res):
+        return "tooLittleDeleted", None
+    elif len(correct) > len(res):
         return "tooManyDeleted", None
     
     for i, value in enumerate(res):
