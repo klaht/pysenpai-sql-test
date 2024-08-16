@@ -100,7 +100,7 @@ import:
     You should find all the errors in your code by running it in a shell as it provides more accurate information of what went wrong.
     Submit your code for testing only after it runs on your computer!
   LoadingModule: |-
-    Loading module {name} for evaluation...
+    Loading file {name} for evaluation...
   MissingFileExtension: |-
     The file is missing the .py extension, which is required of Python code files.
   NameError: |-

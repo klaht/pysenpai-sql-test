@@ -102,7 +102,7 @@ import:
     Korjaa koodisi virheet omalla koneella suorittamalla, jolloin saat tarkkaa tietoa missä ja millaisia virheet ovat.
     Palauta koodisi vasta kun saat sen komentorivillä toimimaan alusta loppuun!
   LoadingModule: |-
-    Ladataan moduuli {name} arvioitavaksi...
+    Ladataan tiedosto {name} arvioitavaksi...
   MissingFileExtension: |-
     Tiedostosta puuttuu .py-pääte, joka tulisi olla kaikissa Python-tiedostoissa.
   PrintExcLine: |-
