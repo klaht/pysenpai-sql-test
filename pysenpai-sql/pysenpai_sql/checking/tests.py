@@ -452,6 +452,6 @@ def get_table_names_from_query(query):
 
 def get_column_names_from_query(query):
     '''TODO Support for other query types'''
-    result = re.search(r"\b(?:SELECT(?: DISTINCT)?)(.*)\bFROM\b", query, re.IGNORECASE)
+    result = re.search(r"\b(?:SELECT(?: DISTINCT)?)(.*?)\bFROM\b", query, re.IGNORECASE)
 
     return result.group(1).replace(" ", "")
