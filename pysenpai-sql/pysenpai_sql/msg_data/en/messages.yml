@@ -324,6 +324,8 @@ program:
     {output}
     A database error occurred while calling the function.
     {emsg}
+  tooLittleDeleted: |-
+    Not enought rows were deleted.
   tooManyDeleted: |-
     Too many rows were deleted
   tooManyReturnValues0: |-

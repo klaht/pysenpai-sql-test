@@ -324,7 +324,7 @@ program:
   tooFewWhereClauses: |-
     Rivien valikointiin käytetty WHERE lauseke ei sisältänyt tarpeeksi montaa ehtoa. Tarkista tehtävänanto.
   tooLittleDeleted: |-
-    Kysely poisti liian vähän rivejä.
+    Rivejä ei poistettu tarpeeksi.
   tooLittleReturnValues0: |-
     Kysely palautti liian vähän arvoja.
     Puuttuvat arvot:
