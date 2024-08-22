@@ -62,7 +62,7 @@ def evaluate_variables(res, correct, feedback_params=None):
             return "IncorrectInsertError", item
 
     
-    return None
+    return None, None
 
 def assert_distinct(res, correct, feedback_params=None):
     '''Checks if the list contains only distinct values and if the query contains distinct keyword'''
