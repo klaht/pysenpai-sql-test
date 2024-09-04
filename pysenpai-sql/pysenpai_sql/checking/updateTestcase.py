@@ -31,22 +31,9 @@ class SQLUpdateTestCase(SQLTestCase):
         # Run student answer
         try: 
             conn = sqlite3.connect("mydatabase1.db")
-
             cursor = conn.cursor()
-            # cursor.execute(test_query)
-            # res = cursor.fetchall()
 
-            # Get ids affected by the update
-            ans_affected_ids = get_affected_row_ids(cursor, student_answer)
-
-            # Execute updated
-            cursor.execute(student_answer)
-
-            # Get rows with previously fetched ids
-            # If no rows have been affected by the query set all to empty
-            res = get_rows_with_ids(cursor, student_answer, ans_affected_ids) if ans_affected_ids else []
-            self.field_names = [i[0] for i in cursor.description] if res else []
-            result_list = [list(row) for row in res][0] if res else []
+            res = run_query_and_get_changed_rows(cursor, student_answer)
 
             conn.commit()
             cursor.close()
@@ -61,14 +48,8 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
 
-            ref_affected_ids = get_affected_row_ids(cursor2, ref_answer)
+            ref = run_query_and_get_changed_rows(cursor2, ref_answer)
 
-            cursor2.execute(ref_answer)
-
-            ref = get_rows_with_ids(cursor2, ref_answer, ref_affected_ids) 
-
-            # cursor2.execute(test_query)
-            # ref = cursor2.fetchall()
             self.ref_query_result = ref
 
             conn2.commit()
@@ -79,59 +60,44 @@ class SQLUpdateTestCase(SQLTestCase):
             output(msgs.get_msg("DatabaseError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0
         
-        self.feedback_params['res_affected_ids'] = ans_affected_ids
-        self.feedback_params['correct_affected_ids'] = ref_affected_ids
+        self.feedback_params['res_affected_ids'] = get_affected_row_ids(res)
+        self.feedback_params['correct_affected_ids'] = get_affected_row_ids(ref)
 
         return ref, res
 
-def get_affected_row_ids(cursor: sqlite3.Cursor, query):
-    """
-    Get all affected row primary keys from an update query
-    Splits the query at the first WHERE and uses the part after in a SELECT query
-    """
-    where_clause = re.split("where", query, maxsplit=1, flags=re.IGNORECASE)[1]
-    primary_key = getTablePrimaryKey(cursor, query)
+def run_query_and_get_changed_rows(cursor:sqlite3.Cursor, query:str):
+    changed_rows = []
 
-    affected_query = "SELECT " + primary_key + " FROM " + query.split()[1] + " WHERE " + where_clause
+    orig_content = get_table_contents(cursor, query)
+    cursor.execute(query)
+    updated_content = get_table_contents(cursor, query)
 
-    cursor.execute(affected_query)
+    for i, orig_row in enumerate(orig_content):
+        if updated_content[i] != orig_row:
+            changed_rows.append(updated_content[i])
 
-    return cursor.fetchall()
+    return changed_rows
 
-def getTablePrimaryKey(cursor, query):
-    """
-    Get primary key from an UPDATE query
-    Uses PRAGMA query to fetch information about the table
-    """
-    table_name = query.split()[1]
-    columns_query = "PRAGMA table_info(" + table_name + ")"
-    columns = cursor.execute(columns_query).fetchall()
+def get_table_contents(cursor: sqlite3.Cursor, query: str):
+    table_name = get_table_name(query)
+    select_query = "SELECT * FROM " + table_name
 
-    for column in columns:
-        if column[5]: #Primary key information is stored at index 5
-            try:
-                return column[1] #Index 1 stores column name
-            except Exception as e:
-                raise IndexError
-
-def get_rows_with_ids(cursor, query, ids):
-    """
-    Get all rows from table for given ids (primary key)
-    """
-    primary_key = getTablePrimaryKey(cursor, query)
-    select_query = "SELECT * FROM " + query.split()[1] + " WHERE " + primary_key + " IN " +  ids_to_string(ids) 
     cursor.execute(select_query)
 
     return cursor.fetchall()
 
-def ids_to_string (ids):
-    """
-    Generates a string to be used in "WHERE ... IN" query
-    """
-    query_str = "("
-    for id in ids:
-        query_str += str(id[0]) + ", "
+def get_table_name(query):
+    return re.search(r"UPDATE\s+`?(\w+)`?\s+SET", query, re.IGNORECASE).group(1)
+    
 
-    #remove last comma
-    return query_str[:-2] + ")"
+def get_affected_row_ids(rows: list):
+    ids = []
+    """
+    Get affected ids from rows.
+    Assume that index 0 is ID
+    """
 
+    for val in rows:
+        ids.append(val[0])
+
+    return ids
