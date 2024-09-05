@@ -300,6 +300,8 @@ program:
   missingPrimarykey: |-
     Taulukosta puuttuu pääavain.
     Lisää taulukkoon pääavain.
+  missingSemicolon: |-
+    Vastaus ei päättynyt puolipisteeseen (;).
   multiIncorrectTableContent: |-
     Tauluun {output} lisätty virheellisiä arvoja.
   noDistinctKeyword: |-

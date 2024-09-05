@@ -175,6 +175,12 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
         except FileNotFoundError as e:
             output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
+        
+        student_answer = student_answer.replace('\n', ' ')
+        if not student_answer.strip().endswith(';'):
+            output(msgs.get_msg("missingSemicolon", lang), Codes.INCORRECT)
+            return 0
+
 
         #Run test
         ref, res = test.wrap(test.ref_result, student_answer, lang, msgs)

@@ -295,6 +295,8 @@ program:
   missingPrimarykey: |-
     Table is missing a primary key.
     Make sure you define a primary key for the table.
+  missingSemicolon: |-
+    The answer didn't include a closing semicolon (;).
   multiIncorrectTableContent: |-
     Table {output} contains incorrect values.
   noDistinctKeyword: |-
