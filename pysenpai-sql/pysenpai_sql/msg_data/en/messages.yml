@@ -305,6 +305,8 @@ program:
     GROUP BY keyword not found in answer query.
   noHavingKeyword: |-
     HAVING wasn't used with GROUP BY.
+  noInsertedRow: |-
+    Inserting row wasn't succesful. Check the query.
   noOrderByKeyword: |-
     ORDER BY keyword not found.
   noSelectedRows: |-

@@ -39,10 +39,8 @@ class SQLInsertTestCase(SQLTestCase):
 
             res = getLastInsertedRow(cursor, student_answer)
 
-            try:
-                result_list = [list(row) for row in res][0] # Arrange result to list
-            except IndexError as e:
-                output(msgs.get_msg("UnidentifiableRecord", lang), Codes.ERROR)
+            if len(res) == 0:
+                output(msgs.get_msg("noInsertedRow", lang), Codes.INCORRECT)
                 return 0, 0
 
             conn.commit()
@@ -112,4 +110,4 @@ def getLastInsertedRow(cursor, query):
 
                 return matchingId
             except Exception:
-                raise IndexError
+                return []

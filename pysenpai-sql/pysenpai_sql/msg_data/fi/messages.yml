@@ -310,6 +310,8 @@ program:
     GROUP BY funktiota ei löytynyt vastauksesta.
   noHavingKeyword: |-
     HAVING funktiota ei käytetty GROUP BY:n yhteydessä.
+  noInsertedRow: |-
+    Rivin lisääminen ei onnistunut. Tarkista käytetty lause.
   noOrderByKeyword: |-
     ORDER BY keyword puuttuu
   noSelectedRows: |-
