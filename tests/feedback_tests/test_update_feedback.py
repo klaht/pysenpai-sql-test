@@ -65,3 +65,34 @@ def test_incorrect_updated_values():
     assert compare_messages(returned_msgs, correct_msgs)
 
     assert not answer
+
+def test_different_update_format():
+    ref_query = """
+        UPDATE Artwork
+        SET collectionId = (SELECT collectionId FROM Collection WHERE name = 'Collection of the Oulu Museum of Art')
+        WHERE title = 'La Merenda' 
+        AND artistId = (SELECT artistId FROM Artist WHERE name = 'Elin Danielson-Gambogi' AND yearBorn = 1861)
+        AND year = 1904
+        AND type = 'painting'
+        AND material = 'oil on canvas';
+    """
+    ans_query = """
+        UPDATE Artwork
+        SET collectionId = (SELECT collectionId FROM Collection WHERE name = 'Collection of the Oulu Museum of Art')
+        WHERE title = 'La Merenda' 
+        AND artistId = (SELECT artistId FROM Artist WHERE name = 'Elin Danielson-Gambogi' AND yearBorn = 1861)
+        AND year = 1904
+        AND type = 'painting'
+        AND material = 'oil on canvas';
+    """
+
+    args = ["exNumber = 0", "show_answer_difference", "feedback=update"]
+
+    answer, output = run_test_case(ans_query, ref_query, args)
+    error_keys = ["CorrectResult"]
+
+    correct_msgs = get_msg("en", error_keys)
+    returned_msgs = parse_flag_msg(output, 1)
+
+    assert compare_messages(returned_msgs, correct_msgs)
+    assert answer
