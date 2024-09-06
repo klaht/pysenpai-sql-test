@@ -55,7 +55,7 @@ class SQLMultipleQueryTestCase(SQLTestCase):
         try:
             res, ref = create_list_for_validator(ref_results, ans_results, self)
         except KeyError as e:
-            output(msgs.get_msg("incorrect_table_name", lang), Codes.ERROR, emsg=str(e))
+            output(msgs.get_msg("missingContentInTable", lang), Codes.ERROR)
             return 0, 0
 
 

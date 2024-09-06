@@ -297,6 +297,8 @@ program:
   insertOutput: |-
     Viimeiseksi lisätty rivi:
     {output}
+  missingContentInTable: |-
+    Vaadittuun tauluun ei ole lisätty tehtävänannon mukaisia rivejä.
   missingPrimarykey: |-
     Taulukosta puuttuu pääavain.
     Lisää taulukkoon pääavain.

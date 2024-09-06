@@ -292,6 +292,8 @@ program:
   insertOutput: |-
     The last inserted row:
     {output}
+  missingContentInTable: |-
+    Rows weren't added to one of the required tables.
   missingPrimarykey: |-
     Table is missing a primary key.
     Make sure you define a primary key for the table.
