@@ -59,7 +59,7 @@ def parse_flag_msg(out_str, flag):
 def get_msg(lang, error_keys):
     '''Find the message of an error key in the messages.yml file'''
 
-    with open(f"../pysenpai-sql/pysenpai_sql/msg_data/{lang}/messages.yml", 'r') as f:
+    with open(f"../pysenpai_sql/msg_data/{lang}/messages.yml", 'r') as f:
         data = yaml.safe_load(f)
 
     keys = []
