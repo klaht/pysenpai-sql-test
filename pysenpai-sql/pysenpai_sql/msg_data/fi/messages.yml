@@ -102,7 +102,7 @@ import:
     Korjaa koodisi virheet omalla koneella suorittamalla, jolloin saat tarkkaa tietoa missä ja millaisia virheet ovat.
     Palauta koodisi vasta kun saat sen komentorivillä toimimaan alusta loppuun!
   LoadingModule: |-
-    Ladataan tiedosto {name} arvioitavaksi...
+    Ladataan vastausta arvioitavaksi...
   MissingFileExtension: |-
     Tiedostosta puuttuu .py-pääte, joka tulisi olla kaikissa Python-tiedostoissa.
   PrintExcLine: |-
@@ -297,8 +297,6 @@ program:
   insertOutput: |-
     Viimeiseksi lisätty rivi:
     {output}
-  missingContentInTable: |-
-    Vaadittuun tauluun ei ole lisätty tehtävänannon mukaisia rivejä.
   missingPrimarykey: |-
     Taulukosta puuttuu pääavain.
     Lisää taulukkoon pääavain.
@@ -312,8 +310,6 @@ program:
     GROUP BY funktiota ei löytynyt vastauksesta.
   noHavingKeyword: |-
     HAVING funktiota ei käytetty GROUP BY:n yhteydessä.
-  noInsertedRow: |-
-    Rivin lisääminen ei onnistunut. Tarkista käytetty lause.
   noOrderByKeyword: |-
     ORDER BY keyword puuttuu
   noSelectedRows: |-
