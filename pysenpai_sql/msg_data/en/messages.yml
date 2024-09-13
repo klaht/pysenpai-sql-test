@@ -102,7 +102,7 @@ import:
   LoadingModule: |-
     Loading answer for evaluation...
   MissingFileExtension: |-
-    The file is missing the .py extension, which is required of Python code files.
+    The file is missing the .sql extension.
   NameError: |-
     The program has an execution path where it tries to access an undefined variable.
     Additional information:

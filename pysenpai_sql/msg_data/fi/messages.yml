@@ -104,7 +104,7 @@ import:
   LoadingModule: |-
     Ladataan vastaus arvioitavaksi...
   MissingFileExtension: |-
-    Tiedostosta puuttuu .py-pääte, joka tulisi olla kaikissa Python-tiedostoissa.
+    Tiedostosta puuttuu .sql pääte.
   PrintExcLine: |-
     Aiheutui rivistä {lineno}:
     {{{{{{{line}}}}}}}
