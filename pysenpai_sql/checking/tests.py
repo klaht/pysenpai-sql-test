@@ -41,8 +41,13 @@ def assert_selected_variables(res, correct, feedback_params=None):
     if len(student_columns) != len(reference_columns):
         return "incorrectSelectedColumnAmount", None
 
+    """
+    Remove table name before dot operand before comparing selected columns.
+    Makes comparison simpler since it removes the need to account for aliases
+    """
     for i, column in enumerate(reference_columns):
-        if column.strip() != student_columns[i].strip():
+        answer_column = remove_table_from_column(student_columns[i].strip())
+        if remove_table_from_column(column.strip()) != answer_column:
             return "unmatchedColumn", student_columns[i]
 
         
@@ -318,6 +323,9 @@ feedback_functions = {
 }
 
 #Helper functions
+
+def remove_table_from_column(column:str):
+    return re.sub(r".*\.", "", column)
 
 def get_where_clause_content(query:str):
     conditions = []
