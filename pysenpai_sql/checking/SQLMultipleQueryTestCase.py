@@ -104,7 +104,7 @@ def execute_multi_line_script(script: str, cursor: sqlite3.Cursor):
 def create_result_dict(ans_affected_tables: list, cursor: sqlite3.Cursor):
     result_dict = {}
     for table in ans_affected_tables:
-        result_dict[table] = {
+        result_dict[table.upper()] = {
             "content": get_table_content(table, cursor),
             "data": get_table_data(table, cursor)
         }
