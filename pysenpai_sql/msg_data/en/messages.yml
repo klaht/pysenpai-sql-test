@@ -299,6 +299,8 @@ program:
     Make sure you define a primary key for the table.
   missingSemicolon: |-
     The answer didn't include a closing semicolon (;).
+  missingValueInTable: |-
+    Content in table {output} didn't match the assignment. Did you place your subquery in parenthses?
   multiIncorrectTableContent: |-
     Table {output} contains incorrect values.
   noDistinctKeyword: |-

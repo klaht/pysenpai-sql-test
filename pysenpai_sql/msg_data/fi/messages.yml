@@ -304,6 +304,8 @@ program:
     Lisää taulukkoon pääavain.
   missingSemicolon: |-
     Vastaus ei päättynyt puolipisteeseen (;).
+  missingValueInTable: |-
+    Taulun {output} sisältö ei vastannut tehtävänantoa.
   multiIncorrectTableContent: |-
     Tauluun {output} lisätty virheellisiä arvoja.
   noDistinctKeyword: |-

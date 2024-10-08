@@ -218,8 +218,11 @@ def evaluate_multi_query_content(res, correct, feedback_params=None):
 
     for table, value in ref_tables.items():
         for i, row in enumerate(value['content']):
-            if row != res_tables[table]['content'][i]:
-                return "multiIncorrectTableContent", table
+            try:
+                if row != res_tables[table]['content'][i]:
+                    return "multiIncorrectTableContent", table
+            except (IndexError, KeyError) as e:
+                return "missingValueInTable", table
 
     return None, None
 

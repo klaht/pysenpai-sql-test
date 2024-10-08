@@ -18,19 +18,19 @@ if __name__ == "__main__":
     if msg_parent == "":
         msg_parent = "program"
 
-    with open(f"../pysenpai-sql/pysenpai_sql/msg_data/en/messages.yml", 'r') as f:
+    with open(f"../pysenpai_sql/msg_data/en/messages.yml", 'r') as f:
         data = yaml.safe_load(f)
     
     data[msg_parent][msg_key] = msg_en
     if data:
-        with open(f"../pysenpai-sql/pysenpai_sql/msg_data/en/messages.yml", 'w') as f:
+        with open(f"../pysenpai_sql/msg_data/en/messages.yml", 'w') as f:
             dump_data_to_yaml(data, f)
 
-    with open(f"../pysenpai-sql/pysenpai_sql/msg_data/fi/messages.yml", 'r') as f:
+    with open(f"../pysenpai_sql/msg_data/fi/messages.yml", 'r') as f:
         data = yaml.safe_load(f)
     
     data[msg_parent][msg_key] = msg_fi
     if data:
-        with open(f"../pysenpai-sql/pysenpai_sql/msg_data/fi/messages.yml", 'w') as f:
+        with open(f"../pysenpai_sql/msg_data/fi/messages.yml", 'w') as f:
             dump_data_to_yaml(data, f)
     
