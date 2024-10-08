@@ -35,9 +35,11 @@ class SQLInsertTestCase(SQLTestCase):
 
             cursor.execute(student_answer)
 
+            affected_table = get_table_name(ref_answer)
+
             conn.commit()
 
-            res = getLastInsertedRow(cursor, student_answer)
+            res = getLastInsertedRow(cursor, student_answer, affected_table)
 
             if len(res) == 0:
                 output(msgs.get_msg("noInsertedRow", lang), Codes.INCORRECT)
@@ -60,7 +62,7 @@ class SQLInsertTestCase(SQLTestCase):
 
             conn2.commit()
 
-            ref = getLastInsertedRow(cursor2, ref_answer) 
+            ref = getLastInsertedRow(cursor2, ref_answer, affected_table) 
             self.ref_query_result = ref
         
             conn2.commit()
@@ -74,9 +76,9 @@ class SQLInsertTestCase(SQLTestCase):
         return ref, res
 
 def get_table_name(query):
-    return re.search(r"^INSERT\s+INTO\s+`?(\w+)`?\s*", query, re.IGNORECASE).group(1)
+    return re.search(r"INSERT\s+INTO\s+`?(\w+)`?\s*", query, re.IGNORECASE).group(1)
 
-def getLastInsertedRow(cursor, query):
+def getLastInsertedRow(cursor, query, affected_table):
     
     """
     Retrieves the last inserted row from the specified table.
@@ -94,16 +96,15 @@ def getLastInsertedRow(cursor, query):
 
     id_of_inserted = cursor.lastrowid
 
-    table_name = get_table_name(query)
 
-    columns_query = "PRAGMA table_info(" + table_name + ")"
+    columns_query = "PRAGMA table_info(" + affected_table + ")"
 
     columns = cursor.execute(columns_query).fetchall()
 
     for column in columns:
         if column[5]:
             try:
-                test_query = "SELECT * FROM " + table_name + " WHERE " + column[1] + "=" + str(id_of_inserted)
+                test_query = "SELECT * FROM " + affected_table + " WHERE " + column[1] + "=" + str(id_of_inserted)
                 cursor.execute(test_query)
                 matchingId = cursor.fetchall()
                 assert len(matchingId) == 1

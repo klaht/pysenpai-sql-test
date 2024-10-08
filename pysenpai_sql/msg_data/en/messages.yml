@@ -287,6 +287,8 @@ program:
   incorrectTableName: |-
     Table name is incorrect.
     Make sure you use the name specified in the assignment.
+  incorrectUpdatedRows: |-
+    Content of the table didn't match the assignment after UPDATE query.
   incorrectWhereClause: |-
     WHERE clause included wrong condition: {output}
   insertOutput: |-
@@ -333,7 +335,7 @@ program:
     A database error occurred while calling the function.
     {emsg}
   tooLittleDeleted: |-
-    Not enought rows were deleted.
+    Not enough rows were deleted.
   tooManyDeleted: |-
     Too many rows were deleted
   tooManyReturnValues0: |-

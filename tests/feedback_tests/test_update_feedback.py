@@ -41,7 +41,7 @@ def test_incorrect_update_where():
     assert compare_messages(returned_msgs, correct_msgs)
 
     returned_msgs = parse_flag_msg(output, 2)
-    error_keys = ["incorrectSelectedRows", "AdditionalTests"]
+    error_keys = ["incorrectUpdatedRows", "AdditionalTests"]
     correct_msgs = get_msg("en", error_keys)
     assert compare_messages(returned_msgs, correct_msgs)
 

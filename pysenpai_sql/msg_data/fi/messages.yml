@@ -292,6 +292,8 @@ program:
   incorrectTableName: |-
     Taulukon nimi on väärin.
     Varmista, että käytät tehtävänannossa määriteltyä nimeä.
+  incorrectUpdatedRows: |-
+    Taulun sisältö ei vastannut tehtävänantoa UPDATE lauseen jälkeen.
   incorrectWhereClause: |-
     Rivien valitsemiseen käytetty where lauseke sisälsi väärän ehtolausekkeen: {output}
   insertOutput: |-

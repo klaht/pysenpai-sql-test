@@ -31,8 +31,9 @@ class SQLDeleteTestCase(SQLTestCase):
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
             cursor.execute(student_answer)
+            affected_table = get_table_name(ref_answer)
 
-            res = get_table_contents(cursor, student_answer)
+            res = get_table_contents(cursor, student_answer, affected_table)
             conn.commit() 
         
         except sqlite3.Error as e:
@@ -45,7 +46,7 @@ class SQLDeleteTestCase(SQLTestCase):
             cursor2 = conn2.cursor()
             cursor2.execute(ref_answer)
 
-            ref = get_table_contents(cursor2, ref_answer)
+            ref = get_table_contents(cursor2, ref_answer, affected_table)
             
             conn2.commit()
         
@@ -58,9 +59,8 @@ class SQLDeleteTestCase(SQLTestCase):
 def get_table_name(query):
     return re.search(r"^DELETE\s+FROM\s+`?(\w+)`?\s*", query, re.IGNORECASE).group(1)
 
-def get_table_contents(cursor: sqlite3.Cursor, query: str):
-    table_name = get_table_name(query)
-    select_query = "SELECT * FROM " + table_name
+def get_table_contents(cursor: sqlite3.Cursor, query: str, affected_table: str):
+    select_query = "SELECT * FROM " + affected_table
 
     cursor.execute(select_query)
 

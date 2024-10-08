@@ -33,7 +33,9 @@ class SQLUpdateTestCase(SQLTestCase):
             conn = sqlite3.connect("mydatabase1.db")
             cursor = conn.cursor()
 
-            res = run_query_and_get_changed_rows(cursor, student_answer)
+            affected_table = get_table_name(ref_answer)
+
+            res = run_query_and_get_changed_rows(cursor, student_answer, affected_table)
 
             conn.commit()
             cursor.close()
@@ -48,7 +50,7 @@ class SQLUpdateTestCase(SQLTestCase):
             conn2 = sqlite3.connect("mydatabase2.db")
             cursor2 = conn2.cursor()
 
-            ref = run_query_and_get_changed_rows(cursor2, ref_answer)
+            ref = run_query_and_get_changed_rows(cursor2, ref_answer, affected_table)
 
             self.ref_query_result = ref
 
@@ -65,12 +67,12 @@ class SQLUpdateTestCase(SQLTestCase):
 
         return ref, res
 
-def run_query_and_get_changed_rows(cursor:sqlite3.Cursor, query:str):
+def run_query_and_get_changed_rows(cursor:sqlite3.Cursor, query:str, affected_table: str):
     changed_rows = []
 
-    orig_content = get_table_contents(cursor, query)
+    orig_content = get_table_contents(cursor, query, affected_table)
     cursor.execute(query)
-    updated_content = get_table_contents(cursor, query)
+    updated_content = get_table_contents(cursor, query, affected_table)
 
     for i, orig_row in enumerate(orig_content):
         if updated_content[i] != orig_row:
@@ -78,9 +80,8 @@ def run_query_and_get_changed_rows(cursor:sqlite3.Cursor, query:str):
 
     return changed_rows
 
-def get_table_contents(cursor: sqlite3.Cursor, query: str):
-    table_name = get_table_name(query)
-    select_query = "SELECT * FROM " + table_name
+def get_table_contents(cursor: sqlite3.Cursor, query: str, affected_table: str):
+    select_query = "SELECT * FROM " + affected_table
 
     cursor.execute(select_query)
 
