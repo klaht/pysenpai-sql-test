@@ -35,8 +35,9 @@ def assert_selected_variables(res, correct, feedback_params=None):
     if len(res) == 0:
         return "noSelectedRows", None
 
-    student_columns = get_column_names_from_query(student_answer).split(",")
-    reference_columns = get_column_names_from_query(correct_answer).split(",")
+    #Split selected columns at commas. Regex to make sure commas within parentheses aren't split (fe. function calls)
+    student_columns = re.split(r"(?<!\(),(?![\w\s,]*\))", get_column_names_from_query(student_answer))
+    reference_columns = re.split(r"(?<!\(),(?![\w\s,]*\))", get_column_names_from_query(correct_answer))
 
     if len(student_columns) != len(reference_columns):
         return "incorrectSelectedColumnAmount", None
