@@ -92,7 +92,7 @@ def execute_multi_line_script(script: str, cursor: sqlite3.Cursor):
     for query in queries:
         if len(query.strip()) == 0: #Don't execute empty strings
             continue
-        query_type = query.split(" ")[0]
+        query_type = query.split(" ")[0].strip()
         cursor.execute(query)
         table_name = get_table_name(query, query_type)
 
