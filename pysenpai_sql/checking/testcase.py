@@ -2,6 +2,7 @@ import importlib
 import io
 import sqlite3
 import sys
+import re
 
 import pysenpai.callbacks.defaults as defaults
 import pysenpai.callbacks.convenience as convenience
@@ -9,6 +10,13 @@ from pysenpai.output import json_output
 from pysenpai_sql.messages import load_messages, Codes
 from pysenpai.output import output
 from pysenpai_sql.checking.tests import *
+
+def remove_comments_and_newlines(query:str) -> str:
+    query = re.sub(r"\/\*.+\*\/", "", query, flags=re.DOTALL) #Multiline comments
+    query = re.sub(r"--.+", "", query) #Single line
+
+    print(query)
+    return query.replace("\n", " ")
 
 def get_assignment_type_output_msg(ref_query:str) -> str:
     assignmentType = ref_query.split()[0]
@@ -176,8 +184,9 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
             output(msgs.get_msg("FileOpenError", lang), Codes.ERROR, emsg=str(e))
             return 0, 0, ""
         
-        student_answer = student_answer.replace('\n', ' ')
+        student_answer = remove_comments_and_newlines(student_answer)
         if not student_answer.strip().endswith(';'):
+            print(student_answer.strip())
             output(msgs.get_msg("missingSemicolon", lang), Codes.INCORRECT)
             return 0
 

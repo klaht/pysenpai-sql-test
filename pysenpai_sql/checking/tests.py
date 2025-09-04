@@ -403,7 +403,7 @@ def get_aliases(query:str) -> dict:
 
 
 def get_group_by_parameter_from_query(query):
-    group_by_param = re.search(r"\bGROUP\s+BY\s+(\w+)\b", query, re.IGNORECASE)
+    group_by_param = re.search(r"\bGROUP\s+BY\s+(\w+)\b", query, flags=re.IGNORECASE)
     if group_by_param:
         return group_by_param.group(1)
     
