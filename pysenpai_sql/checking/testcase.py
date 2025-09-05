@@ -15,7 +15,6 @@ def remove_comments_and_newlines(query:str) -> str:
     query = re.sub(r"\/\*.+\*\/", "", query, flags=re.DOTALL) #Multiline comments
     query = re.sub(r"--.+", "", query) #Single line
 
-    print(query)
     return query.replace("\n", " ")
 
 def get_assignment_type_output_msg(ref_query:str) -> str:

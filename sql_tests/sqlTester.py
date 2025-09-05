@@ -165,7 +165,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     except Exception as e:
-        print(e)
         traceback.print_exc() #debug
         print("USAGE: ANSWER_FILENAME REFERENCE_FILENAME")
     
