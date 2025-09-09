@@ -186,7 +186,6 @@ def run_sql_test_cases(category, test_category, test_target, test_cases, lang,
         student_answer = remove_comments_and_newlines(student_answer)
         test.res_result = student_answer
         if not student_answer.strip().endswith(';'):
-            print(student_answer.strip())
             output(msgs.get_msg("missingSemicolon", lang), Codes.INCORRECT)
             return 0
 
